@@ -11,9 +11,12 @@ class User {
     UserRole role = UserRole::NONE;
 public:
     explicit User(int64_t chat_id, UserRole role) : chat_id(chat_id), role(role) {}
-    // virtual ~User() {}  
+    virtual ~User() {}  
     int64_t id() const;
     UserRole get_role() const;
+    virtual TgBot::InlineKeyboardMarkup::Ptr get_inline_keyboard() = 0;
+    virtual TgBot::InlineKeyboardMarkup::Ptr get_menu() = 0;
+    virtual TgBot::InlineKeyboardMarkup::Ptr back_button() = 0;
 };
 }
 
