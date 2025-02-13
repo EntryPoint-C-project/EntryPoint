@@ -21,9 +21,9 @@ TgBot::InlineKeyboardMarkup::Ptr OfficeStaff::get_inline_keyboard() {
     help->callbackData = "office_staff_help";
 
     // ЗДЕСЬ КАКОЙ_ТО ПИЗДЕЦ
-    // TgBot::InlineKeyboardButton::Ptr add_info(new TgBot::InlineKeyboardButton);
-    // help->text = "Добавить информацию";
-    // help->callbackData = "office_add_info";
+    TgBot::InlineKeyboardButton::Ptr add_info(new TgBot::InlineKeyboardButton);
+    add_info->text = "Добавить информацию";
+    add_info->callbackData = "office_add_info";
 
     TgBot::InlineKeyboardButton::Ptr back(new TgBot::InlineKeyboardButton);
     back->text = "🔙 Назад";
@@ -33,8 +33,8 @@ TgBot::InlineKeyboardMarkup::Ptr OfficeStaff::get_inline_keyboard() {
     inline_keyboard->inlineKeyboard.push_back({declaration});
     inline_keyboard->inlineKeyboard.push_back({connect_with_teacher});
     inline_keyboard->inlineKeyboard.push_back({help});
+    inline_keyboard->inlineKeyboard.push_back({add_info});
     inline_keyboard->inlineKeyboard.push_back({back});
-    // inline_keyboard->inlineKeyboard.push_back({add_info});
     std::cout << "1234567\n";
     return inline_keyboard;
 }

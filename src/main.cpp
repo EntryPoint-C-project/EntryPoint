@@ -11,7 +11,7 @@ int main() {
     std::map<int64_t, std::shared_ptr<mtd::User>> users;
 
     bot.getEvents().onCommand("start", [&bot, &users](TgBot::Message::Ptr message) {
-        auto st = std::make_shared<mtd::Student>(message->chat->id);
+        auto st = std::make_shared<mtd::OfficeStaff>(message->chat->id);
         users.insert({st->id(), st});
         bot.getApi().sendMessage(st->id(), "zDF", 0, 0, st->get_menu());
     });
@@ -31,22 +31,26 @@ int main() {
         }
         // перестает блестеть кнопочка
         // bot.getApi().answerCallbackQuery(query->id);
+        if (query->data == "student_buttons") {
+            bot.getApi().sendMessage(chat_id, "fsfsdf", 0, 0, users[chat_id]->get_inline_keyboard());
+        }
         if (query->data == "student_time_table") {
-            bot.getApi().sendMessage(chat_id, "Ссылка на расписание");
+            bot.getApi().sendMessage(chat_id, "Ссылка на расписание", 0, 0, users[chat_id]->get_inline_keyboard());
         }
         else if (query->data == "student_declaration") {
-            bot.getApi().sendMessage(chat_id, "Актуальные объявления");
+            bot.getApi().sendMessage(chat_id, "Актуальные объявления", 0, 0, users[chat_id]->get_inline_keyboard());
         }
         else if (query->data == "student_connect_with_teacher") {
-            bot.getApi().sendMessage(chat_id, "Списочек с контактами преподавателя");
+            bot.getApi().sendMessage(chat_id, "Списочек с контактами преподавателя", 0, 0, users[chat_id]->get_inline_keyboard());
         }
         else if (query->data == "student_help") {
-            bot.getApi().sendMessage(chat_id, "Помощь");
+            bot.getApi().sendMessage(chat_id, "Помощь", 0, 0, users[chat_id]->get_inline_keyboard());
         }
         else if (query->data == "student_back") {
             bot.getApi().sendMessage(chat_id, "Меню", 0, 0, users[chat_id]->get_menu());
             return;
         }
+
         else if (query->data == "student_information") {
             bot.getApi().sendMessage(chat_id, "Какая-то информация", 0, 0, users[chat_id]->back_button());
             return;
@@ -58,16 +62,16 @@ int main() {
             return;
         }
         if (query->data == "office_staff_time_table") {
-            bot.getApi().sendMessage(chat_id, "Ссылка на расписание для office staff");
+            bot.getApi().sendMessage(chat_id, "Ссылка на расписание для office staff", 0, 0, users[chat_id]->get_inline_keyboard());
         }
         else if (query->data == "office_staff_declaration") {
-            bot.getApi().sendMessage(chat_id, "Актуальные объявления для office staff");
+            bot.getApi().sendMessage(chat_id, "Актуальные объявления для office staff", 0, 0, users[chat_id]->get_inline_keyboard());
         }
         else if (query->data == "office_staff_connect_with_teacher") {
-            bot.getApi().sendMessage(chat_id, "Списочек с контактами преподавателя для office staff");
+            bot.getApi().sendMessage(chat_id, "Списочек с контактами преподавателя для office staff", 0, 0, users[chat_id]->get_inline_keyboard());
         }
         else if (query->data == "office_staff_help") {
-            bot.getApi().sendMessage(chat_id, "Помощь для office staff");
+            bot.getApi().sendMessage(chat_id, "Помощь для office staff", 0, 0, users[chat_id]->get_inline_keyboard());
         }
         else if (query->data == "office_staff_back") {
             bot.getApi().sendMessage(chat_id, "Меню для office staff", 0, 0, users[chat_id]->get_menu());
@@ -78,10 +82,8 @@ int main() {
             return;
         }
         else if (query->data == "office_add_info") {
-            bot.getApi().sendMessage(chat_id, "Здесь вы можете ввести информацию");
+            bot.getApi().sendMessage(chat_id, "Здесь вы можете ввести информацию", 0, 0, users[chat_id]->get_inline_keyboard());
         }
-
-        bot.getApi().sendMessage(chat_id, "sdfds", 0, 0, users[chat_id]->get_inline_keyboard());
     });
 
     try {
