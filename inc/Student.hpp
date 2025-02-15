@@ -1,7 +1,6 @@
 #ifndef STUDENT_GPP_
 #define STUDENT_GPP_
 
-#include <tgbot/tgbot.h>
 #include "User.hpp"
 
 namespace mtd {

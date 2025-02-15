@@ -35,7 +35,6 @@ TgBot::InlineKeyboardMarkup::Ptr OfficeStaff::get_inline_keyboard() {
     inline_keyboard->inlineKeyboard.push_back({help});
     inline_keyboard->inlineKeyboard.push_back({add_info});
     inline_keyboard->inlineKeyboard.push_back({back});
-    std::cout << "1234567\n";
     return inline_keyboard;
 }
 
@@ -53,7 +52,6 @@ TgBot::InlineKeyboardMarkup::Ptr OfficeStaff::get_menu() {
 
     inline_keyboard->inlineKeyboard.push_back({buttons});
     inline_keyboard->inlineKeyboard.push_back({information});
-    std::cout << "=====\n";
     return inline_keyboard;
 }
 
