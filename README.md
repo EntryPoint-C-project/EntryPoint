@@ -1,5 +1,4 @@
 # EntryPoint
-database structure :
 
-![(database.jpeg)]
-
+database structure:
+![Database Structure](database.jpeg)
