@@ -2,5 +2,5 @@
 database structure :
   
 
-[[(database.jpg)]]
+[[(database.jpeg)]]
 
