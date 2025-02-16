@@ -82,7 +82,7 @@ public:
 
             //Добавление в Feedback 
             // TODO: сгенирировать табличку из всех учителей 
-            std::string sql_get_subject_id = "SELECT subject_id FROM Subjects WHERE subject_name  = " + conn.quote(user.subject) ; 
+            std::string sql_get_subject_id = "SELECT subject_id FROM Subjects WHERE subject_name = "+conn.quote(user.subject) ; 
             pqxx::result res_sql_get_subject_id = txn.exec(sql_get_subject_id);
 
             if (res_sql_get_subject_id.empty()){
@@ -91,7 +91,7 @@ public:
             ); 
             }
             int subject_id = res_sql_get_subject_id[0][0].as<int>();
-            std::string sql_insert_subject_id = "INSERT INTO Feedback (teacher_id , subject_id , name ) VALUES ($1, $2 , $3) "
+            std::string sql_insert_subject_id = "INSERT INTO Feedbacks (teacher_id , subject_id , name ) VALUES ($1, $2 , $3) "
                 "ON CONFLICT DO NOTHING;";
 
             txn.exec_params(sql_insert_subject_id, person_id, subject_id , user.subject);

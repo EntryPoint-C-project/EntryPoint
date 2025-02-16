@@ -44,11 +44,14 @@ CREATE TABLE Subjects (
     subject_id SERIAL PRIMARY KEY,
     subject_name VARCHAR(255) UNIQUE NOT NULL
 );
-INSERT INTO Programs (program_name) VALUES 
-    ('MATH'), 
-    ('ALGEBRA'), 
-    ('C++'), 
-    ('ALGOSY');
+
+INSERT INTO Subjects (subject_name)
+VALUES 
+    ('MATH'),
+    ('ALGEBRA'),
+    ('C++'),
+    ('ALGOSY')
+ON CONFLICT (subject_name) DO NOTHING;
 
 
 
