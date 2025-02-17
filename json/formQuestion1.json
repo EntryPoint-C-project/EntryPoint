@@ -1,0 +1,43 @@
+{
+    "requests": [
+      {
+        "createItem": {
+          "item": {
+            "title": "Оцените качество преподавания Идеалова Идеала Идеаловича от 1 до 10",
+            "questionItem": {
+              "question": {
+                "required": true,
+                "scaleQuestion": {
+                  "low": 1,
+                  "high": 10,
+                  "lowLabel": "Плохо",
+                  "highLabel": "Отлично"
+                }
+              }
+            }
+          },
+          "location": {
+            "index": 0
+          }
+        }
+      },
+      {
+        "createItem": {
+          "item": {
+            "title": "Что вам понравилось в преподавании Идеалова Идеала Идеаловича?",
+            "questionItem": {
+              "question": {
+                "required": true,
+                "textQuestion": {
+                  "paragraph": true
+                }
+              }
+            }
+          },
+          "location": {
+            "index": 1
+          }
+        }
+      }
+    ]
+  }
