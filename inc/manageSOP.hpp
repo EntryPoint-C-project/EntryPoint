@@ -11,9 +11,9 @@ namespace sop {
 
 using json = nlohmann::json;
 
-const std::string refreshToken = "";
-const std::string clientId = "";
-const std::string clientSecret = "";
+const std::string refreshToken = "1//0cOYQ-Gkp10-iCgYIARAAGAwSNwF-L9IreQZryzVc8uBz3yUtRDfVRr-U2n2hVu619cXzHBWPlsfM8bK4PvpJGXbXDCDdyH7CHOo";
+const std::string clientId = "314611394476-nscobighgst0lhnglrvh45l3nrioth77.apps.googleusercontent.com";
+const std::string clientSecret = "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";
 
 std::string performHttpRequest(const std::string &url, const std::string &method, const std::string &accessToken, const std::string &postData = "");
 std::string refreshAccessToken();
