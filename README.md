@@ -1,16 +1,31 @@
-# EntryPoint
-Проект на плюсах от 3 амбициозных пацанчиков 
+# 🚀 EntryPoint
 
+A **Telegram Bot** designed for students, teachers, administration, and educational process organizers.
 
-### Чуток описание проекта : 
-Телеграмм-бот с авторизацией для студентов, преподавателей, администрации, организаторов учебного процесса (учебный офис, кураторы и т.п.). Среди базового функционала присутствуют: система анонимной студенческой оценки преподавания, система донесения информации от учебного офиса, преподавателей и кураторов до студентов c подтверждением получения (в т.ч. ссылок на чаты и объявлений). Возможность поддержания полезной информации о предметах внутри бота (ссылки, таблицы, папки, чаты, файлы) с возможностью изменения студентами (как wiki, просмотр изменений). 
+## 📌 Project Description
 
+EntryPoint is a Telegram bot with an authorization system for different roles in the educational process:
+
+- **Students** — can anonymously evaluate teaching quality and receive important announcements.
+- **Teachers & Curators** — can send notifications to students with read confirmation.
+- **Administration** — can manage information distribution within the university.
+
+🔹 The bot also allows storing useful subject-related information (links, tables, files, chats).  
+🔹 Any student can edit the materials **Wiki-style**, with a change history feature.
+
+---
+
+## 🛠 Installation & Build
+
+### 🔹 1. Clone the repository
 ```sh
-# Запуск clang-tidy
-run-clang-tidy -p build/
-```
-```sh     
+git clone git@github.com:EntryPoint-C-project/EntryPoint.git
+cd EntryPoint
 mkdir build && cd build  
-cmake -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..  # Флаг для поддержки clang-tidy       
-ninja                    
+cmake -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..  # Enable clang-tidy support
+ninja
+``` 
+### 🔹 2. Running clang-tidy
+```sh
+run-clang-tidy -p build/
 ```
