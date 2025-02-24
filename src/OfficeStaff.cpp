@@ -49,7 +49,6 @@ TgBot::InlineKeyboardMarkup::Ptr OfficeStaff::GetMenu() {
     information->text = "Информация";
     information->callbackData = "office_staff_information";
 
-
     inline_keyboard->inlineKeyboard.push_back({buttons});
     inline_keyboard->inlineKeyboard.push_back({information});
     return inline_keyboard;
@@ -63,4 +62,4 @@ TgBot::InlineKeyboardMarkup::Ptr OfficeStaff::BackButton() {
     keyboard->inlineKeyboard.push_back({button});
     return keyboard;
 }
-}
+}  // namespace mtd

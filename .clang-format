@@ -1,0 +1,29 @@
+---
+BasedOnStyle: Google  # Используем Google Style как основу
+
+# Выравнивание и отступы
+AccessModifierOffset: -2  # Смещение модификаторов доступа (private, public) влево
+AlignTrailingComments: true  # Выравнивание комментариев
+IndentPPDirectives: AfterHash  # Директивы препроцессора (#define, #include) выравниваются после #
+IndentWidth: 4  # Отступ в 4 пробела
+NamespaceIndentation: None  # Без отступов внутри namespace
+
+# Форматирование скобок и операторов
+BreakBeforeBraces: Attach  # Фигурные скобки остаются на той же строке, что и выражение
+BreakBeforeBinaryOperators: All  # Перенос бинарных операторов (+, -, *, /) на новую строку
+BreakBeforeTernaryOperators: true  # Перенос тернарных операторов (?:) на новую строку
+
+# Лимиты строк и форматирование длинных выражений
+ColumnLimit: 100  # Максимальная длина строки 100 символов
+ConstructorInitializerAllOnOneLineOrOnePerLine: true  # Либо все инициализаторы конструктора в одной строке, либо каждый на новой
+
+# Включения (includes)
+IncludeBlocks: Regroup  # Группировать include'ы по категориям (стандартные, пользовательские, системные)
+SortIncludes: true  # Сортировать include'ы по алфавиту
+
+# Дополнительные улучшения читаемости
+SpaceBeforeParens: ControlStatements  # Пробел перед скобками у if, while, for, но не у вызовов функций
+AllowShortFunctionsOnASingleLine: InlineOnly  # Разрешать однострочные функции только в inline
+AllowShortIfStatementsOnASingleLine: false  # if всегда должен быть на новой строке
+AllowShortLoopsOnASingleLine: false  # Циклы тоже должны быть в отдельных строках
+...

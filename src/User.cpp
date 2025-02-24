@@ -16,4 +16,4 @@ UserRole User::GetRole() const {
 UserState &User::GetState() {
     return state;
 }
-}
+}  // namespace mtd

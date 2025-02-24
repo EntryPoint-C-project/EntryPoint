@@ -1,7 +1,8 @@
 #include "Tutor.hpp"
 
 namespace mtd {
-Tutor::Tutor(int64_t chat_id) : User(chat_id, UserRole::TUTOR) {}
+Tutor::Tutor(int64_t chat_id) : User(chat_id, UserRole::TUTOR) {
+}
 
 TgBot::InlineKeyboardMarkup::Ptr Tutor::GetInlineKeyboard() {
     TgBot::InlineKeyboardMarkup::Ptr inlineKeyboard(new TgBot::InlineKeyboardMarkup);
@@ -45,7 +46,7 @@ TgBot::InlineKeyboardMarkup::Ptr Tutor::GetMenu() {
     TgBot::InlineKeyboardButton::Ptr buttons(new TgBot::InlineKeyboardButton);
     buttons->text = "Меню для куратора";
     buttons->callbackData = "tutor_buttons";
-    
+
     inlineKeyboard->inlineKeyboard.push_back({buttons});
     return inlineKeyboard;
 }
@@ -58,4 +59,4 @@ TgBot::InlineKeyboardMarkup::Ptr Tutor::BackButton() {
     keyboard->inlineKeyboard.push_back({button});
     return keyboard;
 }
-}
+}  // namespace mtd

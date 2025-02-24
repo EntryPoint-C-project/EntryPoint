@@ -14,7 +14,7 @@ TgBot::InlineKeyboardMarkup::Ptr Teacher::GetInlineKeyboard() {
     back->callbackData = "teacher_back";
     inlineKeyboard->inlineKeyboard.push_back({back});
 
-    return inlineKeyboard; 
+    return inlineKeyboard;
 }
 
 TgBot::InlineKeyboardMarkup::Ptr Teacher::GetMenu() {
@@ -27,7 +27,6 @@ TgBot::InlineKeyboardMarkup::Ptr Teacher::GetMenu() {
     TgBot::InlineKeyboardButton::Ptr information(new TgBot::InlineKeyboardButton);
     information->text = "Информация";
     information->callbackData = "teachert_information";
-
 
     inlineKeyboard->inlineKeyboard.push_back({buttons});
     inlineKeyboard->inlineKeyboard.push_back({information});
@@ -43,4 +42,4 @@ TgBot::InlineKeyboardMarkup::Ptr Teacher::BackButton() {
     keyboard->inlineKeyboard.push_back({button});
     return keyboard;
 }
-}
+}  // namespace mtd

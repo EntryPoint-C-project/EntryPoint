@@ -5,13 +5,13 @@
 
 namespace mtd {
 class Tutor : public User {
-public:
+  public:
     Tutor(int64_t chat_id);
 
     TgBot::InlineKeyboardMarkup::Ptr GetInlineKeyboard() override;
     TgBot::InlineKeyboardMarkup::Ptr GetMenu() override;
     TgBot::InlineKeyboardMarkup::Ptr BackButton() override;
 };
-}
+}  // namespace mtd
 
 #endif
