@@ -24,6 +24,11 @@ TgBot::InlineKeyboardMarkup::Ptr Tutor::get_inline_keyboard() {
     create_sop->callbackData = "tutor_create_sop";
     inline_keyboard->inlineKeyboard.push_back({create_sop});
 
+    TgBot::InlineKeyboardButton::Ptr view_sop(new TgBot::InlineKeyboardButton);
+    view_sop->text = "Посмотреть СОП";
+    view_sop->callbackData = "tutor_view_sop";
+    inline_keyboard->inlineKeyboard.push_back({view_sop});
+
     // Добавление кнопки "Назад"
     TgBot::InlineKeyboardButton::Ptr back(new TgBot::InlineKeyboardButton);
     back->text = "🔙 Назад";

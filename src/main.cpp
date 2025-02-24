@@ -1,19 +1,58 @@
 #include <tgbot/tgbot.h>
 #include "BotToken.hpp"
-#include <map>
 #include "User.hpp"
 #include "Student.hpp"
 #include "OfficeStaff.hpp"
 #include "Teacher.hpp"
+#include "Tutor.hpp"
+#include <map>
 #include <memory>
 #include <mutex>
 #include <set>
-#include "Tutor.hpp"
+#include <vector>
+
+
+
+TgBot::InlineKeyboardMarkup::Ptr get_raiting_scale() {
+    TgBot::InlineKeyboardMarkup::Ptr keyboard(new TgBot::InlineKeyboardMarkup);
+    // Создаем кнопки от 1 до 10
+    for (int i = 1; i < 11; ++i) {
+        TgBot::InlineKeyboardButton::Ptr button(new TgBot::InlineKeyboardButton);
+        button->text = std::to_string(i);
+        button->callbackData = std::to_string(i);  // Колбек-данные соответствуют цифре
+        keyboard->inlineKeyboard.push_back({button}); // Добавляем кнопки в строку клавиатуры
+    }
+    return keyboard;
+}
 
 void student_call_back_query(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query, std::shared_ptr<mtd::User> user) {
     int64_t chat_id = user->id();
+    if (query->data == "1" || query->data == "2" || query->data == "3" || query->data == "4" || 
+        query->data == "5" || query->data == "6" || query->data == "7" || query->data == "8" || 
+        query->data == "9" || query->data == "10") {
+        
+        bot.getApi().sendMessage(chat_id, "Этого лоха ты оценил на " + query->data + ".\nИзменить свой выбор нельзя(");
+        user->get_evaluations().push_back(std::stoi(query->data));
+        // Следующий вопрос
+        if (user->get_step() < 5) {
+            bot.getApi().sendMessage(chat_id, "Вопрос " + std::to_string(user->get_step() + 1), 0, 0, get_raiting_scale());
+            user->get_step()++; // Переход к следующему вопросу
+        } else {
+            bot.getApi().sendMessage(chat_id, "Опрос завершен. Спасибо за участие!", 0, 0, user->back_button());
+            user->get_state() = mtd::UserState::NONE;
+            user->get_step() = 0;
+        }
+    }
+
+    //---------------------------------
+    //---------------------------------
     if (query->data == "student_buttons") {
         bot.getApi().sendMessage(chat_id, "fsfsdf", 0, 0, user->get_inline_keyboard());
+    }
+    else if (query->data == "student_sop" && user->get_step() == 0) {
+        bot.getApi().sendMessage(chat_id, "Вопрос 1", 0, 0, get_raiting_scale());
+        user->get_step()++;
+        user->get_state() = mtd::UserState::STUDENT_SOP;
     }
     else if (query->data == "student_time_table") {
         bot.getApi().sendMessage(chat_id, "Ссылка на расписание", 0, 0, user->get_inline_keyboard());
@@ -87,6 +126,11 @@ void tutor_call_back_query(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query, st
     else if (query->data == "tutor_add_subject") {
         bot.getApi().sendMessage(chat_id, "Введите название нового предмета", 0, 0, user->get_inline_keyboard());
     }
+    else if (query->data == "tutor_view_sop") {
+        user->get_state() = mtd::UserState::TUTOR_SOP;
+        bot.getApi().sendMessage(chat_id, "Введите id пользователя");
+        
+    }
     else if (query->data == "tutor_add_people") {
         bot.getApi().sendMessage(chat_id, "Введите ID студентов и групп, которых нужно добавить", 0, 0, user->get_inline_keyboard());
     }
@@ -107,7 +151,7 @@ int main() {
     bot.getEvents().onCommand("start", [&bot, &users, &mutex_for_users, &new_users](TgBot::Message::Ptr message) {
         std::lock_guard<std::mutex> lock(mutex_for_users);
         new_users.insert(message->chat->id);
-
+        std::cout << "User connect: " << message->chat->id << '\n';
         TgBot::InlineKeyboardMarkup::Ptr keyboard(new TgBot::InlineKeyboardMarkup);
         TgBot::InlineKeyboardButton::Ptr b1(new TgBot::InlineKeyboardButton);
         b1->text = "Студент";
@@ -175,11 +219,31 @@ int main() {
             teacher_call_back_query(bot, query, user);
         }
         else if (user->get_role() == mtd::UserRole::TUTOR) {
-            std::cout << "tutor\n";
+            
             tutor_call_back_query(bot, query, user);
         }
     });
 
+    bot.getEvents().onAnyMessage([&bot, &users, &mutex_for_users](TgBot::Message::Ptr message){
+        std::lock_guard<std::mutex> lock(mutex_for_users);
+        int64_t chat_id = message->chat->id;
+    
+        if (users.find(chat_id) == users.end()) {
+            std::cout << "=== Error 2 ===\n";
+            return;
+        }
+        auto &user = users[chat_id];
+
+        if (user->get_state() == mtd::UserState::TUTOR_SOP) {
+            int64_t student_chat_id = static_cast<int64_t>(std::stoll(message->text));
+            std::string s;
+            for (const auto i : users[student_chat_id]->get_evaluations()) {
+                s += std::to_string(i) + " ";
+            }
+            bot.getApi().sendMessage(chat_id, "Оценки этого студента:\n" + s, 0, 0, user->back_button());
+            return;
+        }
+    });
     try {
         std::cout << "Bot is running...\n";
         TgBot::TgLongPoll longPoll(bot);

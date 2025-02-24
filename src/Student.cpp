@@ -24,11 +24,17 @@ TgBot::InlineKeyboardMarkup::Ptr Student::get_inline_keyboard() {
     back->text = "🔙 Назад";
     back->callbackData = "student_back";
 
+    TgBot::InlineKeyboardButton::Ptr sop(new TgBot::InlineKeyboardButton);
+    sop->text = "Пройти СОП";
+    sop->callbackData = "student_sop";
+
     inline_keyboard->inlineKeyboard.push_back({time_table});
     inline_keyboard->inlineKeyboard.push_back({declaration});
     inline_keyboard->inlineKeyboard.push_back({connect_with_teacher});
     inline_keyboard->inlineKeyboard.push_back({help});
+    inline_keyboard->inlineKeyboard.push_back({sop});
     inline_keyboard->inlineKeyboard.push_back({back});
+    
     return inline_keyboard;
 }
 
