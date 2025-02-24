@@ -1,0 +1,19 @@
+Checks: >-
+  -*,
+  bugprone-*,
+  concurrency-*,
+  cppcoreguidelines-*,
+  misc-*,
+  modernize-*,
+  performance-*,
+  portability-*,
+  readability-*,
+  google-readability-casting,
+  google-runtime-operator,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -cppcoreguidelines-pro-bounds-constant-array-index
+
+WarningsAsErrors: "*"
+
+ExtraArgs:
+  - "-std=c++20"
