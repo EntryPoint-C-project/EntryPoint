@@ -7,4 +7,7 @@ int64_t User::id() const {
 UserRole User::get_role() const {
     return role;
 }
+UserState &User::get_state() {
+    return state;
+}
 }

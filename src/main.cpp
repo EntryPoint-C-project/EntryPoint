@@ -8,6 +8,7 @@
 #include <memory>
 #include <mutex>
 #include <set>
+#include "Tutor.hpp"
 
 void student_call_back_query(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query, std::shared_ptr<mtd::User> user) {
     int64_t chat_id = user->id();
@@ -78,6 +79,25 @@ void teacher_call_back_query(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query, 
     }
 }
 
+void tutor_call_back_query(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query, std::shared_ptr<mtd::User> user) {
+    int64_t chat_id = user->id();
+    if (query->data == "tutor_buttons") {
+        bot.getApi().sendMessage(chat_id, "fsdf", 0, 0, user->get_inline_keyboard());
+    }
+    else if (query->data == "tutor_add_subject") {
+        bot.getApi().sendMessage(chat_id, "Введите название нового предмета", 0, 0, user->get_inline_keyboard());
+    }
+    else if (query->data == "tutor_add_people") {
+        bot.getApi().sendMessage(chat_id, "Введите ID студентов и групп, которых нужно добавить", 0, 0, user->get_inline_keyboard());
+    }
+    else if (query->data == "tutor_create_sop") {
+        bot.getApi().sendMessage(chat_id, "Введите данные для создания SOP", 0, 0, user->get_inline_keyboard());
+    }
+    else if (query->data == "tutor_back") {
+        bot.getApi().sendMessage(chat_id, "Меню", 0, 0, user->get_menu());
+    }
+}
+
 int main() {
     TgBot::Bot bot(mtd::token);
     std::map<int64_t, std::shared_ptr<mtd::User>> users;
@@ -101,9 +121,14 @@ int main() {
         b3->text = "Преподаватель";
         b3->callbackData = "teacher";
 
+        TgBot::InlineKeyboardButton::Ptr b4(new TgBot::InlineKeyboardButton);
+        b4->text = "Куратор";
+        b4->callbackData = "tutor";
+
         keyboard->inlineKeyboard.push_back({b1});
         keyboard->inlineKeyboard.push_back({b2});
         keyboard->inlineKeyboard.push_back({b3});
+        keyboard->inlineKeyboard.push_back({b4});
 
         bot.getApi().sendMessage(message->chat->id, "Кто ты?", 0, 0, keyboard);
     });
@@ -111,10 +136,11 @@ int main() {
     bot.getEvents().onCallbackQuery([&bot, &users, &mutex_for_users, &new_users](TgBot::CallbackQuery::Ptr query) {
         std::lock_guard<std::mutex> lock(mutex_for_users);
         int64_t chat_id = query->message->chat->id;
+    
         if (users.find(chat_id) == users.end()) {
             std::cout << "=== Error ===\n";
         }
-        
+    
         if (new_users.find(chat_id) != new_users.end()) {
             if (query->data == "student") {
                 auto student_ptr = std::make_shared<mtd::Student>(chat_id);
@@ -128,13 +154,16 @@ int main() {
                 auto teacher_ptr = std::make_shared<mtd::Teacher>(chat_id);
                 users.insert({chat_id, teacher_ptr});
             }
-            
+            else if (query->data == "tutor") {
+                auto tutor_ptr = std::make_shared<mtd::Tutor>(chat_id);
+                users.insert({chat_id, tutor_ptr});
+            }
+    
             bot.getApi().sendMessage(chat_id, "Меню", 0, 0, users[chat_id]->get_menu());
             new_users.erase(chat_id);
             return;
         }
-        
-
+    
         auto &user = users[chat_id];
         if (user->get_role() == mtd::UserRole::STUDENT) {
             student_call_back_query(bot, query, user);
@@ -145,7 +174,10 @@ int main() {
         else if (user->get_role() == mtd::UserRole::TEACHER) {
             teacher_call_back_query(bot, query, user);
         }
-        
+        else if (user->get_role() == mtd::UserRole::TUTOR) {
+            std::cout << "tutor\n";
+            tutor_call_back_query(bot, query, user);
+        }
     });
 
     try {
