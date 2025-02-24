@@ -1,44 +1,44 @@
 #include "OfficeStaff.hpp"
 
 namespace mtd {
-TgBot::InlineKeyboardMarkup::Ptr OfficeStaff::get_inline_keyboard() {
-    TgBot::InlineKeyboardMarkup::Ptr inline_keyboard(new TgBot::InlineKeyboardMarkup);
+TgBot::InlineKeyboardMarkup::Ptr OfficeStaff::GetInlineKeyboard() {
+    TgBot::InlineKeyboardMarkup::Ptr inlineKeyboard(new TgBot::InlineKeyboardMarkup);
 
-    TgBot::InlineKeyboardButton::Ptr time_table(new TgBot::InlineKeyboardButton);
-    time_table->text = "📅 Расписание";
-    time_table->callbackData = "office_staff_time_table";
+    TgBot::InlineKeyboardButton::Ptr timeTable(new TgBot::InlineKeyboardButton);
+    timeTable->text = "📅 Расписание";
+    timeTable->callbackData = "office_staff_time_table";
 
     TgBot::InlineKeyboardButton::Ptr declaration(new TgBot::InlineKeyboardButton);
     declaration->text = "📢 Объявления";
     declaration->callbackData = "office_staff_declaration";
 
-    TgBot::InlineKeyboardButton::Ptr connect_with_teacher(new TgBot::InlineKeyboardButton);
-    connect_with_teacher->text = "📩 Связь с преподавателем";
-    connect_with_teacher->callbackData = "office_staff_connect_with_teacher";
+    TgBot::InlineKeyboardButton::Ptr connectWithTeacher(new TgBot::InlineKeyboardButton);
+    connectWithTeacher->text = "📩 Связь с преподавателем";
+    connectWithTeacher->callbackData = "office_staff_connect_with_teacher";
 
     TgBot::InlineKeyboardButton::Ptr help(new TgBot::InlineKeyboardButton);
     help->text = "❓ Помощь";
     help->callbackData = "office_staff_help";
 
     // ЗДЕСЬ КАКОЙ_ТО ПИЗДЕЦ
-    TgBot::InlineKeyboardButton::Ptr add_info(new TgBot::InlineKeyboardButton);
-    add_info->text = "Добавить информацию";
-    add_info->callbackData = "office_add_info";
+    TgBot::InlineKeyboardButton::Ptr addInfo(new TgBot::InlineKeyboardButton);
+    addInfo->text = "Добавить информацию";
+    addInfo->callbackData = "office_add_info";
 
     TgBot::InlineKeyboardButton::Ptr back(new TgBot::InlineKeyboardButton);
     back->text = "🔙 Назад";
     back->callbackData = "office_staff_back";
 
-    inline_keyboard->inlineKeyboard.push_back({time_table});
-    inline_keyboard->inlineKeyboard.push_back({declaration});
-    inline_keyboard->inlineKeyboard.push_back({connect_with_teacher});
-    inline_keyboard->inlineKeyboard.push_back({help});
-    inline_keyboard->inlineKeyboard.push_back({add_info});
-    inline_keyboard->inlineKeyboard.push_back({back});
-    return inline_keyboard;
+    inlineKeyboard->inlineKeyboard.push_back({timeTable});
+    inlineKeyboard->inlineKeyboard.push_back({declaration});
+    inlineKeyboard->inlineKeyboard.push_back({connectWithTeacher});
+    inlineKeyboard->inlineKeyboard.push_back({help});
+    inlineKeyboard->inlineKeyboard.push_back({addInfo});
+    inlineKeyboard->inlineKeyboard.push_back({back});
+    return inlineKeyboard;
 }
 
-TgBot::InlineKeyboardMarkup::Ptr OfficeStaff::get_menu() {
+TgBot::InlineKeyboardMarkup::Ptr OfficeStaff::GetMenu() {
     TgBot::InlineKeyboardMarkup::Ptr inline_keyboard(new TgBot::InlineKeyboardMarkup);
 
     TgBot::InlineKeyboardButton::Ptr buttons(new TgBot::InlineKeyboardButton);
@@ -55,7 +55,7 @@ TgBot::InlineKeyboardMarkup::Ptr OfficeStaff::get_menu() {
     return inline_keyboard;
 }
 
-TgBot::InlineKeyboardMarkup::Ptr OfficeStaff::back_button() {
+TgBot::InlineKeyboardMarkup::Ptr OfficeStaff::BackButton() {
     TgBot::InlineKeyboardMarkup::Ptr keyboard(new TgBot::InlineKeyboardMarkup);
     TgBot::InlineKeyboardButton::Ptr button(new TgBot::InlineKeyboardButton);
     button->text = "🔙 Назад";

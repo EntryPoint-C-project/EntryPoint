@@ -3,54 +3,54 @@
 namespace mtd {
 Tutor::Tutor(int64_t chat_id) : User(chat_id, UserRole::TUTOR) {}
 
-TgBot::InlineKeyboardMarkup::Ptr Tutor::get_inline_keyboard() {
-    TgBot::InlineKeyboardMarkup::Ptr inline_keyboard(new TgBot::InlineKeyboardMarkup);
+TgBot::InlineKeyboardMarkup::Ptr Tutor::GetInlineKeyboard() {
+    TgBot::InlineKeyboardMarkup::Ptr inlineKeyboard(new TgBot::InlineKeyboardMarkup);
 
     // Добавление кнопки для добавления предмета
-    TgBot::InlineKeyboardButton::Ptr add_subject(new TgBot::InlineKeyboardButton);
-    add_subject->text = "Добавить предмет";
-    add_subject->callbackData = "tutor_add_subject";
-    inline_keyboard->inlineKeyboard.push_back({add_subject});
+    TgBot::InlineKeyboardButton::Ptr addSubject(new TgBot::InlineKeyboardButton);
+    addSubject->text = "Добавить предмет";
+    addSubject->callbackData = "tutor_add_subject";
+    inlineKeyboard->inlineKeyboard.push_back({addSubject});
 
     // Добавление кнопки для добавления людей в группы
-    TgBot::InlineKeyboardButton::Ptr add_people(new TgBot::InlineKeyboardButton);
-    add_people->text = "Добавить людей в группы";
-    add_people->callbackData = "tutor_add_people";
-    inline_keyboard->inlineKeyboard.push_back({add_people});
+    TgBot::InlineKeyboardButton::Ptr addPeople(new TgBot::InlineKeyboardButton);
+    addPeople->text = "Добавить людей в группы";
+    addPeople->callbackData = "tutor_add_people";
+    inlineKeyboard->inlineKeyboard.push_back({addPeople});
 
     // Добавление кнопки для создания SOP
-    TgBot::InlineKeyboardButton::Ptr create_sop(new TgBot::InlineKeyboardButton);
-    create_sop->text = "Создать SOP";
-    create_sop->callbackData = "tutor_create_sop";
-    inline_keyboard->inlineKeyboard.push_back({create_sop});
+    TgBot::InlineKeyboardButton::Ptr createSop(new TgBot::InlineKeyboardButton);
+    createSop->text = "Создать SOP";
+    createSop->callbackData = "tutor_create_sop";
+    inlineKeyboard->inlineKeyboard.push_back({createSop});
 
     TgBot::InlineKeyboardButton::Ptr view_sop(new TgBot::InlineKeyboardButton);
     view_sop->text = "Посмотреть СОП";
     view_sop->callbackData = "tutor_view_sop";
-    inline_keyboard->inlineKeyboard.push_back({view_sop});
+    inlineKeyboard->inlineKeyboard.push_back({view_sop});
 
     // Добавление кнопки "Назад"
     TgBot::InlineKeyboardButton::Ptr back(new TgBot::InlineKeyboardButton);
     back->text = "🔙 Назад";
     back->callbackData = "tutor_back";
-    inline_keyboard->inlineKeyboard.push_back({back});
+    inlineKeyboard->inlineKeyboard.push_back({back});
 
-    return inline_keyboard;
+    return inlineKeyboard;
 }
 
-TgBot::InlineKeyboardMarkup::Ptr Tutor::get_menu() {
-    TgBot::InlineKeyboardMarkup::Ptr inline_keyboard(new TgBot::InlineKeyboardMarkup);
+TgBot::InlineKeyboardMarkup::Ptr Tutor::GetMenu() {
+    TgBot::InlineKeyboardMarkup::Ptr inlineKeyboard(new TgBot::InlineKeyboardMarkup);
 
     // Пример кнопки меню (можно добавить другие кнопки по необходимости)
     TgBot::InlineKeyboardButton::Ptr buttons(new TgBot::InlineKeyboardButton);
     buttons->text = "Меню для куратора";
     buttons->callbackData = "tutor_buttons";
     
-    inline_keyboard->inlineKeyboard.push_back({buttons});
-    return inline_keyboard;
+    inlineKeyboard->inlineKeyboard.push_back({buttons});
+    return inlineKeyboard;
 }
 
-TgBot::InlineKeyboardMarkup::Ptr Tutor::back_button() {
+TgBot::InlineKeyboardMarkup::Ptr Tutor::BackButton() {
     TgBot::InlineKeyboardMarkup::Ptr keyboard(new TgBot::InlineKeyboardMarkup);
     TgBot::InlineKeyboardButton::Ptr button(new TgBot::InlineKeyboardButton);
     button->text = "🔙 Назад";

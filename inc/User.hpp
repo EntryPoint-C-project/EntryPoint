@@ -19,13 +19,13 @@ public:
     explicit User(int64_t chat_id, UserRole role) : chat_id(chat_id), role(role), state(UserState::NONE) {}
     virtual ~User() {}  
     int64_t id() const;
-    UserRole get_role() const;
-    UserState &get_state();
-    int &get_step();
-    std::vector<int> &get_evaluations();
-    virtual TgBot::InlineKeyboardMarkup::Ptr get_inline_keyboard() = 0;
-    virtual TgBot::InlineKeyboardMarkup::Ptr get_menu() = 0;
-    virtual TgBot::InlineKeyboardMarkup::Ptr back_button() = 0;
+    UserRole GetRole() const;
+    UserState &GetState();
+    int &GetStep();
+    std::vector<int> &GetEvaluations();
+    virtual TgBot::InlineKeyboardMarkup::Ptr GetInlineKeyboard() = 0;
+    virtual TgBot::InlineKeyboardMarkup::Ptr GetMenu() = 0;
+    virtual TgBot::InlineKeyboardMarkup::Ptr BackButton() = 0;
 };
 }
 

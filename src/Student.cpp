@@ -1,20 +1,20 @@
 #include "Student.hpp"
 
 namespace mtd {
-TgBot::InlineKeyboardMarkup::Ptr Student::get_inline_keyboard() {
-    TgBot::InlineKeyboardMarkup::Ptr inline_keyboard(new TgBot::InlineKeyboardMarkup);
+TgBot::InlineKeyboardMarkup::Ptr Student::GetInlineKeyboard() {
+    TgBot::InlineKeyboardMarkup::Ptr inlineKeyboard(new TgBot::InlineKeyboardMarkup);
 
-    TgBot::InlineKeyboardButton::Ptr time_table(new TgBot::InlineKeyboardButton);
-    time_table->text = "📅 Расписание";
-    time_table->callbackData = "student_time_table";
+    TgBot::InlineKeyboardButton::Ptr timeTable(new TgBot::InlineKeyboardButton);
+    timeTable->text = "📅 Расписание";
+    timeTable->callbackData = "student_time_table";
 
     TgBot::InlineKeyboardButton::Ptr declaration(new TgBot::InlineKeyboardButton);
     declaration->text = "📢 Объявления";
     declaration->callbackData = "student_declaration";
 
-    TgBot::InlineKeyboardButton::Ptr connect_with_teacher(new TgBot::InlineKeyboardButton);
-    connect_with_teacher->text = "📩 Связь с преподавателем";
-    connect_with_teacher->callbackData = "student_connect_with_teacher";
+    TgBot::InlineKeyboardButton::Ptr connectWithTeacher(new TgBot::InlineKeyboardButton);
+    connectWithTeacher->text = "📩 Связь с преподавателем";
+    connectWithTeacher->callbackData = "student_connect_with_teacher";
 
     TgBot::InlineKeyboardButton::Ptr help(new TgBot::InlineKeyboardButton);
     help->text = "❓ Помощь";
@@ -28,17 +28,17 @@ TgBot::InlineKeyboardMarkup::Ptr Student::get_inline_keyboard() {
     sop->text = "Пройти СОП";
     sop->callbackData = "student_sop";
 
-    inline_keyboard->inlineKeyboard.push_back({time_table});
-    inline_keyboard->inlineKeyboard.push_back({declaration});
-    inline_keyboard->inlineKeyboard.push_back({connect_with_teacher});
-    inline_keyboard->inlineKeyboard.push_back({help});
-    inline_keyboard->inlineKeyboard.push_back({sop});
-    inline_keyboard->inlineKeyboard.push_back({back});
+    inlineKeyboard->inlineKeyboard.push_back({timeTable});
+    inlineKeyboard->inlineKeyboard.push_back({declaration});
+    inlineKeyboard->inlineKeyboard.push_back({connectWithTeacher});
+    inlineKeyboard->inlineKeyboard.push_back({help});
+    inlineKeyboard->inlineKeyboard.push_back({sop});
+    inlineKeyboard->inlineKeyboard.push_back({back});
     
-    return inline_keyboard;
+    return inlineKeyboard;
 }
 
-TgBot::InlineKeyboardMarkup::Ptr Student::get_menu() {
+TgBot::InlineKeyboardMarkup::Ptr Student::GetMenu() {
     TgBot::InlineKeyboardMarkup::Ptr inline_keyboard(new TgBot::InlineKeyboardMarkup);
 
     TgBot::InlineKeyboardButton::Ptr buttons(new TgBot::InlineKeyboardButton);
@@ -55,7 +55,7 @@ TgBot::InlineKeyboardMarkup::Ptr Student::get_menu() {
     return inline_keyboard;
 }
 
-TgBot::InlineKeyboardMarkup::Ptr Student::back_button() {
+TgBot::InlineKeyboardMarkup::Ptr Student::BackButton() {
     TgBot::InlineKeyboardMarkup::Ptr keyboard(new TgBot::InlineKeyboardMarkup);
     TgBot::InlineKeyboardButton::Ptr button(new TgBot::InlineKeyboardButton);
     button->text = "🔙 Назад";

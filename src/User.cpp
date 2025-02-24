@@ -1,19 +1,19 @@
 #include "User.hpp"
 
 namespace mtd {
-int &User::get_step() {
+int &User::GetStep() {
     return step;
 }
-std::vector<int> &User::get_evaluations() {
+std::vector<int> &User::GetEvaluations() {
     return evaluations;
 }
 int64_t User::id() const {
     return chat_id;
 }
-UserRole User::get_role() const {
+UserRole User::GetRole() const {
     return role;
 }
-UserState &User::get_state() {
+UserState &User::GetState() {
     return state;
 }
 }

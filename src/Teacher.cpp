@@ -1,24 +1,24 @@
 #include "Teacher.hpp"
 
 namespace mtd {
-TgBot::InlineKeyboardMarkup::Ptr Teacher::get_inline_keyboard() {
-    TgBot::InlineKeyboardMarkup::Ptr inline_keyboard(new TgBot::InlineKeyboardMarkup);
+TgBot::InlineKeyboardMarkup::Ptr Teacher::GetInlineKeyboard() {
+    TgBot::InlineKeyboardMarkup::Ptr inlineKeyboard(new TgBot::InlineKeyboardMarkup);
 
     TgBot::InlineKeyboardButton::Ptr declaration(new TgBot::InlineKeyboardButton);
     declaration->text = "Уведомление студентам";
     declaration->callbackData = "teacher_declaration";
-    inline_keyboard->inlineKeyboard.push_back({declaration});
+    inlineKeyboard->inlineKeyboard.push_back({declaration});
 
     TgBot::InlineKeyboardButton::Ptr back(new TgBot::InlineKeyboardButton);
     back->text = "🔙 Назад";
     back->callbackData = "teacher_back";
-    inline_keyboard->inlineKeyboard.push_back({back});
+    inlineKeyboard->inlineKeyboard.push_back({back});
 
-    return inline_keyboard; 
+    return inlineKeyboard; 
 }
 
-TgBot::InlineKeyboardMarkup::Ptr Teacher::get_menu() {
-    TgBot::InlineKeyboardMarkup::Ptr inline_keyboard(new TgBot::InlineKeyboardMarkup);
+TgBot::InlineKeyboardMarkup::Ptr Teacher::GetMenu() {
+    TgBot::InlineKeyboardMarkup::Ptr inlineKeyboard(new TgBot::InlineKeyboardMarkup);
 
     TgBot::InlineKeyboardButton::Ptr buttons(new TgBot::InlineKeyboardButton);
     buttons->text = "кнопочки";
@@ -29,13 +29,13 @@ TgBot::InlineKeyboardMarkup::Ptr Teacher::get_menu() {
     information->callbackData = "teachert_information";
 
 
-    inline_keyboard->inlineKeyboard.push_back({buttons});
-    inline_keyboard->inlineKeyboard.push_back({information});
+    inlineKeyboard->inlineKeyboard.push_back({buttons});
+    inlineKeyboard->inlineKeyboard.push_back({information});
 
-    return inline_keyboard;
+    return inlineKeyboard;
 }
 
-TgBot::InlineKeyboardMarkup::Ptr Teacher::back_button() {
+TgBot::InlineKeyboardMarkup::Ptr Teacher::BackButton() {
     TgBot::InlineKeyboardMarkup::Ptr keyboard(new TgBot::InlineKeyboardMarkup);
     TgBot::InlineKeyboardButton::Ptr button(new TgBot::InlineKeyboardButton);
     button->text = "🔙 Назад";
