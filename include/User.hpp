@@ -5,10 +5,11 @@
 
 #include <map>
 #include <vector>
+#include "sop.hpp"
 
 namespace mtd {
 enum class UserRole { STUDENT, TEACHER, OFFICE_STAFF, TUTOR, NONE };
-enum class UserState { MENU, BUTTONS, INFORMATION, STUDENT_SOP, TUTOR_SOP, NONE };
+enum class UserState { MENU, BUTTONS, INFORMATION, STUDENT_SOP_LECTION, STUDENT_SOP_PRACTICE, TUTOR_SOP, CREATE_SOP, NONE };
 
 class User {
     int64_t chat_id = 0;
@@ -17,10 +18,11 @@ class User {
     int step = 0;
     std::vector<int> evaluations;
 
-  public:
+public:
     explicit User(int64_t chat_id, UserRole role)
         : chat_id(chat_id), role(role), state(UserState::NONE) {}
     virtual ~User() {}
+    Feedback feedback;
     int64_t id() const;
     UserRole GetRole() const;
     UserState &GetState();

@@ -1,12 +1,12 @@
-#ifndef OFFECESTAFF_HPP_
-#define OFFECESTAFF_HPP_
+#ifndef TUTOR_HPP_
+#define TUTOR_HPP_
 
 #include "User.hpp"
 
 namespace mtd {
-class OfficeStaff : public User {
-  public:
-    OfficeStaff(int64_t chat_id) : User(chat_id, UserRole::OFFICE_STAFF) {}
+class Tutor : public User {
+public:
+    Tutor(int64_t chat_id);
     TgBot::InlineKeyboardMarkup::Ptr GetInlineKeyboard() override;
     TgBot::InlineKeyboardMarkup::Ptr GetMenu() override;
     TgBot::InlineKeyboardMarkup::Ptr BackButton() override;

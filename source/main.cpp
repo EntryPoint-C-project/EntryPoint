@@ -22,6 +22,10 @@ TgBot::InlineKeyboardMarkup::Ptr get_raiting_scale() {
         button->callbackData = std::to_string(i);  // Колбек-данные соответствуют цифре
         keyboard->inlineKeyboard.push_back({button});  // Добавляем кнопки в строку клавиатуры
     }
+    TgBot::InlineKeyboardButton::Ptr button(new TgBot::InlineKeyboardButton);
+    button->text = "Не моя группа";
+    button->callbackData = "-1";
+    keyboard->inlineKeyboard.push_back({button});  
     return keyboard;
 }
 
@@ -30,20 +34,12 @@ void StudentCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
     int64_t ChatId = user->id();
     if (query->data == "1" || query->data == "2" || query->data == "3" || query->data == "4"
         || query->data == "5" || query->data == "6" || query->data == "7" || query->data == "8"
-        || query->data == "9" || query->data == "10") {
-        bot.getApi().sendMessage(
-            ChatId, "Этого лоха ты оценил на " + query->data + ".\nИзменить свой выбор нельзя(");
-        user->GetEvaluations().push_back(std::stoi(query->data));
-        // Следующий вопрос
-        if (user->GetStep() < 5) {
-            bot.getApi().sendMessage(ChatId, "Вопрос " + std::to_string(user->GetStep() + 1), 0, 0,
-                                     get_raiting_scale());
-            user->GetStep()++;  // Переход к следующему вопросу
-        } else {
-            bot.getApi().sendMessage(ChatId, "Опрос завершен. Спасибо за участие!", 0, 0,
-                                     user->BackButton());
-            user->GetState() = mtd::UserState::NONE;
-            user->GetStep() = 0;
+        || query->data == "9" || query->data == "10" || query->data == "-1") {
+        
+        if (user->feedback.step == 0) {
+            bot.getApi().sendMessage(ChatId, "Лекция оценена на " + query->data);
+            bot.getApi().sendMessage(ChatId, "Напишите, что нравится в лекциях");
+            user->feedback.step++;
         }
     }
 
@@ -52,9 +48,9 @@ void StudentCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
     if (query->data == "student_buttons") {
         bot.getApi().sendMessage(ChatId, "fsfsdf", 0, 0, user->GetInlineKeyboard());
     } else if (query->data == "student_sop" && user->GetStep() == 0) {
-        bot.getApi().sendMessage(ChatId, "Вопрос 1", 0, 0, get_raiting_scale());
+        bot.getApi().sendMessage(ChatId, "Оцените лекции по ОМП", 0, 0, get_raiting_scale());
         user->GetStep()++;
-        user->GetState() = mtd::UserState::STUDENT_SOP;
+        user->GetState() = mtd::UserState::STUDENT_SOP_LECTION;
     } else if (query->data == "student_time_table") {
         bot.getApi().sendMessage(ChatId, "Ссылка на расписание", 0, 0, user->GetInlineKeyboard());
     } else if (query->data == "student_declaration") {
@@ -131,6 +127,8 @@ void TutorCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
         bot.getApi().sendMessage(ChatId, "Введите ID студентов и групп, которых нужно добавить", 0,
                                  0, user->GetInlineKeyboard());
     } else if (query->data == "tutor_create_sop") {
+        user->GetStep()++;
+        user->GetState() = mtd::UserState::CREATE_SOP;
         bot.getApi().sendMessage(ChatId, "Введите данные для создания SOP", 0, 0,
                                  user->GetInlineKeyboard());
     } else if (query->data == "tutor_back") {
@@ -234,6 +232,19 @@ int main() {
             bot.getApi().sendMessage(ChatId, "Оценки этого студента:\n" + s, 0, 0,
                                      user->BackButton());
             return;
+        }
+        else if (user->GetState() == mtd::UserState::STUDENT_SOP) {
+            if (user->feedback.step == 1) {
+                std::cout << "fsdfsdfs\n";
+                user->feedback.advantages = message->text;
+                user->feedback.step++;
+                bot.getApi().sendMessage(ChatId, "Что не нравится в лекциях?");
+            }
+            else if (user->feedback.step == 2) {
+                user->feedback.disadvantages = message->text;
+                user->feedback.step = 0;
+                bot.getApi().sendMessage(ChatId, "Оцените практику группа 1", 0, 0, get_raiting_scale());
+            }
         }
     });
     try {

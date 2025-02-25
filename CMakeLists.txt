@@ -12,10 +12,10 @@ find_package(Boost REQUIRED COMPONENTS system) # Ищем Boost (модуль sy
 find_package(TgBot REQUIRED)                  # Ищем библиотеку TgBot
 
 # Указываем путь к заголовочным файлам
-include_directories(inc) # Например, папка "inc" для .hpp файлов
+include_directories(include) # Например, папка "inc" для .hpp файлов
 
 # Собираем список исходников
-file(GLOB SOURCES src/*.cpp) # Собираем все .cpp файлы в папке src
+file(GLOB SOURCES source/*.cpp) # Собираем все .cpp файлы в папке src
 
 # Создаём исполняемый файл
 add_executable(my_bot ${SOURCES}) # Компилируем все найденные .cpp файлы
