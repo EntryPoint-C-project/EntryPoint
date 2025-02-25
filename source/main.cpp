@@ -12,6 +12,11 @@
 #include "Teacher.hpp"
 #include "Tutor.hpp"
 #include "User.hpp"
+#include "sop.hpp"
+
+const mtd::Discipline t;
+mtd::Subject OMP;
+
 
 TgBot::InlineKeyboardMarkup::Ptr get_raiting_scale() {
     TgBot::InlineKeyboardMarkup::Ptr keyboard(new TgBot::InlineKeyboardMarkup);
@@ -36,10 +41,22 @@ void StudentCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
         || query->data == "5" || query->data == "6" || query->data == "7" || query->data == "8"
         || query->data == "9" || query->data == "10" || query->data == "-1") {
         
-        if (user->feedback.step == 0) {
-            bot.getApi().sendMessage(ChatId, "Лекция оценена на " + query->data);
-            bot.getApi().sendMessage(ChatId, "Напишите, что нравится в лекциях");
-            user->feedback.step++;
+        if (user->GetState() == mtd::UserState::STUDENT_SOP) {
+            if (user->GetStep() == 0) { // оценка лектора
+                user->feedback.grade = std::stoi(query->data);
+                bot.getApi().sendMessage(ChatId, "вы оценили лекции на " + query->data + "\nНапишите, что вам нравится в лекциях");
+                user->GetStep()++;
+            }
+            else if (user->GetStep() == 3) {
+                user->feedback.grade = std::stoi(query->data);
+                user->GetStep()++;
+                bot.getApi().sendMessage(ChatId, "Оцените домашку", 0, 0, get_raiting_scale());
+            }
+            else if (user->GetStep() == 4) {
+                user->feedback.grade_home_work = std::stoi(query->data);
+                user->GetStep()++;
+                bot.getApi().sendMessage(ChatId, "Что нравится");
+            }
         }
     }
 
@@ -48,9 +65,8 @@ void StudentCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
     if (query->data == "student_buttons") {
         bot.getApi().sendMessage(ChatId, "fsfsdf", 0, 0, user->GetInlineKeyboard());
     } else if (query->data == "student_sop" && user->GetStep() == 0) {
-        bot.getApi().sendMessage(ChatId, "Оцените лекции по ОМП", 0, 0, get_raiting_scale());
-        user->GetStep()++;
-        user->GetState() = mtd::UserState::STUDENT_SOP_LECTION;
+        bot.getApi().sendMessage(ChatId, "Оцените лекции по " + t.name_subject + " (" + t.lector + ")", 0, 0, get_raiting_scale());
+        user->GetState() = mtd::UserState::STUDENT_SOP;
     } else if (query->data == "student_time_table") {
         bot.getApi().sendMessage(ChatId, "Ссылка на расписание", 0, 0, user->GetInlineKeyboard());
     } else if (query->data == "student_declaration") {
@@ -120,8 +136,35 @@ void TutorCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
         bot.getApi().sendMessage(ChatId, "Введите название нового предмета", 0, 0,
                                  user->GetInlineKeyboard());
     } else if (query->data == "tutor_view_sop") {
-        user->GetState() = mtd::UserState::TUTOR_SOP;
-        bot.getApi().sendMessage(ChatId, "Введите id пользователя");
+        // user->GetState() = mtd::UserState::TUTOR_SOP;
+        // bot.getApi().sendMessage(ChatId, "Введите id пользователя");
+        std::string s = "лекции ";
+        for (auto p : OMP.lections_result) {
+            s = s + std::to_string(p.grade);
+        }
+        s += "\n Что понравилось:\n";
+        for (auto p : OMP.lections_result) {
+            s = s + p.advantages + '\n';
+        }
+        s += "Что не понравилось: ";
+        for (auto p : OMP.lections_result) {
+            s = s + p.disadvantages + '\n';
+        }
+        bot.getApi().sendMessage(ChatId, s);
+
+        s = "Праки ";
+        for (auto p : OMP.practice_result) {
+            s = s + std::to_string(p.grade);
+        }
+        s += "\n Что понравилось:\n";
+        for (auto p : OMP.practice_result) {
+            s = s + p.advantages + '\n';
+        }
+        s += "Что не понравилось: ";
+        for (auto p : OMP.practice_result) {
+            s = s + p.disadvantages + '\n';
+        }
+        bot.getApi().sendMessage(ChatId, s);
 
     } else if (query->data == "tutor_add_people") {
         bot.getApi().sendMessage(ChatId, "Введите ID студентов и групп, которых нужно добавить", 0,
@@ -137,6 +180,7 @@ void TutorCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
 }
 
 int main() {
+    OMP.name_subject = "ОМП";
     TgBot::Bot bot(mtd::token);
     std::map<int64_t, std::shared_ptr<mtd::User>> users;
     std::set<int64_t> NewUsers;
@@ -234,16 +278,50 @@ int main() {
             return;
         }
         else if (user->GetState() == mtd::UserState::STUDENT_SOP) {
-            if (user->feedback.step == 1) {
-                std::cout << "fsdfsdfs\n";
-                user->feedback.advantages = message->text;
-                user->feedback.step++;
-                bot.getApi().sendMessage(ChatId, "Что не нравится в лекциях?");
+            if (user->GetStep() == -1) { // конец
+                OMP.comments.push_back(message->text);
             }
-            else if (user->feedback.step == 2) {
+            if (user->GetStep() == 1) {
+                user->feedback.advantages = message->text;
+                bot.getApi().sendMessage(ChatId, "Что не нравится в лекциях?");
+                user->GetStep()++;
+            }
+            else if (user->GetStep() == 2) {
+                if (user->feedback.index == 0) {
+                    user->feedback.disadvantages = message->text;
+                    mtd::LectionFeedback q;
+                    q.grade = user->feedback.grade;
+                    q.advantages = user->feedback.advantages;
+                    q.disadvantages = user->feedback.disadvantages;
+                    OMP.lections_result.push_back(q);
+                }
+                user->GetStep()++;
+                if (user->feedback.index < t.seminarians.size()) {
+                    bot.getApi().sendMessage(ChatId, "Оцените практику с " + t.seminarians[user->feedback.index], 0, 0, get_raiting_scale());
+                }
+                else {
+                    user->GetStep() = -1;
+                    bot.getApi().sendMessage(ChatId, "Введите какой-нибудь коммент");
+                }
+                
+            }
+            else if (user->GetStep() == 5) {
+                user->feedback.advantages = message->text;
+                bot.getApi().sendMessage(ChatId, "Что не нравится");
+                user->GetStep()++;
+            }
+            else if (user->GetStep() == 6) {
                 user->feedback.disadvantages = message->text;
-                user->feedback.step = 0;
-                bot.getApi().sendMessage(ChatId, "Оцените практику группа 1", 0, 0, get_raiting_scale());
+                mtd::PracticeFeedback q;
+                q.grade = user->feedback.grade;
+                q.grade_for_homework = user->feedback.grade_home_work;
+                q.advantages = user->feedback.advantages;
+                q.disadvantages = user->feedback.disadvantages;
+                q.name_teacher = t.seminarians[user->feedback.index];
+                OMP.practice_result.push_back(q);
+                user->feedback.index++;
+                user->GetStep() = 2;
+                bot.getApi().sendMessage(ChatId, "Если хотите продолжить, введите что-то");
             }
         }
     });
