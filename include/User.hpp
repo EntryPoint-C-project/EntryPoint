@@ -20,9 +20,8 @@ class User {
     std::vector<int> evaluations;
 
 public:
-    explicit User(int64_t chat_id, UserRole role)
-        : chat_id(chat_id), role(role), state(UserState::NONE) {}
-    virtual ~User() {}
+    explicit User(int64_t chat_id, UserRole role);
+    virtual ~User();
     Feedback feedback;
     int64_t id() const;
     UserRole GetRole() const;

@@ -1,6 +1,8 @@
 #include "OfficeStaff.hpp"
 
 namespace mtd {
+OfficeStaff::OfficeStaff(int64_t chat_id) : User(chat_id, UserRole::OFFICE_STAFF) {
+}
 TgBot::InlineKeyboardMarkup::Ptr OfficeStaff::GetInlineKeyboard() {
     TgBot::InlineKeyboardMarkup::Ptr inlineKeyboard(new TgBot::InlineKeyboardMarkup);
 

@@ -6,7 +6,7 @@
 namespace mtd {
 class Student : public User {
 public:
-    Student(int64_t chat_id) : User(chat_id, UserRole::STUDENT) {}
+    Student(int64_t chat_id);
     TgBot::InlineKeyboardMarkup::Ptr GetInlineKeyboard() override;
     TgBot::InlineKeyboardMarkup::Ptr GetMenu() override;
     TgBot::InlineKeyboardMarkup::Ptr BackButton() override;

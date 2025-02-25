@@ -1,6 +1,8 @@
 #include "Student.hpp"
 
 namespace mtd {
+Student::Student(int64_t chat_id) : User(chat_id, UserRole::STUDENT) {
+}
 TgBot::InlineKeyboardMarkup::Ptr Student::GetInlineKeyboard() {
     TgBot::InlineKeyboardMarkup::Ptr inlineKeyboard(new TgBot::InlineKeyboardMarkup);
 
