@@ -55,6 +55,26 @@ static std::string ReadInfo(pqxx::connection &conn, const int student_id) {
     }
 }
 
+
+static  std::vector< int> ReadAllPersonId(pqxx::connection &conn ) {
+    try {
+        pqxx::work txn(work) ; 
+        std::string sql = "SELECT student_id FROM People" ; 
+        pqxx::result res = txn.exec(); 
+
+        std::vector <int> vec_student_id; 
+        for (auto row : res) {
+            vec_student_id.push_back(row[0].as<int>());
+        }
+        txn.commit(); 
+        std::cout << "Данные о студентах были успешно добавлены в вектор vec_student_id\n";
+        return vec_student_id; 
+    }
+    catch {
+        std::cout << "Произошла ошибка при чтении из таблицы Students: " << e.what() << std::endl;
+    }
+}
+
 static void UpdateProgramId(pqxx::connection &conn, int student_id  , int old_program_id , int new_program_id) {
     try {
         pqxx::work txn(conn);

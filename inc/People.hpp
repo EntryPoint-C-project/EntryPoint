@@ -8,6 +8,8 @@ public:
 
     static std::string  ReadAllInformation(pqxx::connection &conn, const int person_id); // first_name , last_name , tg_nick  
 
+    static  std::vector< int> ReadAllPersonId(pqxx::connection &conn ) ; 
+
     static int ReadPersonId(pqxx::connection &conn , std::string tg_nick ); 
 
     static void Update(pqxx::connection &conn, std::string old_tg_nick  , std::string new_tg_nick ); 
