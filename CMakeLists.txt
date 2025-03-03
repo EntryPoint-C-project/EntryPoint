@@ -1,26 +1,25 @@
-cmake_minimum_required(VERSION 3.10)  # Указываем минимальную версию CMake
-project(TelegramBot)  # Указываем имя проекта
-
+cmake_minimum_required(VERSION 3.10)  
+project(TelegramBot) 
 # Устанавливаем стандарт C++
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # Длдя генерации какого-то файлика clang-tidy
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON) 
 
 # Поиск необходимых библиотек
-find_package(Boost REQUIRED COMPONENTS system) # Ищем Boost (модуль system)
-find_package(TgBot REQUIRED)                  # Ищем библиотеку TgBot
+find_package(Boost REQUIRED COMPONENTS system) 
+find_package(TgBot REQUIRED)                
 
-# Указываем путь к заголовочным файлам
-include_directories(include) # Например, папка "inc" для .hpp файлов
 
-# Собираем список исходников
-file(GLOB SOURCES source/*.cpp) # Собираем все .cpp файлы в папке src
+include_directories(include)
 
-# Создаём исполняемый файл
-add_executable(my_bot ${SOURCES}) # Компилируем все найденные .cpp файлы
 
-# Линкуем с найденными библиотеками
+file(GLOB SOURCES source/*.cpp) 
+
+
+add_executable(my_bot ${SOURCES})
+
+
 target_link_libraries(my_bot Boost::system TgBot::TgBot)
 
 

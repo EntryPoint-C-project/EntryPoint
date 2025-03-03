@@ -1,8 +1,8 @@
-
 BotToken.hpp
 /build
 .vscode/
 .idea/
+
 # Prerequisites
 *.d
 
