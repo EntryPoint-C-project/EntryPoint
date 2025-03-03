@@ -1,0 +1,21 @@
+{
+    "createItem": {
+        "item": {
+            "title": "",
+            "questionItem": {
+                "question": {
+                    "required": true,
+                    "scaleQuestion": {
+                        "low": 1,
+                        "high": 10,
+                        "lowLabel": "Плохо",
+                        "highLabel": "Отлично"
+                    }
+                }
+            }
+        },
+        "location": {
+            "index": 0
+        }
+    }
+}

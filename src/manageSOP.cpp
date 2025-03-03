@@ -2,6 +2,55 @@
 
 namespace sop {
 
+json generateQuestionsPerStudent(const ClassForJSONFormat &student) {
+    json form;
+    form["requests"] = json::array();
+    json jsonScaleQuestion = readJsonFromFile("json/scaleQuestion.json");
+    std::cout << "Have read from scaleQuestion\n";
+    json jsonOverallQuestion = readJsonFromFile("json/overallQuestion.json");
+    std::cout << "Have read from overallQustion\n";
+    json header = readJsonFromFile("json/headerOfQuestionsBlock.json");
+    std::cout << "Have read from headerOfQustionsBlock\n";
+    auto teachers = student.GetSubjectsNameAndProfessionForJSON();
+    std::string currentHeader = "";
+    for (const auto &teacher : teachers) {
+        std::cout << std::get<0>(teacher) << ' ' << std::get<1>(teacher) << ' ' << std::get<2>(teacher) <<'\n';
+        try {
+        if (currentHeader != std::get<2>(teacher)) {
+            currentHeader = std::get<1>(teacher);
+            header["createItem"]["item"]["title"] = currentHeader;
+            form["requests"].push_back(header);
+        }
+        } catch (...) {
+            std::cerr << "jopa\n";
+        }   
+        try {
+        std::string question = "Оцените качество " + std::get<2>(teacher) + " " + std::get<0>(teacher) + " от 1 до 10";
+        jsonScaleQuestion["createItem"]["item"]["title"] = question;
+        form["requests"].push_back(jsonScaleQuestion);
+        std::cout << "Added scaleQuestion\n";
+        question = "Что вам понравилось в преподавании " + std::get<0>(teacher) + "?";
+        jsonOverallQuestion["createItem"]["item"]["title"] = question;
+        form["requests"].push_back(jsonOverallQuestion);
+        std::cout << "added 1\n";
+        question = "Что вам не понравилось в преподавании " + std::get<0>(teacher) + "?";
+        jsonOverallQuestion["createItem"]["item"]["title"] = question;
+        form["requests"].push_back(jsonOverallQuestion);
+        std::cout << "added 2\n";
+        question = "Есть ли у вас какие-нибудь пожелания по поводу преподавания " + std::get<0>(teacher) + "?";
+        jsonOverallQuestion["createItem"]["item"]["title"] = question;
+        form["requests"].push_back(jsonOverallQuestion);
+        std::cout << "added 3\n";
+        } catch (...) {
+            std::cerr << "Gay\n";
+        }
+    }
+    std::size_t index = 0;
+    for (auto &request : form["requests"]) {
+        request["createItem"]["location"]["index"] = index++;
+    }
+    return form;
+}
 json readJsonFromFile(const std::string &filePath) {
     std::ifstream file(filePath);
     if (!file.is_open()) {
@@ -89,7 +138,6 @@ std::string createForm(const std::string &jsonFilePath) {
 
     std::string formTitle = readJsonFromFile(jsonFilePath).dump();
     std::string response = performHttpRequest("https://forms.googleapis.com/v1/forms", "POST", accessToken, formTitle);
-
     json jsonResponse = json::parse(response);
     if (jsonResponse.contains("formId")) {
         return jsonResponse["formId"].get<std::string>();
@@ -102,16 +150,19 @@ std::string createForm(const std::string &jsonFilePath) {
     }
 }
 
-void addFieldToForm(const std::string &formId, std::string &jsonFilePath) {
+void addFieldToForm(const std::string &formId, json jsonFile) {
     std::string accessToken = refreshAccessToken();
     if (accessToken.empty()) {
         std::cerr << "Failed to refresh access token" << std::endl;
         return;
     }
-
-    std::string formField = readJsonFromFile(jsonFilePath).dump();
+    std::string questionForm = jsonFile.dump();
     std::string url = "https://forms.googleapis.com/v1/forms/" + formId + ":batchUpdate";
-    std::string response = performHttpRequest(url, "POST", accessToken, formField);
+    std::string response = performHttpRequest(url, "POST", accessToken, questionForm);
+    json responseJson = json::parse(response);
+    if (responseJson.contains("error")) {
+        std::cerr << "Ошибка: " << responseJson.dump() << std::endl;
+    }
 }
 
 std::string getFormUrl(const std::string &formId) {
