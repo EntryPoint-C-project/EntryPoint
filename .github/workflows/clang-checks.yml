@@ -3,7 +3,7 @@ name: Clang Checks
 on:
   push:
     branches:
-      - dev/meytardzhevtd
+      - '**'
   pull_request:
     branches:
       - pre-main
