@@ -1,9 +1,12 @@
 name: Clang Checks
 
 on:
+  push:
+    branches:
+      - dev/meytardzhevtd
   pull_request:
     branches:
-      - dev/meytardzhevtd  
+      - pre-main
 
 defaults:
   run:
