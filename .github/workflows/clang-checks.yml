@@ -5,10 +5,10 @@ on:
       - '**'
 defaults:
   run:
-    working-directory: EntryPoint
+    working-directory: ..
 jobs:
   c:
     uses: ./.github/workflows/clang-checks.yml
     with:
-      working_directory: EntryPoint
+      working_directory: ..
       simple_compilation_name: my_bot
