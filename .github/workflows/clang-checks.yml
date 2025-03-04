@@ -21,7 +21,11 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install dependencies
-        run: sudo apt-get install -y clang-format clang-tidy libboost-all-dev cppcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-format clang-tidy libboost-all-dev \
+                                  libcurl4-openssl-dev libpq-dev \
+                                  nlohmann-json3-dev libpqxx-dev
 
       - name: Install TgBot
         run: |
@@ -29,7 +33,7 @@ jobs:
           cd tgbot-cpp
           mkdir build
           cd build
-          cmake .. 
+          cmake ..
           make -j$(nproc)
           sudo make install
 
@@ -45,6 +49,6 @@ jobs:
         run: |
           find source include -name '*.cpp' -o -name '*.h' | xargs clang-tidy -p build --extra-arg="-Iinclude" --warnings-as-errors=*
 
-      - name: Run Cppcheck
+      - name: Run CppCheck
         run: |
-          cppcheck --enable=all --inconclusive --quiet --error-exitcode=1 source include
+          cppcheck --enable=all --inconclusive --quiet --error-exitcode=1 --project=build/compile_commands.json
