@@ -1,0 +1,26 @@
+name: Clang Format Check
+
+on:
+  pull_request:
+    branches:
+      - pre-main
+
+jobs:
+  clang-format:
+    needs: install-deps
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Restore Cached Build
+        uses: actions/cache@v3
+        with:
+          path: build
+          key: ${{ runner.os }}-build-${{ github.sha }}
+
+      - name: Run Clang Format
+        run: |
+          find include source -name '*.cpp' -o -name '*.h' | xargs clang-format -i
+          git diff --exit-code || (echo "Clang format check failed! Run clang-format and commit changes."; exit 1)
