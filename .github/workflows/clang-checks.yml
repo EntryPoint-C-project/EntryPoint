@@ -20,7 +20,11 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install dependencies
-        uses: .github/workflows/installing-dependencies.yml
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-format clang-tidy libboost-all-dev \
+                                  libcurl4-openssl-dev libpq-dev \
+                                  nlohmann-json3-dev libpqxx-dev
 
       - name: Install TgBot
         run: |
