@@ -7,23 +7,51 @@ on:
 
 jobs:
   clang-format:
+    install-deps:
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-format clang-tidy libboost-all-dev \
+                                  libcurl4-openssl-dev libpq-dev \
+                                  nlohmann-json3-dev libpqxx-dev
+
+      - name: Install TgBot
+        run: |
+          git clone https://github.com/reo7sp/tgbot-cpp.git
+          cd tgbot-cpp
+          mkdir build
+          cd build
+          cmake .. 
+          make -j$(nproc)
+          sudo make install
+
+      - name: Cache Build Directory
+        uses: actions/cache@v3
+        with:
+          path: build
+          key: ${{ runner.os }}-build-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+
+      - name: Configure CMake
+        run: cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DTgBot_DIR=/usr/local/lib/cmake/TgBot
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install Clang Format
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y clang-format
+      - name: Restore Cached Build
+        uses: actions/cache@v3
+        with:
+          path: build
+          key: ${{ runner.os }}-build-${{ github.sha }}
 
       - name: Run Clang Format
         run: |
-          CHANGED_FILES=$(git ls-files '*.cpp' '*.h')
-          if [[ -n "$CHANGED_FILES" ]]; then
-            echo "$CHANGED_FILES" | xargs clang-format -i
-            git diff --exit-code || (echo "Clang format check failed! Run clang-format and commit changes."; exit 1)
-          else
-            echo "No C++ files found."
-          fi
+          find include source -name '*.cpp' -o -name '*.h' | xargs clang-format -i
+          git diff --exit-code || (echo "Clang format check failed! Run clang-format and commit changes."; exit 1)
