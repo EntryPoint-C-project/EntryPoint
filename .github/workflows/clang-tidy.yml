@@ -61,4 +61,4 @@ jobs:
       - name: Run Clang Tidy
         run: |
           # Найдем все исходные файлы (.cpp и .h) в нужных папках (source, include), исключая build
-          clang-tidy --enable=all --inconclusive --quiet --error-exitcode=1 source/ include/
+          clang-tidy source/*.cpp include/*.hpp
