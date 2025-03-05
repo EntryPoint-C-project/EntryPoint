@@ -23,4 +23,4 @@ jobs:
 
       - name: Run CppCheck
         run: |
-          cppcheck --enable=all --inconclusive --quiet --error-exitcode=1 --project=build/compile_commands.json --exclude=build
+          cppcheck --enable=all --inconclusive --quiet --error-exitcode=1 --project=build/compile_commands.json --suppress=build/*
