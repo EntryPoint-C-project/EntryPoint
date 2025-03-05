@@ -23,7 +23,17 @@ jobs:
                                   libcurl4-openssl-dev libpq-dev \
                                   nlohmann-json3-dev libpqxx-dev
 
+      - name: Cache TgBot
+        id: cache-tgbot
+        uses: actions/cache@v3
+        with:
+          path: |
+            /usr/local/lib/libTgBot.so
+            /usr/local/include/tgbot
+          key: tgbot-${{ runner.os }}-v1
+
       - name: Install TgBot
+        if: steps.cache-tgbot.outputs.cache-hit != 'true'
         run: |
           git clone https://github.com/reo7sp/tgbot-cpp.git
           cd tgbot-cpp
@@ -33,6 +43,9 @@ jobs:
           make -j$(nproc)
           sudo make install
 
+      - name: Configure CMake
+        run: cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DTgBot_DIR=/usr/local/lib/cmake/TgBot
+
       - name: Cache Build Directory
         uses: actions/cache@v3
         with:
@@ -40,10 +53,6 @@ jobs:
           key: ${{ runner.os }}-build-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-build-
-
-      - name: Configure CMake
-        run: cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DTgBot_DIR=/usr/local/lib/cmake/TgBot
-
 
   clang-tidy:
     needs: install-deps
@@ -60,5 +69,9 @@ jobs:
 
       - name: Run Clang Tidy
         run: |
-          find source include -name '*.cpp' -o -name '*.h' | xargs clang-tidy -p build --extra-arg="-Iinclude" --warnings-as-errors=*
-
+          CHANGED_FILES=$(git ls-files '*.cpp' '*.h')
+          if [[ -n "$CHANGED_FILES" ]]; then
+            echo "$CHANGED_FILES" | xargs clang-tidy -p build --extra-arg="-Iinclude" --warnings-as-errors=*
+          else
+            echo "No C++ files found."
+          fi
