@@ -23,4 +23,5 @@ jobs:
 
       - name: Run CppCheck
         run: |
-          cppcheck --enable=all --inconclusive --quiet --error-exitcode=1 --project=build/compile_commands.json --suppress=build/*
+          # Указываем CppCheck проверять только исходные файлы в папке source или include
+          cppcheck --enable=all --inconclusive --quiet --error-exitcode=1 source/ include/
