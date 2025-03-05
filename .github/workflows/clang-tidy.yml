@@ -29,7 +29,7 @@ jobs:
           cd tgbot-cpp
           mkdir build
           cd build
-          cmake .. 
+          cmake ..
           make -j$(nproc)
           sudo make install
 
@@ -60,5 +60,5 @@ jobs:
 
       - name: Run Clang Tidy
         run: |
+          # Найдем все исходные файлы (.cpp и .h) в нужных папках (source, include), исключая build
           find source include -name '*.cpp' -o -name '*.h' | xargs clang-tidy -p build --extra-arg="-Iinclude" --warnings-as-errors=*
-
