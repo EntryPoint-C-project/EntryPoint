@@ -12,19 +12,22 @@
 template <typename T>
 class BaseCrud  {
 public:
-    static void Create(pqxx::connection& conn,  T& entity) {
+    static void Create(pqxx::connection& conn, T& entity) {
         try {
             pqxx::work txn(conn);
-            auto columns = std::vector<std::string>(std::next(T::columns.begin()),  T::columns.end() ); 
-            
+            std::vector<std::string> columns;
+            if constexpr (std::is_base_of_v<ISinglePrimaryKeyEntity, T>) {
+                columns = std::vector<std::string>(std::next(T::columns.begin()), T::columns.end());
+            } else if constexpr (std::is_base_of_v<ICompositePrimaryKeyEntity, T>) {
+                columns = T::columns;
+            } else {
+                throw std::runtime_error("Entity type must implement a primary key interface.");
+            }
+
             std::vector<std::string> placeholders;
             for (size_t i = 1; i <= columns.size(); ++i) {
                 placeholders.push_back(fmt::format("${}", i));
             }
-
-            /* 
-                join - фукнция которая преобразует итератор в строчку с разделитемем , который указали 
-            */
 
             std::string sql;
             if constexpr (std::is_base_of_v<ISinglePrimaryKeyEntity, T>) {
@@ -40,24 +43,20 @@ public:
                                 fmt::join(placeholders, ", "),
                                 T::columns[0],
                                 T::columns[1]);
-            } else {
-                throw std::runtime_error("Entity type must implement a primary key interface.");
             }
-
 
             auto values = entity.get_values_tuple();
             if constexpr (std::is_base_of_v<ISinglePrimaryKeyEntity, T>) {
-                pqxx::result result = std::apply([&sql, &txn](const auto&... args) { 
+                pqxx::result result = std::apply([&sql, &txn](const auto&... args) {
                     return txn.exec_params(sql, args...);
                 }, values);
                 entity.SetEntityPrimaryKey(entity, result, T::columns[0]);
             } else if constexpr (std::is_base_of_v<ICompositePrimaryKeyEntity, T>) {
-                pqxx::result res = txn.exec_params(sql , T::columns[0] , T::columns[1]); 
+                pqxx::result res = std::apply([&sql, &txn](const auto&... args) {
+                    return txn.exec_params(sql, args...);
+                }, values);
                 entity.SetEntityPrimaryKey(entity, res, T::columns[0], T::columns[1]);
-            }else {
-                throw std::runtime_error("Entity type must implement a primary key interface.");
             }
-
 
             txn.commit();
         } catch (const std::exception& e) {
@@ -89,20 +88,27 @@ public:
         try {
             pqxx::work txn(conn);
             std::vector<std::string> set_clauses;
-            /* 
-                тут типо он получает список колонок , и преобразует их в поля бд
-            */
+
             for (size_t i = 1; i < T::columns.size(); ++i) {
                 set_clauses.push_back(fmt::format("{} = ${}", T::columns[i], i));
             }
-            // update students set (student_id = $1 , person_id = $2 , subject_id =$3 , info = $4  ) where student_id = $5 ; 
             std::string sql = fmt::format("UPDATE {} SET {} WHERE {} = ${}", T::table_name, fmt::join(set_clauses, ", "), T::columns[0], T::columns.size() );
 
             auto values = entity.get_values_tuple(); 
 
+            if constexpr (std::is_base_of_v<ISinglePrimaryKeyEntity, T>) {
             std::apply([&sql, &txn ,&id](const auto&... args) {
-                txn.exec_params(sql, args... , id);
+                txn.exec_params(sql, args...,id );
             }, values);
+            } else if constexpr (std::is_base_of_v<ICompositePrimaryKeyEntity, T>) {
+            std::apply([&sql, &txn ,&id](const auto&... args) {
+                txn.exec_params(sql, args... );
+            }, values);
+            } else {
+                throw std::runtime_error("Entity type must implement a primary key interface.");
+            }
+
+
 
             txn.commit();
         } catch (const std::exception& e) {

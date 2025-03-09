@@ -34,7 +34,7 @@ public:
     }
 }; 
 
-    template <>
+template <>
 struct fmt::formatter<Roles> {
     constexpr auto parse(format_parse_context& ctx) { return ctx.begin(); }
     

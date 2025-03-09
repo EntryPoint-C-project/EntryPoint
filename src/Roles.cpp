@@ -7,10 +7,6 @@ void Roles::loadFromRow(const pqxx::row &row) {
 }
 
 
-
-
-
-
 void Roles::Create(pqxx::connection &conn , const std::string &role_name) {
     Roles role; 
     role.role_name = role_name;
