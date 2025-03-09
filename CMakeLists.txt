@@ -10,6 +10,7 @@ add_executable(main ${SOURCES})
 
 include(cmake/CPM.cmake)
 
+# Boost
 CPMAddPackage(
   NAME Boost
   VERSION 1.86.0
@@ -19,10 +20,15 @@ CPMAddPackage(
           "BUILD_SHARED_LIBS OFF" "BOOST_INCLUDE_LIBRARIES system"
 )
 
+# TgBot
 CPMAddPackage(
   NAME TgBot
   GIT_REPOSITORY https://github.com/reo7sp/tgbot-cpp.git
   GIT_TAG master  
 )
 
-target_link_libraries(main Boost::system TgBot)
+# Линкуем библиотеки
+target_link_libraries(main 
+  Boost::system 
+  TgBot 
+)
