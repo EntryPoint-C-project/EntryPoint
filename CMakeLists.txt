@@ -27,8 +27,21 @@ CPMAddPackage(
   GIT_TAG master  
 )
 
+# nlohmann/json
+CPMAddPackage(
+  NAME nlohmann_json
+  VERSION 3.11.2
+  GITHUB_REPOSITORY nlohmann/json
+  OPTIONS "JSON_BuildTests OFF"
+)
+
+# curl
+find_package(CURL REQUIRED)
+
 # Линкуем библиотеки
 target_link_libraries(main 
   Boost::system 
   TgBot 
+  nlohmann_json::nlohmann_json
+  CURL::libcurl
 )
