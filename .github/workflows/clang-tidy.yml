@@ -3,7 +3,10 @@ name: Static Analysis Checks
 on:
   push:
     branches:
-      - '**'
+      - main
+  pull_request:
+    branches:
+      - main
 
 defaults:
   run:
@@ -14,35 +17,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang-format clang-tidy libboost-all-dev \
-                                  libcurl4-openssl-dev libpq-dev \
-                                  nlohmann-json3-dev libpqxx-dev
-
-      - name: Install TgBot
-        run: |
-          git clone https://github.com/reo7sp/tgbot-cpp.git
-          cd tgbot-cpp
-          mkdir build
-          cd build
-          cmake ..
-          make -j$(nproc)
-          sudo make install
-
-      - name: Cache Build Directory
-        uses: actions/cache@v3
-        with:
-          path: build
-          key: ${{ runner.os }}-build-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-build-
+          sudo apt-get install -y clang-tidy
 
       - name: Configure CMake
-        run: cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DTgBot_DIR=/usr/local/lib/cmake/TgBot
+        run: cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
 
   clang-tidy:
@@ -60,5 +43,7 @@ jobs:
 
       - name: Run Clang Tidy
         run: |
-          # Найдем все исходные файлы (.cpp и .h) в нужных папках (source, include), исключая build
           clang-tidy source/*.cpp include/*.hpp
+
+
+        
