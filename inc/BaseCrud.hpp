@@ -7,10 +7,12 @@
 #include <fmt/core.h>
 #include <fmt/ranges.h>
 
+
+
 template <typename T>
 class BaseCrud {
 public:
-    static void Create(pqxx::connection& conn, const T& entity) {
+    static void Create(pqxx::connection& conn,  T& entity) {
         try {
             pqxx::work txn(conn);
             auto columns = std::vector<std::string>(std::next(T::columns.begin()),  T::columns.end() ); // no student_id 
@@ -24,14 +26,23 @@ public:
                 join - фукнция которая преобразует итератор в строчку с разделитемем , который указали 
             */
             // insert into studenst (person_id , program_id , info) values ($1 , $2 , $3) ; 
-            std::string sql = fmt::format( "INSERT INTO {} ({}) VALUES ({});", T::table_name, fmt::join(columns, ", "), fmt::join(placeholders, ", ") );
+            std::string sql = fmt::format( "INSERT INTO {} ({}) VALUES ({}) RETURNING student_id;", T::table_name, fmt::join(columns, ", "), fmt::join(placeholders, ", ") );
+
 
 
             auto values = entity.get_values_tuple();
 
-            std::apply([&sql, &txn](const auto&... args) {
-                txn.exec_params(sql, args...);
+            pqxx::result result = std::apply([&sql, &txn](const auto&... args) {
+                return txn.exec_params(sql, args...);
             }, values);
+
+            // std::apply([&sql, &txn](const auto&... args) {
+            //     txn.exec_params(sql, args...);
+            // }, values);
+
+            if (!result.empty()) {
+                entity.student_id  = result[0][columns[0]].as<int>();
+            }
 
 
             txn.commit();
@@ -70,8 +81,6 @@ public:
             for (size_t i = 1; i < T::columns.size(); ++i) {
                 set_clauses.push_back(fmt::format("{} = ${}", T::columns[i], i));
             }
-            
-
             // update students set (student_id = $1 , person_id = $2 , subject_id =$3 , info = $4  ) where student_id = $5 ; 
             std::string sql = fmt::format("UPDATE {} SET {} WHERE {} = ${}", T::table_name, fmt::join(set_clauses, ", "), T::columns[0], T::columns.size() );
 
@@ -90,7 +99,7 @@ public:
     static void Delete(pqxx::connection& conn, int id) {
         try {
             pqxx::work txn(conn);
-            std::string sql = fmt::format( "DELETE FROM {} WHERE {} = $1", T::table_name, T::columns[0] );
+            std::string sql = fmt::format( "DELETE FROM {} WHERE {} = $1", T::table_name, T::columns[0] ); 
             
             txn.exec_params(sql, id);
             txn.commit();
