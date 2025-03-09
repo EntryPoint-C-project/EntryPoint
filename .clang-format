@@ -1,8 +1,8 @@
 ---
 BasedOnStyle: Google
 
+AccessModifierOffset: -4
 
-AccessModifierOffset: -2
 AlignTrailingComments: true
 IndentPPDirectives: AfterHash
 IndentWidth: 4
@@ -15,11 +15,13 @@ BreakBeforeTernaryOperators: true
 ColumnLimit: 100
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
 
-IncludeBlocks: Regroup
+IncludeBlocks: Regroup  
+
 SortIncludes: true
 
 SpaceBeforeParens: ControlStatements
 AllowShortFunctionsOnASingleLine: InlineOnly
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
+
 ...

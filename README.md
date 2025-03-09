@@ -23,10 +23,6 @@ git clone git@github.com:EntryPoint-C-project/EntryPoint.git
 cd EntryPoint
 # You need to make a telegram-bot token
 mkdir build && cd build  
-cmake -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..  # Enable clang-tidy support
+cmake -G Ninja ..
 ninja
 ``` 
-### 🔹 2. Running clang-tidy
-```sh
-run-clang-tidy -p build/
-```
