@@ -3,7 +3,10 @@ name: CppCheck Analysis
 on:
   push:
     branches:
-      - '**'
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   cppcheck:
@@ -11,7 +14,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install dependencies
         run: |
@@ -23,5 +26,5 @@ jobs:
 
       - name: Run CppCheck
         run: |
-          # Указываем CppCheck проверять только исходные файлы в папке source или include
           cppcheck --enable=all --inconclusive --quiet --error-exitcode=1 source/ include/
+
