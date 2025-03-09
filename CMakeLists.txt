@@ -10,7 +10,6 @@ add_executable(main ${SOURCES})
 
 include(cmake/CPM.cmake)
 
-# Boost
 CPMAddPackage(
   NAME Boost
   VERSION 1.86.0
@@ -20,28 +19,14 @@ CPMAddPackage(
           "BUILD_SHARED_LIBS OFF" "BOOST_INCLUDE_LIBRARIES system"
 )
 
-# TgBot
 CPMAddPackage(
   NAME TgBot
   GIT_REPOSITORY https://github.com/reo7sp/tgbot-cpp.git
   GIT_TAG master  
 )
 
-# nlohmann/json
-CPMAddPackage(
-  NAME nlohmann_json
-  VERSION 3.11.2
-  GITHUB_REPOSITORY nlohmann/json
-  OPTIONS "JSON_BuildTests OFF"
-)
-
-# curl
-find_package(CURL REQUIRED)
-
-# Линкуем библиотеки
 target_link_libraries(main 
   Boost::system 
   TgBot 
   nlohmann_json::nlohmann_json
-  CURL::libcurl
 )
