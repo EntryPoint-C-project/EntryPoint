@@ -1,71 +1,28 @@
-#include "FilterExcludes.hpp"
+#include "../inc/FilterExcludes.hpp"
 
-static void Create(pqxx::connection &conn, const int filter_id , const int   tag_id ){
-    try {
-        pqxx::work txn(conn);
-        std::string sql = "INSERT INTO Filter_Excludes(filter_id, tag_id) VALUES ($1, $2);";
-        txn.exec_params(sql, filter_id, tag_id);
-        txn.commit();
-        std::cout << "Filter_Excludes от filter_id " << filter_id << " и tag_id " << tag_id << " был успешно создан\n";
-    } catch (const std::exception &e) {
-        std::cerr << " Произошла ошибка при добавлении в Filter_Excludes: " << e.what() << "\n";
-    }
+void FilterExcludes::loadFromRow(const pqxx::row &row) {
+    filter_id = row["filter_id"].as<int>();
+    exclude_id = row["exclude_id"].as<int>();
 }
 
-static std::vector <int>  ReadTagId(pqxx::connection &conn, const int filter_id) {
-    try {
-        pqxx::work txn(conn);
-        std::string sql = "SELECT tag_id FROM Filter_Excludes WHERE filter_id = $1;";
-        pqxx::result result = txn.exec_params(sql, filter_id);
-        std::vector<int> tag_ids;
-        for (const auto &row : result) {
-            tag_ids.push_back(row[0].as<int>());
-        }
-        txn.commit();
-        std::cout << "Данные о тегах фильтра с ID: " << filter_id << " были успешно добавлены в вектор tag_ids\n";
-        return tag_ids;
-    } catch (const std::exception &e) {
-        std::cout << "Произошла ошибка при чтении tag_id: " << e.what() << std::endl;
-        return {};
-    }
+static void Create(pqxx::connection &conn, int filter_id, int exclude_id) {
+    FilterExcludes filter_excludes;
+    filter_excludes.filter_id = filter_id;
+    filter_excludes.exclude_id = exclude_id;
+    BaseCrud<FilterExcludes>::Create(conn, filter_excludes);
 }
 
-static std::vector <int>  ReadFiltertId(pqxx::connection &conn, const int tag_id) {
-    try {
-        pqxx::work txn(conn);
-        std::string sql = "SELECT filter_id FROM Filter_Excludes WHERE tag_id = $1;";
-        pqxx::result result = txn.exec_params(sql, tag_id);
-        std::vector<int> filter_ids;
-        for (const auto &row : result) {
-            filter_ids.push_back(row[0].as<int>());
-        }
-        txn.commit();
-        std::cout << "Данные о фильтрах тега с ID: " << tag_id << " были успешно добавлены в вектор filter_ids\n";
-        return filter_ids;
-    } catch (const std::exception &e) {
-        std::cout << "Произошла ошибка при чтении filter_id: " << e.what() << std::endl;
-        return {};
-    }
+static std::vector<FilterExcludes> Read(pqxx::connection &conn) {
+    return BaseCrud<FilterExcludes>::Read(conn);
 }
 
-static void Update(pqxx::connection &conn, const int old_filter_id , const int old_tag_id , const int new_filter_id , const int new_tag_id ){
-    try {
-        Remove(conn, old_filter_id, old_tag_id);
-        Create(conn , new_filter_id , new_tag_id);
-        std::cout << "Изменения : " << old_filter_id << " --> " << new_filter_id << " , " << old_tag_id << " --> " << new_tag_id << std::endl;
-    } catch (const std::exception &e) {
-        std::cout << "Произошла ошибка при обновлении Filter_Excludes: " << e.what() << std::endl;
-    }
+static void Update(pqxx::connection &conn, int filter_id, std::vector<std::string> new_params_for_filter_excludes) {
+    FilterExcludes updated_filter_excludes;
+    updated_filter_excludes.filter_id = filter_id;
+    updated_filter_excludes.exclude_id = std::stoi(new_params_for_filter_excludes[0]);
+    BaseCrud<FilterExcludes>::Update(conn, filter_id, updated_filter_excludes);
 }
 
-static void Remove(pqxx::connection &conn, const int filter_id , const int tag_id ) {
-    try {
-        pqxx::work txn(conn);
-        std::string sql = "DELETE FROM Filter_Excludes WHERE filter_id = $1 AND tag_id = $2;";
-        txn.exec_params(sql, filter_id, tag_id);
-        txn.commit();
-        std::cout << "Filter_Excludes от filter_id " << filter_id << " и tag_id " << tag_id << " был успешно удален\n";
-    } catch (const std::exception &e) {
-        std::cout << "Произошла ошибка при удалении Filter_Excludes: " << e.what() << std::endl; 
-    }
+static void Delete(pqxx::connection &conn, int filter_id) {
+    BaseCrud<FilterExcludes>::Delete(conn, filter_id);
 }

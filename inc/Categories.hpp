@@ -1,23 +1,48 @@
+#pragma once 
 
-#pragma once
-#include "ForTableInternal.hpp"
+#include "BaseCrud.hpp"
+#include "IPrimaryKeyEntity.hpp"
+#include <pqxx/pqxx>
 #include <vector>
+#include <string>
+#include <fmt/format.h>
 
-class Categories {
+class Categories : public ISinglePrimaryKeyEntity {
 public:
-    static void Create(pqxx::connection &conn,  const std::string category_name , const int filter_id , bool required); 
+    int category_id;
+    std::string category_name;
+    int filter_id;
+    bool required;
 
-    static std::string  ReadCategoryName(pqxx::connection &conn, const int category_id); 
+    int GetPrimaryKey() const override { return category_id; }
+    void SetPrimaryKey(int id) override { category_id = id; }
 
-    static int  ReadFilterId(pqxx::connection &conn, const int category_id); 
+    static const inline std::string table_name = "categories";
+    static const inline std::vector<std::string> columns = {"category_id", "category_name", "filter_id", "required"};
 
-    static bool ReadRequired(pqxx::connection &conn, const int category_id);
+    void loadFromRow(const pqxx::row &row);
+    auto get_values_tuple() const {
+        return std::make_tuple(category_name, filter_id, required);
+    }
 
-    static void UpdateCategoryName(pqxx::connection &conn, std::string old_category_name  , std::string new_category_name ); 
+    static void Create(pqxx::connection &conn, const std::string &category_name, int filter_id, bool required) ;
+    static std::vector<Categories> Read(pqxx::connection &conn) ;
+    static void Update(pqxx::connection &conn, int category_id, std::vector<std::string> new_params_for_category) ;
+    static void Delete(pqxx::connection &conn, int category_id) ;
+    friend std::ostream& operator<<(std::ostream& os, const Categories& c) {
+        return os << fmt::format( "Categories(Category: {}, Filter: {}, Required: {})", c.category_id, c.category_name, c.filter_id, c.required );
+    }
 
-    static void UpdateFilterId(pqxx::connection &conn, std::string category_name , int old_filter_id  , int new_filter_id ); 
-
-    static void UpdateRequired(pqxx::connection &conn, int category_id , bool old_required  , bool new_required ); 
-
-    static void Remove(pqxx::connection &conn, const int category_id ); 
 }; 
+
+template <>
+struct fmt::formatter<Categories> {
+    constexpr auto parse(format_parse_context& ctx) { return ctx.begin(); }
+    
+    auto format(const Categories& c, format_context& ctx) const {
+        return format_to(ctx.out(), 
+            "Category(ID: {}, Name: {}, Filter: {}, Required: {})",
+            c.category_id, c.category_name, c.filter_id, c.required
+        );
+    }
+};
