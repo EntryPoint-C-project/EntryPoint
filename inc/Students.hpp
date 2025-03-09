@@ -1,16 +1,21 @@
 #pragma once
 #include "BaseCrud.hpp"
+#include "IPrimaryKeyEntity.hpp"
 #include <pqxx/pqxx>
 #include <vector>
 #include <string>
 #include <fmt/format.h>
 
-class Students {
+
+class Students : public ISinglePrimaryKeyEntity {
 public:
     int student_id;
     int person_id;
     int program_id;
     std::string info;
+
+    int GetPrimaryKey() const override { return student_id; }
+    void SetPrimaryKey(int id) override { student_id = id; }
 
     static const inline std::string table_name = "students";
     static const inline std::vector<std::string> columns = {"student_id", "person_id", "program_id", "info"};
@@ -23,7 +28,6 @@ public:
     }
 
     static void Create(pqxx::connection &conn, int person_id, int program_id, const std::string &info) ; 
-
     static std::vector<Students> Read(pqxx::connection &conn); 
     static void Update(pqxx::connection &conn, int student_id, std::vector<std::string> new_params_for_student) ; 
     static void Delete(pqxx::connection &conn, int student_id) ; 

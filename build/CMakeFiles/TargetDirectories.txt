@@ -1,3 +1,3 @@
-/Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/build/CMakeFiles/app.dir
-/Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/build/CMakeFiles/edit_cache.dir
-/Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/build/CMakeFiles/rebuild_cache.dir
+/Users/qwertz/Desktop/code/EntryPoint/build/CMakeFiles/app.dir
+/Users/qwertz/Desktop/code/EntryPoint/build/CMakeFiles/edit_cache.dir
+/Users/qwertz/Desktop/code/EntryPoint/build/CMakeFiles/rebuild_cache.dir

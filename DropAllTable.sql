@@ -1,7 +1,8 @@
 
 DROP TABLE IF EXISTS 
-    Feedback_Participants, 
-    Feedbacks, 
+    Result_Request, 
+    Feedback_URL,
+    Feedback_Request, 
     People_Subject, 
     Teacher_Subject, 
     Students, 
@@ -17,5 +18,5 @@ DROP TABLE IF EXISTS
     Filter_Excludes, 
     Catagories,
     Category_Tags, 
-    Person_Filter_Access
+    Person_Filter_Access,  
 CASCADE;

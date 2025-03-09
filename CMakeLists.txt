@@ -1,34 +1,36 @@
 cmake_minimum_required(VERSION 3.10)
+project(MyPQXXProject)
 
-# Название проекта (можете изменить)
-project(CreateAllTables)
+# Настройки для Apple Silicon
+if(APPLE)
+    set(CMAKE_CXX_FLAGS "-L/opt/homebrew/opt/libpqxx/lib -L/opt/homebrew/opt/libpq/lib")
+    set(CMAKE_EXE_LINKER_FLAGS "-L/opt/homebrew/opt/libpqxx/lib -L/opt/homebrew/opt/libpq/lib")
+endif()
 
-# Указываем стандарт C++
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Пути к заголовочным файлам (если у вас есть собственные .hpp в других папках, добавьте их)
-include_directories(
+add_executable(app main.cpp)
+
+# Пути для заголовочных файлов
+target_include_directories(app PRIVATE
     /opt/homebrew/opt/libpqxx/include
     /opt/homebrew/opt/libpq/include
+    /opt/homebrew/opt/fmt/include
 )
 
 # Пути к библиотекам
-link_directories(
+target_link_directories(app PRIVATE
     /opt/homebrew/opt/libpqxx/lib
     /opt/homebrew/opt/libpq/lib
 )
 
-# Собираем проект из нескольких файлов
-# Добавьте/удалите .cpp-файлы по необходимости
-add_executable(app
-    main.cpp
-    FunctionsForCreateAllTables.cpp
-    FunctionsForTable_all_people.cpp
+# Явное указание библиотек
+target_link_libraries(app PRIVATE
+    /opt/homebrew/opt/libpqxx/lib/libpqxx.dylib
+    /opt/homebrew/opt/libpq/lib/libpq.dylib
+    /opt/homebrew/opt/fmt/lib/libfmt.dylib
 )
 
-# Линкуем библиотеки libpqxx и libpq
-target_link_libraries(app PRIVATE pqxx pq)
-
-# Отключаем предупреждения об атрибуте [[assume]] (libpqxx)
+# Подавление предупреждений
 target_compile_options(app PRIVATE -Wno-unknown-attributes)

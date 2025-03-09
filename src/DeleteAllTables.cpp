@@ -14,6 +14,5 @@ void DropAllTables(pqxx::connection &conn ){
     catch (const std::exception &e) {
         std::cerr << "Ошибка при Удалении таблицы --> " << e.what() << std::endl;
     }
-    
 
 }

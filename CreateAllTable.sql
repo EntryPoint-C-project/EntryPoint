@@ -4,11 +4,7 @@ CREATE TABLE Programs (
     program_id SERIAL PRIMARY KEY,
     program_name VARCHAR(50) UNIQUE NOT NULL
 );
-INSERT INTO Programs (program_name) VALUES 
-    ('PMI'), 
-    ('PADII'), 
-    ('PHYSICS'), 
-    ('KOTSYS');
+ 
 
 
 CREATE TABLE People (
@@ -25,17 +21,18 @@ CREATE TABLE Roles (
 );
 INSERT INTO Roles (role_name) VALUES 
     ('admin'); 
+    -- TODO:
 
 CREATE TABLE Students (
     student_id SERIAL PRIMARY KEY,
-    person_id INT UNIQUE REFERENCES People(person_id) ON DELETE CASCADE,
+    person_id INT UNIQUE REFERENCES People(person_id) ON DELETE CASCADE NOT NULL,
     program_id INT REFERENCES Programs(program_id) NOT NULL,
     info VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE Person_Role (
-    person_id INT REFERENCES People(person_id) ON DELETE CASCADE,
-    role_id INT REFERENCES Roles(role_id) ON DELETE CASCADE,
+    person_id INT REFERENCES People(person_id) ON DELETE CASCADE NOT NULL,
+    role_id INT REFERENCES Roles(role_id) ON DELETE CASCADE NOT NULL,
     PRIMARY KEY (person_id, role_id)
 );
 
@@ -45,45 +42,43 @@ CREATE TABLE Subjects (
     subject_name VARCHAR(255) UNIQUE NOT NULL
 );
 
-INSERT INTO Subjects (subject_name)
-VALUES 
-    ('MATH'),
-    ('ALGEBRA'),
-    ('C++'),
-    ('ALGOSY')
-ON CONFLICT (subject_name) DO NOTHING;
-
-
 
 
 CREATE TABLE Teacher_Subject (
-    teacher_id INT REFERENCES People(person_id) ON DELETE CASCADE,
-    subject_id INT REFERENCES Subjects(subject_id) ON DELETE CASCADE,
+    teacher_id INT REFERENCES People(person_id) ON DELETE CASCADE NOT NULL,
+    subject_id INT REFERENCES Subjects(subject_id) ON DELETE CASCADE NOT NULL,
     PRIMARY KEY (teacher_id, subject_id)
 );
 
 
 CREATE TABLE People_Subject (
-    person_id INT REFERENCES People(person_id) ON DELETE CASCADE,
-    subject_id INT REFERENCES Subjects(subject_id) ON DELETE CASCADE,
+    person_id INT REFERENCES People(person_id) ON DELETE CASCADE NOT NULL ,
+    subject_id INT REFERENCES Subjects(subject_id) ON DELETE CASCADE NOT NULL ,
     PRIMARY KEY (person_id, subject_id)
 );
 
 
-CREATE TABLE Feedbacks (
-    feedback_id SERIAL PRIMARY KEY,
-    teacher_id INT REFERENCES People(person_id) ON DELETE CASCADE,
-    subject_id INT REFERENCES Subjects(subject_id) ON DELETE CASCADE,
-    feedback_name VARCHAR(255) NOT NULL
+CREATE TABLE Feedback_Request (
+    request_id SERIAL PRIMARY KEY,
+    teacher_id INT REFERENCES People(person_id) ON DELETE CASCADE NOT NULL,
+    subject_id INT REFERENCES Subjects(subject_id) ON DELETE CASCADE NOT NULL,
+    request_name VARCHAR(255) NOT NULL
 );
 
 
-CREATE TABLE Feedback_Participants (
-    student_id INT REFERENCES Students(student_id) ON DELETE CASCADE,
-    feedback_id INT REFERENCES Feedbacks(feedback_id) ON DELETE CASCADE,
-    feedback TEXT,
-    PRIMARY KEY (feedback_id, student_id)
+CREATE TABLE Result_Request (
+    result_id INT REFERENCES Feedback_URL(result_id) ON DELETE CASCADE NOT NULL,
+    request_id INT REFERENCES Feedback_Request(request_id) ON DELETE CASCADE NOT NULL,
+    PRIMARY KEY (result_id, request_id)
 );
+
+
+CREATE TABLE Feedback_URL (
+    result_id SERIAL PRIMARY KEY,
+    student_id INT REFERENCES Students(student_id) ON DELETE CASCADE NOT NULL,
+    JSON VARCHAR(255) NOT NULL
+);
+
 
 
 CREATE TABLE Tags (
@@ -94,8 +89,8 @@ CREATE TABLE Tags (
 
 
 CREATE TABLE Subject_Tags (
-    subject_id INT REFERENCES Subjects(subject_id) ON DELETE CASCADE,
-    tag_id INT REFERENCES Tags(tag_id) ON DELETE CASCADE,
+    subject_id INT REFERENCES Subjects(subject_id) ON DELETE CASCADE NOT NULL ,
+    tag_id INT REFERENCES Tags(tag_id) ON DELETE CASCADE NOT NULL ,
     PRIMARY KEY (subject_id, tag_id)
 );
 
@@ -106,14 +101,14 @@ CREATE TABLE Filters (
 
 
 CREATE TABLE Filter_Includes (
-    filter_id INT REFERENCES Filters(filter_id) ON DELETE CASCADE,
-    tag_id INT REFERENCES Tags(tag_id) ON DELETE CASCADE,
+    filter_id INT REFERENCES Filters(filter_id) ON DELETE CASCADE NOT NULL ,
+    tag_id INT REFERENCES Tags(tag_id) ON DELETE CASCADE NOT NULL ,
     PRIMARY KEY (filter_id, tag_id)
 );
 
 CREATE TABLE Filter_Excludes (
-    filter_id INT REFERENCES Filters(filter_id) ON DELETE CASCADE,
-    tag_id INT REFERENCES Tags(tag_id) ON DELETE CASCADE,
+    filter_id INT REFERENCES Filters(filter_id) ON DELETE CASCADE NOT NULL,
+    tag_id INT REFERENCES Tags(tag_id) ON DELETE CASCADE NOT NULL ,
     PRIMARY KEY (filter_id, tag_id)
 );
 
@@ -121,19 +116,21 @@ CREATE TABLE Filter_Excludes (
 CREATE TABLE Catagories (
     category_id SERIAL PRIMARY KEY , 
     category_name VARCHAR(255) NOT NULL , 
-    filter_id INt REFERENCES Filters(filter_id) ON DELETE CASCADE ,
+    filter_id INt REFERENCES Filters(filter_id) ON DELETE CASCADE NOT NULL ,
     required BOOLEAN
 );
 
 
 CREATE TABLE Category_Tags(
-    category_id INT REFERENCES Catagories(category_id) ON DELETE CASCADE,
-    tag_id INT REFERENCES Tags(tag_id) ON DELETE CASCADE,
+    category_id INT REFERENCES Catagories(category_id) ON DELETE CASCADE NOT NULL,
+    tag_id INT REFERENCES Tags(tag_id) ON DELETE CASCADE NOT NULL,
     PRIMARY KEY (category_id, tag_id)
 );
 
 CREATE TABLE Person_Filter_Access (
-    person_id INT REFERENCES People(person_id) ON DELETE CASCADE ,
-    filter_id INT REFERENCES Filters(filter_id) ON DELETE CASCADE, 
+    person_id INT REFERENCES People(person_id) ON DELETE CASCADE NOT NULL,
+    filter_id INT REFERENCES Filters(filter_id) ON DELETE CASCADE NOT NULL, 
     PRIMARY KEY (person_id , filter_id)
 ); 
+
+CREATE TABLE

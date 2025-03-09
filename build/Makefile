@@ -57,10 +57,10 @@ RM = /opt/homebrew/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree
+CMAKE_SOURCE_DIR = /Users/qwertz/Desktop/code/EntryPoint
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/build
+CMAKE_BINARY_DIR = /Users/qwertz/Desktop/code/EntryPoint/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/build/CMakeFiles /Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/qwertz/Desktop/code/EntryPoint/build/CMakeFiles /Users/qwertz/Desktop/code/EntryPoint/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/qwertz/Desktop/code/EntryPoint/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -129,54 +129,6 @@ app/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/app.dir/build.make CMakeFiles/app.dir/build
 .PHONY : app/fast
 
-FunctionsForCreateAllTables.o: FunctionsForCreateAllTables.cpp.o
-.PHONY : FunctionsForCreateAllTables.o
-
-# target to build an object file
-FunctionsForCreateAllTables.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/app.dir/build.make CMakeFiles/app.dir/FunctionsForCreateAllTables.cpp.o
-.PHONY : FunctionsForCreateAllTables.cpp.o
-
-FunctionsForCreateAllTables.i: FunctionsForCreateAllTables.cpp.i
-.PHONY : FunctionsForCreateAllTables.i
-
-# target to preprocess a source file
-FunctionsForCreateAllTables.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/app.dir/build.make CMakeFiles/app.dir/FunctionsForCreateAllTables.cpp.i
-.PHONY : FunctionsForCreateAllTables.cpp.i
-
-FunctionsForCreateAllTables.s: FunctionsForCreateAllTables.cpp.s
-.PHONY : FunctionsForCreateAllTables.s
-
-# target to generate assembly for a file
-FunctionsForCreateAllTables.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/app.dir/build.make CMakeFiles/app.dir/FunctionsForCreateAllTables.cpp.s
-.PHONY : FunctionsForCreateAllTables.cpp.s
-
-FunctionsForTable_all_people.o: FunctionsForTable_all_people.cpp.o
-.PHONY : FunctionsForTable_all_people.o
-
-# target to build an object file
-FunctionsForTable_all_people.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/app.dir/build.make CMakeFiles/app.dir/FunctionsForTable_all_people.cpp.o
-.PHONY : FunctionsForTable_all_people.cpp.o
-
-FunctionsForTable_all_people.i: FunctionsForTable_all_people.cpp.i
-.PHONY : FunctionsForTable_all_people.i
-
-# target to preprocess a source file
-FunctionsForTable_all_people.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/app.dir/build.make CMakeFiles/app.dir/FunctionsForTable_all_people.cpp.i
-.PHONY : FunctionsForTable_all_people.cpp.i
-
-FunctionsForTable_all_people.s: FunctionsForTable_all_people.cpp.s
-.PHONY : FunctionsForTable_all_people.s
-
-# target to generate assembly for a file
-FunctionsForTable_all_people.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/app.dir/build.make CMakeFiles/app.dir/FunctionsForTable_all_people.cpp.s
-.PHONY : FunctionsForTable_all_people.cpp.s
-
 main.o: main.cpp.o
 .PHONY : main.o
 
@@ -210,12 +162,6 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... app"
-	@echo "... FunctionsForCreateAllTables.o"
-	@echo "... FunctionsForCreateAllTables.i"
-	@echo "... FunctionsForCreateAllTables.s"
-	@echo "... FunctionsForTable_all_people.o"
-	@echo "... FunctionsForTable_all_people.i"
-	@echo "... FunctionsForTable_all_people.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

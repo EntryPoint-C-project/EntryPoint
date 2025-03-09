@@ -4,9 +4,9 @@
 # compile CXX with /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/opt/homebrew/opt/libpqxx/include -I/opt/homebrew/opt/libpq/include
+CXX_INCLUDES = -I/opt/homebrew/opt/libpqxx/include -I/opt/homebrew/opt/libpq/include -I/opt/homebrew/opt/fmt/include
 
-CXX_FLAGSarm64 = -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk -Wno-unknown-attributes
+CXX_FLAGSarm64 = -L/opt/homebrew/opt/libpqxx/lib -L/opt/homebrew/opt/libpq/lib -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk -Wno-unknown-attributes
 
-CXX_FLAGS = -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk -Wno-unknown-attributes
+CXX_FLAGS = -L/opt/homebrew/opt/libpqxx/lib -L/opt/homebrew/opt/libpq/lib -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk -Wno-unknown-attributes
 

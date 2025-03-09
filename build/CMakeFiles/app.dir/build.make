@@ -53,10 +53,10 @@ RM = /opt/homebrew/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree
+CMAKE_SOURCE_DIR = /Users/qwertz/Desktop/code/EntryPoint
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/build
+CMAKE_BINARY_DIR = /Users/qwertz/Desktop/code/EntryPoint/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/app.dir/depend.make
@@ -73,62 +73,33 @@ CMakeFiles/app.dir/codegen:
 .PHONY : CMakeFiles/app.dir/codegen
 
 CMakeFiles/app.dir/main.cpp.o: CMakeFiles/app.dir/flags.make
-CMakeFiles/app.dir/main.cpp.o: /Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/main.cpp
+CMakeFiles/app.dir/main.cpp.o: /Users/qwertz/Desktop/code/EntryPoint/main.cpp
 CMakeFiles/app.dir/main.cpp.o: CMakeFiles/app.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/app.dir/main.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/app.dir/main.cpp.o -MF CMakeFiles/app.dir/main.cpp.o.d -o CMakeFiles/app.dir/main.cpp.o -c /Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/qwertz/Desktop/code/EntryPoint/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/app.dir/main.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/app.dir/main.cpp.o -MF CMakeFiles/app.dir/main.cpp.o.d -o CMakeFiles/app.dir/main.cpp.o -c /Users/qwertz/Desktop/code/EntryPoint/main.cpp
 
 CMakeFiles/app.dir/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/app.dir/main.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/main.cpp > CMakeFiles/app.dir/main.cpp.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/qwertz/Desktop/code/EntryPoint/main.cpp > CMakeFiles/app.dir/main.cpp.i
 
 CMakeFiles/app.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/app.dir/main.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/main.cpp -o CMakeFiles/app.dir/main.cpp.s
-
-CMakeFiles/app.dir/FunctionsForCreateAllTables.cpp.o: CMakeFiles/app.dir/flags.make
-CMakeFiles/app.dir/FunctionsForCreateAllTables.cpp.o: /Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/FunctionsForCreateAllTables.cpp
-CMakeFiles/app.dir/FunctionsForCreateAllTables.cpp.o: CMakeFiles/app.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/app.dir/FunctionsForCreateAllTables.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/app.dir/FunctionsForCreateAllTables.cpp.o -MF CMakeFiles/app.dir/FunctionsForCreateAllTables.cpp.o.d -o CMakeFiles/app.dir/FunctionsForCreateAllTables.cpp.o -c /Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/FunctionsForCreateAllTables.cpp
-
-CMakeFiles/app.dir/FunctionsForCreateAllTables.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/app.dir/FunctionsForCreateAllTables.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/FunctionsForCreateAllTables.cpp > CMakeFiles/app.dir/FunctionsForCreateAllTables.cpp.i
-
-CMakeFiles/app.dir/FunctionsForCreateAllTables.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/app.dir/FunctionsForCreateAllTables.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/FunctionsForCreateAllTables.cpp -o CMakeFiles/app.dir/FunctionsForCreateAllTables.cpp.s
-
-CMakeFiles/app.dir/FunctionsForTable_all_people.cpp.o: CMakeFiles/app.dir/flags.make
-CMakeFiles/app.dir/FunctionsForTable_all_people.cpp.o: /Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/FunctionsForTable_all_people.cpp
-CMakeFiles/app.dir/FunctionsForTable_all_people.cpp.o: CMakeFiles/app.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/app.dir/FunctionsForTable_all_people.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/app.dir/FunctionsForTable_all_people.cpp.o -MF CMakeFiles/app.dir/FunctionsForTable_all_people.cpp.o.d -o CMakeFiles/app.dir/FunctionsForTable_all_people.cpp.o -c /Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/FunctionsForTable_all_people.cpp
-
-CMakeFiles/app.dir/FunctionsForTable_all_people.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/app.dir/FunctionsForTable_all_people.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/FunctionsForTable_all_people.cpp > CMakeFiles/app.dir/FunctionsForTable_all_people.cpp.i
-
-CMakeFiles/app.dir/FunctionsForTable_all_people.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/app.dir/FunctionsForTable_all_people.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/FunctionsForTable_all_people.cpp -o CMakeFiles/app.dir/FunctionsForTable_all_people.cpp.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/qwertz/Desktop/code/EntryPoint/main.cpp -o CMakeFiles/app.dir/main.cpp.s
 
 # Object files for target app
 app_OBJECTS = \
-"CMakeFiles/app.dir/main.cpp.o" \
-"CMakeFiles/app.dir/FunctionsForCreateAllTables.cpp.o" \
-"CMakeFiles/app.dir/FunctionsForTable_all_people.cpp.o"
+"CMakeFiles/app.dir/main.cpp.o"
 
 # External object files for target app
 app_EXTERNAL_OBJECTS =
 
 app: CMakeFiles/app.dir/main.cpp.o
-app: CMakeFiles/app.dir/FunctionsForCreateAllTables.cpp.o
-app: CMakeFiles/app.dir/FunctionsForTable_all_people.cpp.o
 app: CMakeFiles/app.dir/build.make
+app: /opt/homebrew/opt/libpqxx/lib/libpqxx.dylib
+app: /opt/homebrew/opt/libpq/lib/libpq.dylib
+app: /opt/homebrew/opt/fmt/lib/libfmt.dylib
 app: CMakeFiles/app.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable app"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/qwertz/Desktop/code/EntryPoint/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable app"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/app.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -140,6 +111,6 @@ CMakeFiles/app.dir/clean:
 .PHONY : CMakeFiles/app.dir/clean
 
 CMakeFiles/app.dir/depend:
-	cd /Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree /Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree /Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/build /Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/build /Users/qwertz/Desktop/code/projects/EntryPoint_testing_postgree/build/CMakeFiles/app.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /Users/qwertz/Desktop/code/EntryPoint/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/qwertz/Desktop/code/EntryPoint /Users/qwertz/Desktop/code/EntryPoint /Users/qwertz/Desktop/code/EntryPoint/build /Users/qwertz/Desktop/code/EntryPoint/build /Users/qwertz/Desktop/code/EntryPoint/build/CMakeFiles/app.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/app.dir/depend
 

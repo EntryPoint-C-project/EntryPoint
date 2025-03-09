@@ -1,5 +1,6 @@
 #pragma once
 #include <pqxx/pqxx>
+#include "IPrimaryKeyEntity.hpp"
 #include <vector>
 #include <string>
 #include <stdexcept>
@@ -8,14 +9,13 @@
 #include <fmt/ranges.h>
 
 
-
 template <typename T>
-class BaseCrud {
+class BaseCrud  {
 public:
     static void Create(pqxx::connection& conn,  T& entity) {
         try {
             pqxx::work txn(conn);
-            auto columns = std::vector<std::string>(std::next(T::columns.begin()),  T::columns.end() ); // no student_id 
+            auto columns = std::vector<std::string>(std::next(T::columns.begin()),  T::columns.end() ); 
             
             std::vector<std::string> placeholders;
             for (size_t i = 1; i <= columns.size(); ++i) {
@@ -25,23 +25,37 @@ public:
             /* 
                 join - фукнция которая преобразует итератор в строчку с разделитемем , который указали 
             */
-            // insert into studenst (person_id , program_id , info) values ($1 , $2 , $3) ; 
-            std::string sql = fmt::format( "INSERT INTO {} ({}) VALUES ({}) RETURNING student_id;", T::table_name, fmt::join(columns, ", "), fmt::join(placeholders, ", ") );
 
+            std::string sql;
+            if constexpr (std::is_base_of_v<ISinglePrimaryKeyEntity, T>) {
+                sql = fmt::format("INSERT INTO {} ({}) VALUES ({}) RETURNING {};",
+                                T::table_name,
+                                fmt::join(columns, ", "),
+                                fmt::join(placeholders, ", "),
+                                T::columns[0]);
+            } else if constexpr (std::is_base_of_v<ICompositePrimaryKeyEntity, T>) {
+                sql = fmt::format("INSERT INTO {} ({}) VALUES ({}) RETURNING {}, {};",
+                                T::table_name,
+                                fmt::join(columns, ", "),
+                                fmt::join(placeholders, ", "),
+                                T::columns[0],
+                                T::columns[1]);
+            } else {
+                throw std::runtime_error("Entity type must implement a primary key interface.");
+            }
 
 
             auto values = entity.get_values_tuple();
-
-            pqxx::result result = std::apply([&sql, &txn](const auto&... args) {
-                return txn.exec_params(sql, args...);
-            }, values);
-
-            // std::apply([&sql, &txn](const auto&... args) {
-            //     txn.exec_params(sql, args...);
-            // }, values);
-
-            if (!result.empty()) {
-                entity.student_id  = result[0][columns[0]].as<int>();
+            if constexpr (std::is_base_of_v<ISinglePrimaryKeyEntity, T>) {
+                pqxx::result result = std::apply([&sql, &txn](const auto&... args) { 
+                    return txn.exec_params(sql, args...);
+                }, values);
+                entity.SetEntityPrimaryKey(entity, result, T::columns[0]);
+            } else if constexpr (std::is_base_of_v<ICompositePrimaryKeyEntity, T>) {
+                pqxx::result res = txn.exec_params(sql , T::columns[0] , T::columns[1]); 
+                entity.SetEntityPrimaryKey(entity, res, T::columns[0], T::columns[1]);
+            }else {
+                throw std::runtime_error("Entity type must implement a primary key interface.");
             }
 
 
@@ -84,7 +98,7 @@ public:
             // update students set (student_id = $1 , person_id = $2 , subject_id =$3 , info = $4  ) where student_id = $5 ; 
             std::string sql = fmt::format("UPDATE {} SET {} WHERE {} = ${}", T::table_name, fmt::join(set_clauses, ", "), T::columns[0], T::columns.size() );
 
-            auto values = entity.get_values_tuple(); // std::tuple 
+            auto values = entity.get_values_tuple(); 
 
             std::apply([&sql, &txn ,&id](const auto&... args) {
                 txn.exec_params(sql, args... , id);
