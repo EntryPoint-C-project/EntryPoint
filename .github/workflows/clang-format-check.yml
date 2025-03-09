@@ -1,0 +1,53 @@
+name: Clang Format Check
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  clang-format:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Шаг 1: Checkout репозитория
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Шаг 2: Установка зависимостей
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-format clang-tidy libboost-all-dev \
+                                  libcurl4-openssl-dev libpq-dev \
+                                  nlohmann-json3-dev libpqxx-dev
+
+      # Шаг 3: Установка TgBot
+      - name: Install TgBot
+        run: |
+          git clone https://github.com/reo7sp/tgbot-cpp.git
+          cd tgbot-cpp
+          mkdir build
+          cd build
+          cmake .. 
+          make -j$(nproc)
+          sudo make install
+
+      # Шаг 4: Кэширование директории сборки
+      - name: Cache Build Directory
+        uses: actions/cache@v3
+        with:
+          path: build
+          key: ${{ runner.os }}-build-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+
+      # Шаг 5: Конфигурация CMake
+      - name: Configure CMake
+        run: cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DTgBot_DIR=/usr/local/lib/cmake/TgBot
+
+      # Шаг 6: Запуск Clang Format
+      - name: Run Clang Format
+        run: |
+          find include source -name '*.cpp' -o -name '*.h' | xargs clang-format -i
+          git diff --exit-code || (echo "Clang format check failed! Run clang-format and commit changes."; exit 1)

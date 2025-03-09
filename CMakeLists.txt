@@ -1,31 +1,31 @@
-cmake_minimum_required(VERSION 3.10)
-project(TelegramBot)
+cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+project(MyProject)
 
-find_package(Boost REQUIRED COMPONENTS system)
-find_package(TgBot REQUIRED)
+include_directories(include)
 
-target_include_directories(include) 
+file(GLOB SOURCES source/*.cpp) 
 
-file(GLOB SOURCES source/*.cpp)
+add_executable(main ${SOURCES})
 
-add_executable(my_bot ${SOURCES})
+include(cmake/CPM.cmake)
 
-target_link_libraries(my_bot Boost::system TgBot::TgBot)
+CPMAddPackage(
+  NAME Boost
+  VERSION 1.86.0
+  URL https://github.com/boostorg/boost/releases/download/boost-1.86.0/boost-1.86.0-cmake.tar.xz
+  URL_HASH SHA256=2c5ec5edcdff47ff55e27ed9560b0a0b94b07bd07ed9928b476150e16b0efc57
+  OPTIONS "BOOST_ENABLE_CMAKE ON" "BOOST_SKIP_INSTALL_RULES ON"
+          "BUILD_SHARED_LIBS OFF" "BOOST_INCLUDE_LIBRARIES system"
+)
 
+CPMAddPackage(
+  NAME TgBot
+  GIT_REPOSITORY https://github.com/reo7sp/tgbot-cpp.git
+  GIT_TAG master  
+)
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    target_compile_options(my_bot PRIVATE
-        -g
-        -fsanitize=address,undefined
-        -fno-omit-frame-pointer
-    )
-    target_link_options(my_bot PRIVATE
-        -fsanitize=address,undefined
-        -fno-omit-frame-pointer
-    )
-endif()
+target_link_libraries(main 
+  Boost::system 
+  TgBot 
+)
