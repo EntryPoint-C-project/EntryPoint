@@ -28,5 +28,4 @@ CPMAddPackage(
 target_link_libraries(main 
   Boost::system 
   TgBot 
-  nlohmann_json::nlohmann_json
 )
