@@ -3,35 +3,40 @@
 #include <vector>
 #include <string>
 #include <stdexcept>
+#include <fmt/format.h>
+#include <fmt/core.h>
+#include <fmt/ranges.h>
 
 template <typename T>
 class BaseCrud {
 public:
-    static void Create(pqxx::connection &conn, const T &entity) {
+    static void Create(pqxx::connection& conn, const T& entity) {
         try {
             pqxx::work txn(conn);
+            auto columns = std::vector<std::string>(std::next(T::columns.begin()),  T::columns.end() ); // no student_id 
             
-            std::string sql = "INSERT INTO " + T::table_name + " (";
-            for (size_t i = 1; i < T::columns.size(); ++i) { // Skip first column (ID)
-                sql += T::columns[i];
-                if (i != T::columns.size() - 1) sql += ", ";
-            }
-            sql += ") VALUES (";
-            for (size_t i = 1; i < T::columns.size(); ++i) {
-                sql += "$" + std::to_string(i);
-                if (i != T::columns.size() - 1) sql += ", ";
-            }
-            sql += ")";
-
-            pqxx::params params;
-            for (const auto& value : entity.get_values()) {
-                params.append(value);
+            std::vector<std::string> placeholders;
+            for (size_t i = 1; i <= columns.size(); ++i) {
+                placeholders.push_back(fmt::format("${}", i));
             }
 
-            txn.exec_params(sql, params);
+            /* 
+                join - фукнция которая преобразует итератор в строчку с разделитемем , который указали 
+            */
+            // insert into studenst (person_id , program_id , info) values ($1 , $2 , $3) ; 
+            std::string sql = fmt::format( "INSERT INTO {} ({}) VALUES ({});", T::table_name, fmt::join(columns, ", "), fmt::join(placeholders, ", ") );
+
+
+            auto values = entity.get_values_tuple();
+
+            std::apply([&sql, &txn](const auto&... args) {
+                txn.exec_params(sql, args...);
+            }, values);
+
+
             txn.commit();
-        } catch (const std::exception &e) {
-            throw std::runtime_error("Create error: " + std::string(e.what()));
+        } catch (const std::exception& e) {
+            throw std::runtime_error(fmt::format("Create error: {}", e.what()));
         }
     }
 
@@ -39,87 +44,58 @@ public:
         std::vector<T> result;
         try {
             pqxx::work txn(conn);
-            std::string sql = "SELECT * FROM " + T::table_name;
-            
+            std::string sql = fmt::format("SELECT * FROM {} ; ", T::table_name);
             pqxx::result res = txn.exec(sql);
+
             for (const auto& row : res) {
                 T entity;
                 entity.loadFromRow(row);
                 result.push_back(entity);
             }
+
             txn.commit();
         } catch (const std::exception &e) {
-            throw std::runtime_error("Read error: " + std::string(e.what()));
+            throw std::runtime_error(fmt::format("Read error: {} ", e.what()));
         }
         return result;
-    }
-
-    static T ReadById(pqxx::connection &conn, int id) {
-        try {
-            pqxx::work txn(conn);
-            std::string sql = "SELECT * FROM " + T::table_name 
-                            + " WHERE " + T::columns[0] + " = $1";
-            
-            pqxx::params params;
-            params.append(std::to_string(id));
-            
-            pqxx::result res = txn.exec_params(sql, params);
-            if (res.empty()) {
-                throw std::runtime_error("Record not found");
-            }
-            
-            T entity;
-            entity.loadFromRow(res[0]);
-            txn.commit();
-            return entity;
-        } catch (const std::exception &e) {
-            throw std::runtime_error("ReadById error: " + std::string(e.what()));
-        }
     }
 
     static void Update(pqxx::connection &conn, int id, const T &entity) {
         try {
             pqxx::work txn(conn);
-            std::string sql = "UPDATE " + T::table_name + " SET ";
-            
-            // Generate SET clause
+            std::vector<std::string> set_clauses;
+            /* 
+                тут типо он получает список колонок , и преобразует их в поля бд
+            */
             for (size_t i = 1; i < T::columns.size(); ++i) {
-                sql += T::columns[i] + " = $" + std::to_string(i);
-                if (i != T::columns.size() - 1) sql += ", ";
+                set_clauses.push_back(fmt::format("{} = ${}", T::columns[i], i));
             }
             
-            // Add WHERE clause
-            sql += " WHERE " + T::columns[0] + " = $" + std::to_string(T::columns.size());
 
-            // Prepare parameters
-            auto values = entity.get_values();
-            values.push_back(std::to_string(id)); // Add ID as last parameter
-            
-            pqxx::params params;
-            for (const auto& value : values) {
-                params.append(value);
-            }
+            // update students set (student_id = $1 , person_id = $2 , subject_id =$3 , info = $4  ) where student_id = $5 ; 
+            std::string sql = fmt::format("UPDATE {} SET {} WHERE {} = ${}", T::table_name, fmt::join(set_clauses, ", "), T::columns[0], T::columns.size() );
 
-            txn.exec_params(sql, params);
+            auto values = entity.get_values_tuple(); // std::tuple 
+
+            std::apply([&sql, &txn ,&id](const auto&... args) {
+                txn.exec_params(sql, args... , id);
+            }, values);
+
             txn.commit();
-        } catch (const std::exception &e) {
-            throw std::runtime_error("Update error: " + std::string(e.what()));
+        } catch (const std::exception& e) {
+            throw std::runtime_error(fmt::format("Update error: {}", e.what()));
         }
     }
 
-    static void Delete(pqxx::connection &conn, int id) {
+    static void Delete(pqxx::connection& conn, int id) {
         try {
             pqxx::work txn(conn);
-            std::string sql = "DELETE FROM " + T::table_name 
-                            + " WHERE " + T::columns[0] + " = $1";
+            std::string sql = fmt::format( "DELETE FROM {} WHERE {} = $1", T::table_name, T::columns[0] );
             
-            pqxx::params params;
-            params.append(std::to_string(id));
-            
-            txn.exec_params(sql, params);
+            txn.exec_params(sql, id);
             txn.commit();
-        } catch (const std::exception &e) {
-            throw std::runtime_error("Delete error: " + std::string(e.what()));
+        } catch (const std::exception& e) {
+            throw std::runtime_error(fmt::format("Delete error: {}", e.what()));
         }
     }
 };
