@@ -1,11 +1,18 @@
+# IDEs and editors
+.idea/
+.vscode/
+
+# Build directories
+build/
+
 # Prerequisites
 *.d
 
 # Compiled Object files
-*.slo
-*.lo
 *.o
 *.obj
+*.slo
+*.lo
 
 # Precompiled Headers
 *.gch
@@ -21,10 +28,10 @@
 *.smod
 
 # Compiled Static libraries
-*.lai
-*.la
 *.a
 *.lib
+*.lai
+*.la
 
 # Executables
 *.exe
