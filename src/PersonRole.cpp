@@ -12,9 +12,13 @@ static void Create(pqxx::connection &conn, int person_id, int role_id) {
     BaseCrud<PersonRole>::Create(conn, person_role);
 }
 
-static std::vector<PersonRole> Read(pqxx::connection &conn) {
-    return BaseCrud<PersonRole>::Read(conn);
+static std::vector<PersonRole> ReadRole(pqxx::connection &conn , int person_id) {
+    return BaseCrud<PersonRole>::Read(conn , person_id);
 }
+static std::vector<PersonRole> ReadPerson(pqxx::connection &conn , int role_id) {
+    return BaseCrud<PersonRole>::Read(conn , role_id);
+}
+
 
 static void Update(pqxx::connection &conn, int person_id, std::vector<std::string> new_params_for_person_role) {
     PersonRole updated_person_role;

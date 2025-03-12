@@ -11,8 +11,8 @@ static void Create(pqxx::connection &conn, const std::string &tag_name) {
     BaseCrud<Tags>::Create(conn, tag);
 }
 
-static std::vector<Tags> Read(pqxx::connection &conn) {
-    return BaseCrud<Tags>::Read(conn);
+static std::vector<Tags> Read(pqxx::connection &conn , int tag_id) {
+    return BaseCrud<Tags>::Read(conn , tag_id);
 }
 
 static void Update(pqxx::connection &conn, int tag_id, std::vector<std::string> new_params_for_tag) {

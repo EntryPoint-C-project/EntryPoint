@@ -13,8 +13,12 @@ static void Create(pqxx::connection &conn, int result_id, int request_id) {
     BaseCrud<ResultRequest>::Create(conn, result_request);
 }
 
-static std::vector<ResultRequest> Read(pqxx::connection &conn) {
-    return BaseCrud<ResultRequest>::Read(conn);
+static std::vector<ResultRequest> ReadRequest(pqxx::connection &conn , int result_id) {
+    return BaseCrud<ResultRequest>::Read(conn, result_id);
+}
+
+static std::vector<ResultRequest> ReadResult(pqxx::connection &conn , int requst_id   ) {
+    return BaseCrud<ResultRequest>::Read(conn, requst_id);
 }
 
 static void Update(pqxx::connection &conn, int result_id, std::vector<std::string> new_params_for_result_request) {

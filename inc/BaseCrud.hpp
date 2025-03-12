@@ -30,6 +30,7 @@ public:
             }
 
             std::string sql;
+            // todo: тут сделать так , у нас была возможность передавать вектор из параметров , после чего мы брали парсили его результаты , а после пососать большой член 
             if constexpr (std::is_base_of_v<ISinglePrimaryKeyEntity, T>) {
                 sql = fmt::format("INSERT INTO {} ({}) VALUES ({}) RETURNING {};",
                                 T::table_name,
@@ -50,7 +51,7 @@ public:
                 pqxx::result result = std::apply([&sql, &txn](const auto&... args) {
                     return txn.exec_params(sql, args...);
                 }, values);
-                entity.SetEntityPrimaryKey(entity, result, T::columns[0]);
+                    entity.SetEntityPrimaryKey(entity, result, T::columns[0]);
             } else if constexpr (std::is_base_of_v<ICompositePrimaryKeyEntity, T>) {
                 pqxx::result res = std::apply([&sql, &txn](const auto&... args) {
                     return txn.exec_params(sql, args...);
@@ -64,12 +65,12 @@ public:
         }
     }
 
-    static std::vector<T> Read(pqxx::connection &conn) {
+    static std::vector<T> Read(pqxx::connection &conn , int id ) {
         std::vector<T> result;
         try {
             pqxx::work txn(conn);
-            std::string sql = fmt::format("SELECT * FROM {} ; ", T::table_name);
-            pqxx::result res = txn.exec(sql);
+            std::string sql = fmt::format("SELECT * FROM {} WHERE {} = ${}; ", T::table_name, T::columns[0], 1);
+            pqxx::result res = txn.exec(sql , id);
 
             for (const auto& row : res) {
                 T entity;

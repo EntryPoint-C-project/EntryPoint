@@ -13,8 +13,8 @@ void Roles::Create(pqxx::connection &conn , const std::string &role_name) {
     BaseCrud<Roles>::Create(conn, role);
 }
 
-std::vector<Roles> Roles::Read(pqxx::connection &conn) {
-    return BaseCrud<Roles>::Read(conn);
+std::vector<Roles> Roles::Read(pqxx::connection &conn , int role_id) {
+    return BaseCrud<Roles>::Read(conn , role_id);
 }
 
 void Roles::Update(pqxx::connection &conn, int role_id, std::vector<std::string> new_params_for_role) {

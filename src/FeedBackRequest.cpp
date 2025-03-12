@@ -15,8 +15,8 @@ static void Create(pqxx::connection &conn, int teacher_id, int subject_id, const
     BaseCrud<FeedBackRequest>::Create(conn, feedBackRequest);
 }
 
-static std::vector<FeedBackRequest> Read(pqxx::connection &conn) {
-    return BaseCrud<FeedBackRequest>::Read(conn);
+static std::vector<FeedBackRequest> Read(pqxx::connection &conn , int request_id) {
+    return BaseCrud<FeedBackRequest>::Read(conn, request_id);
 }
 
 static void Update(pqxx::connection &conn, int request_id, std::vector<std::string> new_params_for_request) {

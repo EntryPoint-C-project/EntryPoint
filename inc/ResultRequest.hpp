@@ -22,7 +22,8 @@ public:
         return std::make_tuple(result_id, request_id);
     }
     static void Create(pqxx::connection &conn, int result_id, int request_id) ;
-    static std::vector<ResultRequest> Read(pqxx::connection &conn);
+    static std::vector<ResultRequest> ReadRequest(pqxx::connection &conn , int result_id) ;
+    static std::vector<ResultRequest> ReadResult(pqxx::connection &conn , int request_id) ;
     static void Update(pqxx::connection &conn, int result_id, std::vector<std::string> new_params_for_result_request) ;
     static void Delete(pqxx::connection &conn, int result_id) ;
     friend std::ostream& operator<<(std::ostream& os, const ResultRequest& rr) {

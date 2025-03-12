@@ -2,6 +2,8 @@
 #include <pqxx/pqxx>
 #include <utility> 
 
+typedef std::vector<int> PrimaryKey;
+
 
 class ISinglePrimaryKeyEntity {
 public:
@@ -15,7 +17,7 @@ public:
             entity.SetPrimaryKey(result[0][column_name].as<int>());
         }
     }
-    
+
     virtual ~ISinglePrimaryKeyEntity() = default; 
 
 };

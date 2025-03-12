@@ -23,7 +23,8 @@ public:
         return std::make_tuple(person_id, filter_id);
     }
     static void Create(pqxx::connection &conn, int person_id, int filter_id) ;
-    static std::vector<PersonFilterAccess> Read(pqxx::connection &conn);
+    static std::vector<PersonFilterAccess> ReadFilters(pqxx::connection &conn , int person_id) ;
+    static std::vector<PersonFilterAccess> ReadPeople(pqxx::connection &conn , int filter_id) ;
     static void Update(pqxx::connection &conn, int person_id, std::vector<std::string> new_params_for_person_filter_access) ;
     static void Delete(pqxx::connection &conn, int person_id) ;
     friend std::ostream& operator<<(std::ostream& os, const PersonFilterAccess& pfa) {

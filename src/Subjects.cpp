@@ -11,8 +11,8 @@ void Subjects::Create(pqxx::connection &conn, const std::string &subject_name) {
     BaseCrud<Subjects>::Create(conn, subject);
 }
 
-std::vector<Subjects> Subjects::Read(pqxx::connection &conn) {
-    return BaseCrud<Subjects>::Read(conn);
+std::vector<Subjects> Subjects::Read(pqxx::connection &conn , int subject_id) {
+    return BaseCrud<Subjects>::Read(conn , subject_id);
 }
 
 void Subjects::Update(pqxx::connection &conn, int subject_id, std::vector<std::string> new_params_for_subject) {

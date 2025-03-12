@@ -10,16 +10,19 @@ class Tags : public ISinglePrimaryKeyEntity {
 public:
     int tag_id;
     std::string tag_name;
+
     int GetPrimaryKey() const override { return tag_id; }
     void SetPrimaryKey(int id) override { tag_id = id; }
+
     static const inline std::string table_name = "tags";
     static const inline std::vector<std::string> columns = {"tag_id", "tag_name"};
+    
     void loadFromRow(const pqxx::row &row) ;
     auto get_values_tuple() const {
         return std::make_tuple(tag_name);
     }
     static void Create(pqxx::connection &conn, const std::string &tag_name) ;
-    static std::vector<Tags> Read(pqxx::connection &conn) ;
+    static std::vector<Tags> Read(pqxx::connection &conn , int tag_id) ;
     static void Update(pqxx::connection &conn, int tag_id, std::vector<std::string> new_params_for_tag) ;
     static void Delete(pqxx::connection &conn, int tag_id) ;
     friend std::ostream& operator<<(std::ostream& os, const Tags& t) {

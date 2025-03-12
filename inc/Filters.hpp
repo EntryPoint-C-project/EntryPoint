@@ -20,7 +20,7 @@ public:
         return std::make_tuple(filter_name);
     }
     static void Create(pqxx::connection &conn, const std::string &filter_name) ;
-    static std::vector<Filters> Read(pqxx::connection &conn) ;
+    static std::vector<Filters> Read(pqxx::connection &conn , int filter_id) ;
     static void Update(pqxx::connection &conn, int filter_id, std::vector<std::string> new_params_for_filter) ;
     static void Delete(pqxx::connection &conn, int filter_id) ;
     friend std::ostream& operator<<(std::ostream& os, const Filters& f) {

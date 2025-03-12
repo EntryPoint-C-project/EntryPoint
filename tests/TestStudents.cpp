@@ -1,4 +1,4 @@
-#include "inc/Students.hpp"
+#include "../inc/Students.hpp"
 #include <pqxx/pqxx>
 #include <fmt/core.h>
 
@@ -20,7 +20,7 @@ int main() {
 
 
         fmt::print("\n[READ] Чтение всех студентов:\n");
-        auto students = BaseCrud<Students>::Read(conn);
+        auto students = BaseCrud<Students>::Read(conn, test_student1.student_id);
         for (const auto& s : students) {
             fmt::print("• {}\n", s);
         }
@@ -34,7 +34,7 @@ int main() {
 
 
         fmt::print("\n[FINAL READ] Текущие студенты:\n");
-        auto studentsss = BaseCrud<Students>::Read(conn);
+        auto studentsss = BaseCrud<Students>::Read(conn , test_student1.student_id);
         for (const auto& s : studentsss) {
             fmt::print("• {}\n", s);
         }
@@ -46,7 +46,7 @@ int main() {
 
 
         fmt::print("\n[FINAL READ] Текущие студенты:\n");
-        auto studentss = BaseCrud<Students>::Read(conn);
+        auto studentss = BaseCrud<Students>::Read(conn , test_student1.student_id);
         for (const auto& s : studentss) {
             fmt::print("• {}\n", s);
         }

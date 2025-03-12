@@ -12,8 +12,12 @@ static void Create(pqxx::connection &conn, int category_id, int tag_id) {
     BaseCrud<CategoryTags>::Create(conn, category_tag);
 }
 
-static std::vector<CategoryTags> Read(pqxx::connection &conn) {
-    return BaseCrud<CategoryTags>::Read(conn);
+static std::vector<CategoryTags> ReadTag(pqxx::connection &conn, int category_id) {
+    return BaseCrud<CategoryTags>::Read(conn, category_id );
+}
+
+static std::vector<CategoryTags> ReadCategory(pqxx::connection &conn, int tag_id) {
+    return BaseCrud<CategoryTags>::Read(conn, tag_id);
 }
 
 static void Update(pqxx::connection &conn, int category_id, std::vector<std::string> new_params_for_category) {

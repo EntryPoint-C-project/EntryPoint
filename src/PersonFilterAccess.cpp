@@ -12,8 +12,12 @@ static void Create(pqxx::connection &conn, int person_id, int filter_id) {
     BaseCrud<PersonFilterAccess>::Create(conn, person_filter_access);
 }
 
-static std::vector<PersonFilterAccess> Read(pqxx::connection &conn) {
-    return BaseCrud<PersonFilterAccess>::Read(conn);
+static std::vector<PersonFilterAccess> ReadFilters(pqxx::connection &conn , int person_id) {
+    return BaseCrud<PersonFilterAccess>::Read(conn, person_id);
+}
+
+static std::vector<PersonFilterAccess> ReadPerson(pqxx::connection &conn , int filter_id) {
+    return BaseCrud<PersonFilterAccess>::Read(conn, filter_id);
 }
 
 static void Update(pqxx::connection &conn, int person_id, std::vector<std::string> new_params_for_person_filter_access) {

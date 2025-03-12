@@ -25,7 +25,7 @@ public:
     }
 
     static void Create(pqxx::connection &conn , const std::string &role_name) ; 
-    static std::vector<Roles> Read(pqxx::connection &conn) ; 
+    static std::vector<Roles> Read(pqxx::connection &conn , int role_id) ; 
     static void Update(pqxx::connection &conn, int role_id, std::vector<std::string> new_params_for_role) ; 
     static void Delete(pqxx::connection &conn, int role_id) ; 
 

@@ -22,7 +22,7 @@ public:
         return std::make_tuple(student_id, form_url);
     }
     static void Create(pqxx::connection &conn, int student_id, const std::string &form_url) ;
-    static std::vector<FeedBackURL> Read(pqxx::connection &conn) ;
+    static std::vector<FeedBackURL> Read(pqxx::connection &conn , int result_id) ;
     static void Update(pqxx::connection &conn, int result_id, std::vector<std::string> new_params_for_result) ;
     static void Delete(pqxx::connection &conn, int result_id) ;
     

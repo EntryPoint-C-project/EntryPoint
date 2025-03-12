@@ -16,8 +16,8 @@ static void Create(pqxx::connection &conn, const std::string &category_name , co
     BaseCrud<Categories>::Create(conn, category);
 }
 
-static std::vector<Categories> Read(pqxx::connection &conn) {
-    return BaseCrud<Categories>::Read(conn);
+static std::vector<Categories> Read(pqxx::connection &conn, int category_id) {
+    return BaseCrud<Categories>::Read(conn , category_id);
 }
 
 static void Update(pqxx::connection &conn, int category_id, std::vector<std::string> new_params_for_category) {

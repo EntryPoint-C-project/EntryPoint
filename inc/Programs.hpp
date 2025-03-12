@@ -25,7 +25,7 @@ public:
     }
 
     static void Create(pqxx::connection &conn, const std::string &program_name) ;
-    static std::vector<Programs> Read(pqxx::connection &conn);
+    static std::vector<Programs> Read(pqxx::connection &conn , int program_id) ;
     static void Update(pqxx::connection &conn, int program_id, std::vector<std::string> new_params_for_program) ;
     static void Delete(pqxx::connection &conn, int program_id) ;
     friend std::ostream& operator<<(std::ostream& os, const Programs& p) {
