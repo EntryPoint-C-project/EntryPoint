@@ -1,2 +1,4 @@
 # EntryPoint
-Проект на плюсах от 3 амбициозных пацанчиков 
+
+database structure:
+![Database Structure](database2.jpeg)
