@@ -1,3 +1,0 @@
-/Users/qwertz/Desktop/code/EntryPoint/build/CMakeFiles/app.dir
-/Users/qwertz/Desktop/code/EntryPoint/build/CMakeFiles/edit_cache.dir
-/Users/qwertz/Desktop/code/EntryPoint/build/CMakeFiles/rebuild_cache.dir
