@@ -15,7 +15,7 @@ int main() {
         if (!conn.is_open()) {
             throw std::runtime_error("Connection failed");
         }
-        fmt::print("✓ Подключено к: {}\n", conn.dbname());
+        fmt::print("✓ Connected to: {}\n", conn.dbname());
 
         std::string sql = 
             "DROP TABLE IF EXISTS "
@@ -35,17 +35,17 @@ int main() {
                 "Filters, "
                 "Filter_Includes, "
                 "Filter_Excludes, "
-                "Categories, "  // Исправлено!
+                "Categories, "  
                 "Category_Tags, " 
                 "Person_Filter_Access, "
-                "Feedbacks, "          // Добавлено
-                "Feedback_Participants " // Добавлено
+                "Feedbacks, "          
+                "Feedback_Participants " 
             "CASCADE;"; 
         txn.exec(sql ); 
         txn.commit(); 
-        fmt::print("все удалиллось нафиг)))") ; 
+        fmt::print("all deleted )))") ; 
     }catch( const std::exception &e){
-        fmt::print("произошла ошибка : {}\n", e.what());
+        fmt::print("Error: {}\n", e.what());
     }
     return 0 ; 
 }

@@ -12,7 +12,7 @@
 std::string ReadFileWithSql(const std::string& file_path) {
     std::ifstream file(file_path);
     if (!file.is_open()) {
-        throw std::runtime_error("Не удалось открыть файл: " + file_path);
+        throw std::runtime_error("No find file :  " + file_path);
     }
 
     std::stringstream buffer;
@@ -29,14 +29,14 @@ int main() {
         if (!conn.is_open()) {
             throw std::runtime_error("Connection failed");
         }
-        fmt::print("✓ Подключено к: {}\n", conn.dbname());
+        fmt::print("✓ Connected to: {}\n", conn.dbname());
 
-        std::string sql =  ReadFileWithSql("../CreateAllTable.sql");
+        std::string sql =  ReadFileWithSql("CreateAllTable.sql");
         txn.exec(sql ); 
         txn.commit(); 
-        fmt::print("все создалось )))") ; 
+        fmt::print("All tables created)))") ; 
     }catch( const std::exception &e){
-        fmt::print("произошла ошибка : {}\n", e.what());
+        fmt::print("Error: {}\n", e.what());
     }
     return 0 ; 
 }

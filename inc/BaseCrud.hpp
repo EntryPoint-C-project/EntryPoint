@@ -30,7 +30,6 @@ public:
             }
 
             std::string sql;
-            // todo: тут сделать так , у нас была возможность передавать вектор из параметров , после чего мы брали парсили его результаты , а после пососать большой член 
             if constexpr (std::is_base_of_v<ISinglePrimaryKeyEntity, T>) {
                 sql = fmt::format("INSERT INTO {} ({}) VALUES ({}) RETURNING {};",
                                 T::table_name,

@@ -2,15 +2,11 @@
 #include <pqxx/pqxx>
 #include <utility> 
 
-typedef std::vector<int> PrimaryKey;
-
 
 class ISinglePrimaryKeyEntity {
 public:
     virtual int GetPrimaryKey() const = 0; 
     virtual void SetPrimaryKey(int id) = 0;
-
-
 
     void SetEntityPrimaryKey(ISinglePrimaryKeyEntity& entity, const pqxx::result& result, const std::string& column_name) {
         if (!result.empty()) {
