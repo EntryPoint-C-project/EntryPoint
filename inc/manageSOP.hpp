@@ -1,13 +1,13 @@
 #ifndef MANAGESOP_HPP
 #define MANAGESOP_HPP
 
+#include <chrono>
 #include <curl/curl.h>
 #include <fstream>
 #include <iostream>
 #include <nlohmann/json.hpp>
-#include <string>
-#include <chrono>
 #include <pqxx/pqxx>
+#include <string>
 class ClassForJSONFormat {
 private:
   std::vector<std::tuple<std::string, std::string, std::string>> subjects;
@@ -54,13 +54,21 @@ public:
 
   std::string getAccessToken() const { return accessToken; }
 
-  std::chrono::steady_clock::time_point getLastUpdateTime() const { return lastUpdateTime; }
+  std::chrono::steady_clock::time_point getLastUpdateTime() const {
+    return lastUpdateTime;
+  }
 
-  std::chrono::seconds getTokenExpirationTime() const { return TOKEN_EXPIRATION_TIME; }
+  std::chrono::seconds getTokenExpirationTime() const {
+    return TOKEN_EXPIRATION_TIME;
+  }
 
-  std::string setAccessToken(std::string &accessToken_) { return accessToken = accessToken_; }
+  std::string setAccessToken(std::string &accessToken_) {
+    return accessToken = accessToken_;
+  }
 
-  void setLastUpdateTime() { lastUpdateTime = std::chrono::steady_clock::now(); }
+  void setLastUpdateTime() {
+    lastUpdateTime = std::chrono::steady_clock::now();
+  }
 
 private:
   std::string getEnvVar(const std::string &key);
@@ -73,20 +81,44 @@ private:
   const std::chrono::seconds TOKEN_EXPIRATION_TIME{3600};
 };
 
+class HttpClient {
+public:
+  HttpClient() {
+    curl = curl_easy_init();
+    if (!curl) {
+      throw std::runtime_error("Failed to initialize CURL");
+      curl_easy_setopt(curl, CURLOPT_TCP_KEEPALIVE, 1L);
+      curl_easy_setopt(curl, CURLOPT_TCP_KEEPIDLE, 120L);
+      curl_easy_setopt(curl, CURLOPT_TCP_KEEPINTVL, 60L);
+    }
+  }
+
+  ~HttpClient() {
+    if (curl) {
+      curl_easy_cleanup(curl);
+    }
+  }
+
+  std::string performHttpRequest(const std::string &url,
+                                 const std::string &method,
+                                 const std::string &accessToken,
+                                 const std::string &postData = "");
+
+private:
+  CURL *curl;
+  static size_t WriteCallback(void *contents, size_t size, size_t nmemb,
+                              std::string *userp);
+};
+
 std::vector<ClassForJSONFormat> getStudents(pqxx::connection &conn);
-std::string performHttpRequest(const std::string &url,
-                               const std::string &method,
-                               const std::string &accessToken,
-                               const std::string &postData = "");
-std::string refreshAccessToken(Config &config);
-std::string createForm(const std::string &jsonFilePath, Config &config);
+std::string refreshAccessToken(Config &config, HttpClient &httpClient);
+std::string createForm(const std::string &jsonFilePath, Config &config,
+                       HttpClient &httpClient);
 void deleteForm(const std::string &formId, Config &config);
 json readJsonFromFile(const std::string &filePath);
-size_t WriteCallback(void *contents, size_t size, size_t nmemb,
-                     std::string *userp);
 json generateQuestionsPerStudent(const ClassForJSONFormat &student);
-void addFieldToForm(const std::string &formId, json jsonFile,
-                    Config &config);
+void addFieldToForm(const std::string &formId, json jsonFile, Config &config,
+                    HttpClient &httpClient);
 std::string getFormUrl(const std::string &formId);
 } // namespace sop
 

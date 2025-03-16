@@ -2,9 +2,10 @@
 #include <vector>
 
 int main() {
-    sop::Config config = sop::Config::getInstance();
-    std::string file_path = "json/formTitle.json";
-    std::string formId = sop::createForm(file_path, config);
+  sop::Config config = sop::Config::getInstance();
+  sop::HttpClient httpClient;
+  std::string file_path = "json/formTitle.json";
+  std::string formId = sop::createForm(file_path, config, httpClient);
   ClassForJSONFormat student;
   std::vector<std::tuple<std::string, std::string, std::string>> params;
   params.emplace_back(
@@ -21,6 +22,6 @@ int main() {
   student.SetSubjects(params);
   nlohmann::json question = sop::generateQuestionsPerStudent(student);
   std::cout << question.dump() << '\n';
-  sop::addFieldToForm(formId, question, config);
+  sop::addFieldToForm(formId, question, config, httpClient);
   std::cout << sop::getFormUrl(formId) << '\n';
 }
