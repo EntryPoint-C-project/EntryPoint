@@ -2,9 +2,9 @@
 #include <vector>
 
 int main() {
-  sop::Config config = sop::Config::getInstance();
-  std::string file_path = "json/formTitle.json";
-  std::string formId = sop::createForm(file_path, config);
+    sop::Config config = sop::Config::getInstance();
+    std::string file_path = "json/formTitle.json";
+    std::string formId = sop::createForm(file_path, config);
   ClassForJSONFormat student;
   std::vector<std::tuple<std::string, std::string, std::string>> params;
   params.emplace_back(

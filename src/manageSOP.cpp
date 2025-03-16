@@ -77,7 +77,11 @@ size_t WriteCallback(void *contents, size_t size, size_t nmemb,
   return totalSize;
 }
 
-std::string refreshAccessToken(const Config &config) {
+std::string refreshAccessToken(Config &config) {
+  auto now = std::chrono::steady_clock::now();
+  if (std::chrono::duration_cast<std::chrono::seconds>(now - config.getLastUpdateTime()) < config.getTokenExpirationTime()) {
+    return config.getAccessToken();
+  }
   std::string postData =
       "grant_type=refresh_token&client_id=" + config.getClientId() +
       "&client_secret=" + config.getClientSecret() +
@@ -87,7 +91,9 @@ std::string refreshAccessToken(const Config &config) {
 
   json jsonResponse = json::parse(response);
   if (jsonResponse.contains("access_token")) {
-    return jsonResponse["access_token"].get<std::string>();
+    config.setLastUpdateTime();
+    std::string accessToken = jsonResponse["access_token"].get<std::string>();
+    return config.setAccessToken(accessToken);
   } else {
     std::cerr << "Error: 'access_token' not found in response" << std::endl;
     if (jsonResponse.contains("error")) {
@@ -142,7 +148,7 @@ std::string performHttpRequest(const std::string &url,
   return response;
 }
 
-std::string createForm(const std::string &jsonFilePath, const Config &config) {
+std::string createForm(const std::string &jsonFilePath, Config &config) {
   std::string accessToken = refreshAccessToken(config);
   if (accessToken.empty()) {
     std::cerr << "Failed to refresh access token" << std::endl;
@@ -166,7 +172,7 @@ std::string createForm(const std::string &jsonFilePath, const Config &config) {
 }
 
 void addFieldToForm(const std::string &formId, json jsonFile,
-                    const Config &config) {
+                    Config &config) {
   std::string accessToken = refreshAccessToken(config);
   if (accessToken.empty()) {
     std::cerr << "Failed to refresh access token" << std::endl;
@@ -187,7 +193,7 @@ std::string getFormUrl(const std::string &formId) {
   return "https://docs.google.com/forms/d/" + formId + "/viewform";
 }
 
-void deleteForm(const std::string &formId, const Config &config) {
+void deleteForm(const std::string &formId, Config &config) {
   std::string accessToken = refreshAccessToken(config);
   if (accessToken.empty()) {
     std::cerr << "Failed to refresh access token" << std::endl;
@@ -202,6 +208,7 @@ std::string Config::getEnvVar(const std::string &key) {
   const char *value = std::getenv(key.c_str());
   if (value == nullptr) {
     std::cout << "Unable to get: " + key + '\n';
+    return "";
   } else {
     return std::string(value);
   }
