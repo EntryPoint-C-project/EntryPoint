@@ -1,4 +1,4 @@
-#include "../inc/SubjectTags.hpp"
+#include "../include/SubjectTags.hpp"
 
 void SubjectTags::loadFromRow(const pqxx::row &row) {
     subject_id = row["subject_id"].as<int>();

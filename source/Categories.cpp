@@ -1,4 +1,4 @@
-#include "../inc/Categories.hpp"
+#include "../include/Categories.hpp"
 
 
 void Categories::loadFromRow(const pqxx::row &row) {

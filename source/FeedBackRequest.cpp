@@ -1,4 +1,4 @@
-#include "../inc/FeedBackRequest.hpp"
+#include "../include/FeedBackRequest.hpp"
 
 void FeedBackRequest::loadFromRow(const pqxx::row &row) {
     request_id = row["request_id"].as<int>();

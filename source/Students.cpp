@@ -1,4 +1,4 @@
-#include "../inc/Students.hpp"
+#include "../include/Students.hpp"
 
 void Students::loadFromRow(const pqxx::row &row) {
     student_id = row["student_id"].as<int>();

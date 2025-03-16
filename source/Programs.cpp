@@ -1,4 +1,4 @@
-#include "../inc/Programs.hpp"
+#include "../include/Programs.hpp"
 
 void Programs::loadFromRow(const pqxx::row &row) {
     program_id = row["program_id"].as<int>();

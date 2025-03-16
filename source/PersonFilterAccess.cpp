@@ -1,4 +1,4 @@
-#include "../inc/PersonFilterAccess.hpp"
+#include "../include/PersonFilterAccess.hpp"
 
 void PersonFilterAccess::loadFromRow(const pqxx::row &row) {
     person_id = row["person_id"].as<int>();

@@ -1,4 +1,4 @@
-#include "../inc/CategoryTags.hpp"
+#include "../include/CategoryTags.hpp"
 
 void CategoryTags::loadFromRow(const pqxx::row &row) {
     category_id = row["category_id"].as<int>();

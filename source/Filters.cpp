@@ -1,4 +1,4 @@
-#include "../inc/Filters.hpp"
+#include "../include/Filters.hpp"
 
 void Filters::loadFromRow(const pqxx::row &row) {
     filter_id = row["filter_id"].as<int>();

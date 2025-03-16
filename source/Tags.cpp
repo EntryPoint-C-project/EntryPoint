@@ -1,4 +1,4 @@
-#include "../inc/Tags.hpp"
+#include "../include/Tags.hpp"
 
 void Tags::loadFromRow(const pqxx::row &row) {
     tag_id = row["tag_id"].as<int>();

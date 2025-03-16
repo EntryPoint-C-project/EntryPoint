@@ -1,4 +1,4 @@
-#include "../inc/FilterExcludes.hpp"
+#include "../include/FilterExcludes.hpp"
 
 void FilterExcludes::loadFromRow(const pqxx::row &row) {
     filter_id = row["filter_id"].as<int>();

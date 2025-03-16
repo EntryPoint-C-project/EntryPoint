@@ -1,4 +1,4 @@
-#include "../inc/People.hpp"
+#include "../include/People.hpp"
 
 
 void People::loadFromRow(const pqxx::row &row) {

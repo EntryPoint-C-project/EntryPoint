@@ -1,4 +1,4 @@
-#include "../inc/FeedBackURL.hpp"
+#include "../include/FeedBackURL.hpp"
 
 void FeedBackURL::loadFromRow(const pqxx::row &row) {
     result_id = row["result_id"].as<int>();

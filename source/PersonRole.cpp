@@ -1,4 +1,4 @@
-#include "../inc/PersonRole.hpp"
+#include "../include/PersonRole.hpp"
 
 void PersonRole::loadFromRow(const pqxx::row &row) {
     person_id = row["person_id"].as<int>();

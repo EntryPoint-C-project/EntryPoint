@@ -1,4 +1,4 @@
-#include "../inc/ResultRequest.hpp"
+#include "../include/ResultRequest.hpp"
 
 
 void ResultRequest::loadFromRow(const pqxx::row &row) {
