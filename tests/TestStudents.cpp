@@ -1,4 +1,4 @@
-#include "../inc/Students.hpp"
+#include "../include/Students.hpp"
 #include <pqxx/pqxx>
 #include <fmt/core.h>
 
@@ -10,8 +10,8 @@ int main() {
 
         Students test_student1; 
         test_student1.person_id = 23 ; 
-        test_student1.program_id = 23 ;  
-        test_student1.info = "бла бла бла"; 
+        test_student1.program_id = 1 ;  
+        test_student1.info = "бла "; 
 
         
         fmt::print("\n[CREATE] Создание тестовых записей...\n");
@@ -21,9 +21,7 @@ int main() {
 
         fmt::print("\n[READ] Чтение всех студентов:\n");
         auto students = BaseCrud<Students>::Read(conn, test_student1.student_id);
-        for (const auto& s : students) {
-            fmt::print("• {}\n", s);
-        }
+        fmt::print("• {}\n", students);
 
 
         fmt::print("\n[UPDATE] Обновление студента...\n");
@@ -35,9 +33,7 @@ int main() {
 
         fmt::print("\n[FINAL READ] Текущие студенты:\n");
         auto studentsss = BaseCrud<Students>::Read(conn , test_student1.student_id);
-        for (const auto& s : studentsss) {
-            fmt::print("• {}\n", s);
-        }
+        fmt::print("• {}\n", studentsss);
 
 
         fmt::print("\n[DELETE] Удаление студента...\n");
@@ -47,9 +43,7 @@ int main() {
 
         fmt::print("\n[FINAL READ] Текущие студенты:\n");
         auto studentss = BaseCrud<Students>::Read(conn , test_student1.student_id);
-        for (const auto& s : studentss) {
-            fmt::print("• {}\n", s);
-        }
+        fmt::print("• {}\n", studentss);
 
     } catch (const std::exception& e) {
         fmt::print(stderr, "\n!!! ОШИБКА: {}\n", e.what());

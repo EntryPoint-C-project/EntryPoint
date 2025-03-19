@@ -11,7 +11,7 @@ static void Create(pqxx::connection &conn, const std::string &filter_name) {
     BaseCrud<Filters>::Create(conn, filter);
 }
 
-static std::vector<Filters> Read(pqxx::connection &conn , int filter_id) {
+static Filters Read(pqxx::connection &conn , int filter_id) {
     return BaseCrud<Filters>::Read(conn , filter_id);
 }
 

@@ -25,7 +25,7 @@ public:
         return std::make_tuple(first_name, last_name, tg_nick);
     }
     static void Create(pqxx::connection &conn, const std::string &first_name, const std::string &last_name, const std::string &tg_nick) ; 
-    static std::vector<People> Read(pqxx::connection &conn , int person_id) ; 
+    static People Read(pqxx::connection &conn , int person_id) ; 
     static void Update(pqxx::connection &conn, int person_id, std::vector<std::string> new_params_for_person) ; 
     static void Delete(pqxx::connection &conn, int person_id) ; 
 

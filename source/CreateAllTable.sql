@@ -115,10 +115,11 @@ CREATE TABLE Filter_Excludes (
 
 CREATE TABLE Catagories (
     category_id SERIAL PRIMARY KEY , 
-    category_name VARCHAR(255) NOT NULL , 
+    category_name VARCHAR(255)  , 
     filter_id INt REFERENCES Filters(filter_id) ON DELETE CASCADE NOT NULL ,
     required BOOLEAN
 );
+
 
 
 CREATE TABLE Category_Tags(

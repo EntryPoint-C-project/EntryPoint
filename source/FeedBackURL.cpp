@@ -13,7 +13,7 @@ static void Create(pqxx::connection &conn, int student_id, const std::string &fo
     BaseCrud<FeedBackURL>::Create(conn, feedBackURL);
 }
 
-static std::vector<FeedBackURL> Read(pqxx::connection &conn , int result_id) {
+static FeedBackURL Read(pqxx::connection &conn , int result_id) {
     return BaseCrud<FeedBackURL>::Read(conn, result_id);
 }
 

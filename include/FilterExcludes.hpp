@@ -22,8 +22,6 @@ public:
         return std::make_tuple(filter_id, tag_id);
     }
     static void Create(pqxx::connection &conn, int filter_id, int tag_id) ;
-    static std::vector<FilterExcludes> ReadTag(pqxx::connection &conn, int filter_id);
-    static std::vector<FilterExcludes> ReadFilter(pqxx::connection &conn, int tag_id);
     static void Update(pqxx::connection &conn, int filter_id, std::vector<std::string> new_params_for_filter_excludes) ;
     static void Delete(pqxx::connection &conn, int filter_id) ;
 

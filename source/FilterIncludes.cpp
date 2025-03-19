@@ -13,13 +13,6 @@ static void Create(pqxx::connection &conn, int filter_id , int tag_id) {
     BaseCrud<FilterInludes>::Create(conn, filter_includes);
 }
 
-static std::vector<FilterInludes> ReadTag(pqxx::connection &conn, int filter_id) {
-    return BaseCrud<FilterInludes>::Read(conn , filter_id);
-}
-
-static std::vector<FilterInludes> ReadFilter(pqxx::connection &conn, int tag_id ) {
-    return BaseCrud<FilterInludes>::Read(conn , tag_id);
-}
 
 static void Update(pqxx::connection &conn, int tag_id, std::vector<std::string> new_params_for_filter_includes) {
     FilterInludes updated_filter_includes;

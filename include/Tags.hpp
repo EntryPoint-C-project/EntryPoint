@@ -22,7 +22,7 @@ public:
         return std::make_tuple(tag_name);
     }
     static void Create(pqxx::connection &conn, const std::string &tag_name) ;
-    static std::vector<Tags> Read(pqxx::connection &conn , int tag_id) ;
+    static Tags Read(pqxx::connection &conn , int tag_id) ;
     static void Update(pqxx::connection &conn, int tag_id, std::vector<std::string> new_params_for_tag) ;
     static void Delete(pqxx::connection &conn, int tag_id) ;
     friend std::ostream& operator<<(std::ostream& os, const Tags& t) {

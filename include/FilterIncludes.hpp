@@ -23,8 +23,7 @@ public:
         return std::make_tuple(filter_id, tag_id);
     }
     static void Create(pqxx::connection &conn, int filter_id, int tag_id) ;
-    static std::vector<FilterInludes> ReadTag(pqxx::connection &conn , int filter_id) ;
-    static std::vector<FilterInludes> ReadFitler(pqxx::connection &conn , int tag_id) ;
+
     static void Update(pqxx::connection &conn, int filter_id, std::vector<std::string> new_params_for_filter_includes) ;
     static void Delete(pqxx::connection &conn, int filter_id) ;
     friend std::ostream& operator<<(std::ostream& os, const FilterInludes& fi) {

@@ -25,9 +25,9 @@ public:
     }
 
     static void Create(pqxx::connection &conn, int teacher_id, int subject_id, const std::string &request_name) ;
-    static std::vector<FeedBackRequest> Read(pqxx::connection &conn, int request_id) ;
-    static void Update(pqxx::connection &conn, int request_id, std::vector<std::string> new_params_for_request) ;
-    static void Delete(pqxx::connection &conn, int request_id) ;
+    static FeedBackRequest Read(pqxx::connection &conn, int request_id) ;
+    static void UpdateLinkingPlates(pqxx::connection &conn, std::pair<int ,int > ids, std::pair<int , int> new_params_for_request) ;
+    static void DeleteFromLinkingPlates(pqxx::connection &conn, std::pair<int , int> ids) ;
 
     friend std::ostream& operator<<(std::ostream& os, const FeedBackRequest& f) {
         return os << fmt::format ("FeedBackRequest(ID: {}, TeacherID: {}, SubjectID: {}, RequestName: {})", f.request_id, f.teacher_id, f.subject_id, f.request_name );

@@ -1,13 +1,13 @@
-#include "../inc/CategoryTags.hpp"
-#include "../inc/PeopleSubject.hpp"
-#include "../inc/People.hpp"
-#include "../inc/Subjects.hpp"
-#include "../inc/Roles.hpp"
-#include "../inc/Programs.hpp"
-#include "../inc/Students.hpp"
-#include "../inc/Categories.hpp"
-#include "../inc/TeacherSubject.hpp"
-#include "../inc/Tags.hpp"
+#include "../include/CategoryTags.hpp"
+#include "../include/PeopleSubject.hpp"
+#include "../include/People.hpp"
+#include "../include/Subjects.hpp"
+#include "../include/Roles.hpp"
+#include "../include/Programs.hpp"
+#include "../include/Students.hpp"
+#include "../include/Categories.hpp"
+#include "../include/TeacherSubject.hpp"
+#include "../include/Tags.hpp"
 #include <pqxx/pqxx>
 #include <fmt/core.h>
 
@@ -15,34 +15,34 @@ void AddPeople( pqxx::connection &conn  ) {
     People p1 ; 
     p1.first_name = "Danik" ;
     p1.last_name = "Kalasnikov" ; 
-    p1.tg_nick = "@spelaya_melon" ; 
+    p1.tg_nick = "@spelaya_melons" ; 
 
 
     People p2 ; 
     p2.first_name = "Egor" ; 
     p2.last_name = "Lukavenko" ; 
-    p2.tg_nick = "people2" ; 
+    p2.tg_nick = "people2s" ; 
 
     
     People p3 ; 
     p3.first_name = "Bad" ; 
     p3.last_name = "People" ; 
-    p3.tg_nick = "people3" ; 
+    p3.tg_nick = "people3s" ; 
 
     People p4 ; 
     p4.first_name = "Sergey" ; 
     p4.last_name = "Kopel" ; 
-    p4.tg_nick = "@burunduk" ; 
+    p4.tg_nick = "@burunduks" ; 
 
     People p5 ; 
     p5.first_name = "Misha" ; 
     p5.last_name = "Antipov" ; 
-    p5.tg_nick = "@ochev" ; 
+    p5.tg_nick = "@ochevs" ; 
 
     People p6 ; 
     p6.first_name = "Aleksander" ; 
     p6.last_name = "Kchabrov" ; 
-    p6.tg_nick = "@math" ; 
+    p6.tg_nick = "@maths" ; 
         
     try {
         BaseCrud <People>::Create (conn , p1);
@@ -89,29 +89,6 @@ void AddSubjects( pqxx::connection &conn  ) {
 }
 
 
-void AddLinkBetweenSubjectsAndPeople(pqxx::connection &conn){
-    PeopleSubject l1 ; 
-    l1.person_id = 1; 
-    l1.subject_id= 2; 
-
-    l1.person_id = 1; 
-    l1.subject_id= 3; 
-
-    l1.person_id = 1; 
-    l1.subject_id= 1; 
-
-    PeopleSubject l2 ; 
-    l2.person_id = 2 ; 
-    l2.subject_id= 2  ; 
-
-    BaseCrud<PeopleSubject>::Create(conn , l1);   
-    fmt::print("связь успешно добавлен : {} + {}\n" , l1.person_id , l1.subject_id);
-    BaseCrud<PeopleSubject>::Create(conn , l2);    
-    fmt::print("связь успешно добавлен : {} + {}\n" , l2.person_id , l2.subject_id);
-    
-    fmt::print("инфомация успешно добавлен\n"); 
-}
-
 
 void AddLinkBetweenSubjectsAndTeacher(pqxx::connection &conn){
     TeacherSubject l1 ; 
@@ -143,10 +120,8 @@ void AddLinkBetweenSubjectsAndTeacher(pqxx::connection &conn){
 
 void ReadPeople(pqxx::connection &conn, int id ){
     try {
-        std::vector <People> people = BaseCrud<People>::Read(conn , id); 
-        for (const auto& p : people) {
-            fmt::print("• {}\n", p);
-        }
+        People people = BaseCrud<People>::Read(conn , id); 
+        fmt::print("{}\n" , people.first_name);
 
     }catch (const std::exception &e){
         fmt::print("произошла ошибка : {}" , e.what()) ;
@@ -164,7 +139,6 @@ int main(){
         pqxx::connection conn(conn_str); 
         AddPeople(conn); 
         AddSubjects(conn); 
-        AddLinkBetweenSubjectsAndPeople(conn);
         AddLinkBetweenSubjectsAndTeacher(conn); 
 
         ReadPeople(conn , 1);

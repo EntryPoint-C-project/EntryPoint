@@ -15,19 +15,15 @@ static void Create(pqxx::connection &conn, int teacher_id, int subject_id, const
     BaseCrud<FeedBackRequest>::Create(conn, feedBackRequest);
 }
 
-static std::vector<FeedBackRequest> Read(pqxx::connection &conn , int request_id) {
+static FeedBackRequest Read(pqxx::connection &conn , int request_id) {
     return BaseCrud<FeedBackRequest>::Read(conn, request_id);
 }
 
-static void Update(pqxx::connection &conn, int request_id, std::vector<std::string> new_params_for_request) {
-    FeedBackRequest feedBackRequest_updated;
-    feedBackRequest_updated.request_id = request_id;
-    feedBackRequest_updated.teacher_id = std::stoi(new_params_for_request[0]);
-    feedBackRequest_updated.subject_id = std::stoi(new_params_for_request[1]);
-    feedBackRequest_updated.request_name = new_params_for_request[2];
-    BaseCrud<FeedBackRequest>::Update(conn, request_id, feedBackRequest_updated);
+static void UpdateLinkingPlates(pqxx::connection &conn, std::pair<int ,int > ids, std::pair<int , int> new_params_for_request) {
+    BaseCrud<FeedBackRequest>::UpdateLinkingPlates(conn, ids, new_params_for_request);
 }
 
-static void Delete(pqxx::connection &conn, int request_id) {
-    BaseCrud<FeedBackRequest>::Delete(conn, request_id);
+
+static void DeleteFromLinkingPlates(pqxx::connection &conn, std::pair<int , int> ids) {
+    BaseCrud<FeedBackRequest>::DeleteFromLinkingPlates(conn, ids);
 }

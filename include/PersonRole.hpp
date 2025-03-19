@@ -22,10 +22,8 @@ public:
         return std::make_tuple(person_id, role_id);
     }
     static void Create(pqxx::connection &conn, int person_id, int role_id) ;
-    static std::vector<PersonRole> ReadRole(pqxx::connection &conn , int person_id) ;
-    static std::vector<PersonRole> ReadPerson(pqxx::connection &conn , int role_id) ;
-    static void Update(pqxx::connection &conn, int person_id, std::vector<std::string> new_params_for_person_role) ;
-    static void Delete(pqxx::connection &conn, int person_id) ;
+    static void UpdateLinkingPlates(pqxx::connection &conn, std::pair<int ,int > ids, std::pair<int , int> new_params_for_person_role) ;
+    static void DeleteFromLinkingPlates(pqxx::connection &conn, std::pair<int , int> ids) ;
     friend std::ostream& operator<<(std::ostream& os, const PersonRole& pr) {
         return os << fmt::format( "PersonRole(Person: {}, Role: {})", pr.person_id, pr.role_id );
     }

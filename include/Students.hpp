@@ -28,7 +28,7 @@ public:
     }
 
     static void Create(pqxx::connection &conn, int person_id, int program_id, const std::string &info) ; 
-    static std::vector<Students> Read(pqxx::connection &conn , int person_id) ; 
+    static Students Read(pqxx::connection &conn , int person_id) ; 
     static void Update(pqxx::connection &conn, int student_id, std::vector<std::string> new_params_for_student) ; 
     static void Delete(pqxx::connection &conn, int student_id) ; 
 

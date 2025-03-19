@@ -23,12 +23,8 @@ public:
         return std::make_tuple(category_id, tag_id);
     }
     static void Create(pqxx::connection &conn, int category_id, int tag_id) ;
-
-    static std::vector<CategoryTags> ReadCategory(pqxx::connection &conn, int category_id) ;
-    static std::vector<CategoryTags> ReadTag(pqxx::connection &conn, int tag_id) ;
-    
-    static void Update(pqxx::connection &conn, int category_id, std::vector<std::string> new_params_for_category) ;
-    static void Delete(pqxx::connection &conn, int category_id) ;
+    static void UpdateLinkingPlates(pqxx::connection &conn, std::pair <int , int> , std::pair <int, int>  new_params_for_category) ;
+    static void DeleteFromLinkingPlates(pqxx::connection &conn, std::pair <int , int> ids) ;
     friend std::ostream& operator<<(std::ostream& os, const CategoryTags& ct) {
         return os << fmt::format( "CategoryTags(Category: {}, Tag: {})", ct.category_id, ct.tag_id  );
     }
