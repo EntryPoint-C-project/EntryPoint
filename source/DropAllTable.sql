@@ -1,0 +1,22 @@
+
+DROP TABLE IF EXISTS 
+    Result_Request, 
+    Feedback_URL,
+    Feedback_Request, 
+    People_Subject, 
+    Teacher_Subject, 
+    Students, 
+    Subjects, 
+    Person_Role, 
+    Roles, 
+    People, 
+    Programs, 
+    Tags, 
+    Subject_Tags, 
+    Filters, 
+    Filter_Includes, 
+    Filter_Excludes, 
+    Catagories,
+    Category_Tags, 
+    Person_Filter_Access,  
+CASCADE;
