@@ -17,6 +17,7 @@
 
 mtd::Discipline t;
 mtd::Subject OMP;
+std::vector<std::string> declarations;
 
 TgBot::InlineKeyboardMarkup::Ptr CompleteButton() {
     TgBot::InlineKeyboardMarkup::Ptr keyboard(new TgBot::InlineKeyboardMarkup);
@@ -79,7 +80,14 @@ void StudentCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
     } else if (query->data == "student_time_table") {
         bot.getApi().sendMessage(ChatId, "Ссылка на расписание", 0, 0, user->GetInlineKeyboard());
     } else if (query->data == "student_declaration") {
-        bot.getApi().sendMessage(ChatId, "Актуальные объявления", 0, 0, user->GetInlineKeyboard());
+        std::string result_string;
+        for (auto declaration : declarations) {
+            result_string += declaration + "\n";
+        }
+        if (result_string.empty()) {
+            result_string = "Объявлений нет";
+        }
+        bot.getApi().sendMessage(ChatId, result_string, 0, 0, user->BackButton());
     } else if (query->data == "student_connect_with_teacher") {
         bot.getApi().sendMessage(ChatId, "Списочек с контактами преподавателя", 0, 0,
                                  user->GetInlineKeyboard());
@@ -156,6 +164,9 @@ void TutorCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
         bot.getApi().sendMessage(ChatId, "Название предмета");
     } else if (query->data == "tutor_back") {
         bot.getApi().sendMessage(ChatId, "Меню", 0, 0, user->GetMenu());
+    } else if (query->data == "tutor_add_declaration") {
+        bot.getApi().sendMessage(ChatId, "Введите объявление");
+        user->GetState() = mtd::UserState::TUTOR_ADD_DECLARATION;
     }
 }
 
@@ -261,6 +272,17 @@ int main() {
             }
             bot.getApi().sendMessage(ChatId, "Оценки этого студента:\n" + s, 0, 0,
                                      user->BackButton());
+            return;
+        } else if (user->GetState() == mtd::UserState::TUTOR_ADD_DECLARATION) {
+            declarations.push_back(message->text);
+            bot.getApi().sendMessage(ChatId, "Объявление успешно создано и сделана рассылка пользователям", 0, 0, user->GetMenu());
+            for (const auto &iter : users) {
+                if (iter.first == ChatId) {
+                    continue;
+                }
+                std::string dec = "Объвяление от " + message->chat->firstName + " " + message->chat->lastName + ":\n" + message->text;
+                bot.getApi().sendMessage(iter.first, dec, 0, 0, iter.second->GetMenu());
+            }
             return;
         } else if (user->GetState() == mtd::UserState::STUDENT_SOP) {
             if (user->GetStep() == -1) {  // конец

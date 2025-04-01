@@ -13,6 +13,12 @@ TgBot::InlineKeyboardMarkup::Ptr Tutor::GetInlineKeyboard() {
     addSubject->callbackData = "tutor_add_subject";
     inlineKeyboard->inlineKeyboard.push_back({addSubject});
 
+    // Добавление кнопки для объявления 
+    TgBot::InlineKeyboardButton::Ptr addDeclaration(new TgBot::InlineKeyboardButton);
+    addDeclaration->text = "Сделать объявление";
+    addDeclaration->callbackData = "tutor_add_declaration";
+    inlineKeyboard->inlineKeyboard.push_back({addDeclaration});
+
     // Добавление кнопки для добавления людей в группы
     TgBot::InlineKeyboardButton::Ptr addPeople(new TgBot::InlineKeyboardButton);
     addPeople->text = "Добавить людей в группы";
