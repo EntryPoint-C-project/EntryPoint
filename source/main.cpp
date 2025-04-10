@@ -71,8 +71,12 @@ void StudentCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
     //---------------------------------
     //---------------------------------
     if (query->data == "student_buttons") {
-        bot.getApi().sendMessage(ChatId, "fsfsdf", 0, 0, user->GetInlineKeyboard());
+        bot.getApi().sendMessage(ChatId, "Навигация", 0, 0, user->GetInlineKeyboard());
     } else if (query->data == "student_sop" && user->GetStep() == 0) {
+        if (t.name_subject.empty()) {
+            bot.getApi().sendMessage(ChatId, "Пока что оценки преподавания нет", 0, 0, user->GetInlineKeyboard());
+            return;
+        }
         bot.getApi().sendMessage(ChatId,
                                  "Оцените лекции по " + t.name_subject + " (" + t.lector + ")", 0,
                                  0, get_raiting_scale());
@@ -104,7 +108,7 @@ void OfficeStaffCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
                               std::shared_ptr<mtd::User> user) {
     int64_t ChatId = user->id();
     if (query->data == "office_staff_buttons") {
-        bot.getApi().sendMessage(ChatId, "Кнопочки", 0, 0, user->GetInlineKeyboard());
+        bot.getApi().sendMessage(ChatId, "Навигация", 0, 0, user->GetInlineKeyboard());
     } else if (query->data == "office_staff_time_table") {
         bot.getApi().sendMessage(ChatId, "Ссылка на расписание для office staff", 0, 0,
                                  user->GetInlineKeyboard());
@@ -137,7 +141,7 @@ void TeacherCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
     } else if (query->data == "teacher_back") {
         bot.getApi().sendMessage(ChatId, "Меню", 0, 0, user->GetMenu());
     } else if (query->data == "teacher_buttons") {
-        bot.getApi().sendMessage(ChatId, "Кнопочки для преподов", 0, 0, user->GetInlineKeyboard());
+        bot.getApi().sendMessage(ChatId, "Навигация", 0, 0, user->GetInlineKeyboard());
     } else if (query->data == "teachert_information") {
         bot.getApi().sendMessage(ChatId, "Какая-то полезная инва для преподов", 0, 0,
                                  user->BackButton());
@@ -148,7 +152,7 @@ void TutorCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
                         std::shared_ptr<mtd::User> user) {
     int64_t ChatId = user->id();
     if (query->data == "tutor_buttons") {
-        bot.getApi().sendMessage(ChatId, "fsdf", 0, 0, user->GetInlineKeyboard());
+        bot.getApi().sendMessage(ChatId, "Навигация", 0, 0, user->GetInlineKeyboard());
     } else if (query->data == "tutor_add_subject") {
         bot.getApi().sendMessage(ChatId, "Введите название нового предмета", 0, 0,
                                  user->GetInlineKeyboard());
@@ -176,6 +180,10 @@ int main() {
     std::map<int64_t, std::shared_ptr<mtd::User>> users;
     std::set<int64_t> NewUsers;
     std::mutex MutexForUsers;
+
+    bot.getEvents().onCommand("username", [&](TgBot::Message::Ptr message) {
+        bot.getApi().sendMessage(message->chat->id, "Your username: @" + message->chat->username);
+    });
 
     bot.getEvents().onCommand(
         "start", [&bot, &users, &MutexForUsers, &NewUsers](TgBot::Message::Ptr message) {
@@ -238,8 +246,7 @@ int main() {
             auto &user = users[ChatId];
 
             if (query->data == "complete_button") {
-                std::cout << "sfdfdfdf\n";
-                bot.getApi().sendMessage(ChatId, "_", 0, 0, user->GetMenu());
+                bot.getApi().sendMessage(ChatId, "СОП по предмету " + t.name_subject + " создан", 0, 0, user->GetMenu());
                 return;
             }
 
@@ -354,5 +361,12 @@ int main() {
         std::cerr << "Error: " << e.what() << "\n";
     }
 
+    std::cout << "Test started\n";
+    for (int i = 0; i < 10000; ++i) {
+        TgBot::Message::Ptr msg(new TgBot::Message);
+        msg->text = "Test message " + std::to_string(i);
+        bot.getEvents().handleMessage(msg);
+    }
+    std::cout << "Test finisded\n";
     return 0;
 }

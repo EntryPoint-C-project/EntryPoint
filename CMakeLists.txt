@@ -25,7 +25,14 @@ CPMAddPackage(
   GIT_TAG master  
 )
 
+CPMAddPackage(
+  NAME libpqxx
+  GIT_REPOSITORY https://github.com/jtv/libpqxx.git
+  GIT_TAG 7.9.0  # Укажите нужную вам версию
+)
+
 target_link_libraries(main 
   Boost::system 
   TgBot 
+  pqxx
 )

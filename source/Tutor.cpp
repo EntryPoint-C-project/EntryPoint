@@ -50,7 +50,7 @@ TgBot::InlineKeyboardMarkup::Ptr Tutor::GetMenu() {
 
     // Пример кнопки меню (можно добавить другие кнопки по необходимости)
     TgBot::InlineKeyboardButton::Ptr buttons(new TgBot::InlineKeyboardButton);
-    buttons->text = "Меню для куратора";
+    buttons->text = "Навигация";
     buttons->callbackData = "tutor_buttons";
 
     inlineKeyboard->inlineKeyboard.push_back({buttons});

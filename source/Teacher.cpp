@@ -23,7 +23,7 @@ TgBot::InlineKeyboardMarkup::Ptr Teacher::GetMenu() {
     TgBot::InlineKeyboardMarkup::Ptr inlineKeyboard(new TgBot::InlineKeyboardMarkup);
 
     TgBot::InlineKeyboardButton::Ptr buttons(new TgBot::InlineKeyboardButton);
-    buttons->text = "кнопочки";
+    buttons->text = "Навигация";
     buttons->callbackData = "teacher_buttons";
 
     TgBot::InlineKeyboardButton::Ptr information(new TgBot::InlineKeyboardButton);
