@@ -8,6 +8,10 @@
 #include <nlohmann/json.hpp>
 #include <pqxx/pqxx>
 #include <string>
+// #include "../DataBase/inc/DopMethods.hpp"
+// #include "../DataBase/inc/Students.hpp"
+// #include "../DataBase/inc/PeopleSubject.hpp"
+
 class ClassForJSONFormat {
 private:
   std::vector<std::tuple<std::string, std::string, std::string>> subjects;
@@ -110,7 +114,6 @@ private:
                               std::string *userp);
 };
 
-std::vector<ClassForJSONFormat> getStudents(pqxx::connection &conn);
 std::string refreshAccessToken(Config &config, HttpClient &httpClient);
 std::string createForm(const std::string &jsonFilePath, Config &config,
                        HttpClient &httpClient);
@@ -120,6 +123,8 @@ json generateQuestionsPerStudent(const ClassForJSONFormat &student);
 void addFieldToForm(const std::string &formId, json jsonFile, Config &config,
                     HttpClient &httpClient);
 std::string getFormUrl(const std::string &formId);
+json getFormResponses(const std::string &formId, Config &config,
+                      HttpClient &httpClient);
 } // namespace sop
 
 #endif // MANAGESOP_HPP

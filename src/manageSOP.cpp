@@ -56,58 +56,72 @@ size_t HttpClient::WriteCallback(void *contents, size_t size, size_t nmemb,
 json generateQuestionsPerStudent(const ClassForJSONFormat &student) {
   json form;
   form["requests"] = json::array();
-  json jsonScaleQuestion = readJsonFromFile("json/scaleQuestion.json");
-  std::cout << "Have read from scaleQuestion\n";
-  json jsonOverallQuestion = readJsonFromFile("json/overallQuestion.json");
-  std::cout << "Have read from overallQustion\n";
-  json header = readJsonFromFile("json/headerOfQuestionsBlock.json");
-  std::cout << "Have read from headerOfQustionsBlock\n";
+
+  json jsonScaleQuestion, jsonOverallQuestion, header;
+  try {
+    jsonScaleQuestion = readJsonFromFile("json/scaleQuestion.json");
+    jsonOverallQuestion = readJsonFromFile("json/overallQuestion.json");
+    header = readJsonFromFile("json/headerOfQuestionsBlock.json");
+  } catch (const std::exception &e) {
+    std::cerr << "Error reading JSON templates: " << e.what() << std::endl;
+    return {};
+  }
+
   auto teachers = student.GetSubjects();
-  std::string currentHeader = "";
+  std::string currentHeader;
+
   for (const auto &teacher : teachers) {
-    std::cout << std::get<0>(teacher) << ' ' << std::get<1>(teacher) << ' '
-              << std::get<2>(teacher) << '\n';
+    const std::string &teacherName = std::get<0>(teacher);
+    const std::string &subjectName = std::get<1>(teacher);
+    const std::string &groupName = std::get<2>(teacher);
+
     try {
-      if (currentHeader != std::get<2>(teacher)) {
-        currentHeader = std::get<1>(teacher);
-        header["createItem"]["item"]["title"] = currentHeader;
+      if (currentHeader != groupName) {
+        currentHeader = groupName;
+        header["createItem"]["item"]["title"] = subjectName;
         form["requests"].push_back(header);
       }
-    } catch (...) {
-      std::cerr << "jopa\n";
-    }
-    try {
-      std::string question = "Оцените качество " + std::get<2>(teacher) + " " +
-                             std::get<0>(teacher) + " от 1 до 10";
-      jsonScaleQuestion["createItem"]["item"]["title"] = question;
-      form["requests"].push_back(jsonScaleQuestion);
-      std::cout << "Added scaleQuestion\n";
-      question =
-          "Что вам понравилось в преподавании " + std::get<0>(teacher) + "?";
-      jsonOverallQuestion["createItem"]["item"]["title"] = question;
-      form["requests"].push_back(jsonOverallQuestion);
-      std::cout << "added 1\n";
-      question =
-          "Что вам не понравилось в преподавании " + std::get<0>(teacher) + "?";
-      jsonOverallQuestion["createItem"]["item"]["title"] = question;
-      form["requests"].push_back(jsonOverallQuestion);
-      std::cout << "added 2\n";
-      question =
+
+      std::string question =
+          "Оцените качество " + groupName + " " + teacherName + " от 1 до 10";
+      json scaleQuestion = jsonScaleQuestion;
+      scaleQuestion["createItem"]["item"]["title"] = question;
+      form["requests"].push_back(scaleQuestion);
+
+      json overallQ1 = jsonOverallQuestion;
+      overallQ1["createItem"]["item"]["title"] =
+          "Что вам понравилось в преподавании " + teacherName + "?";
+      form["requests"].push_back(overallQ1);
+
+      json overallQ2 = jsonOverallQuestion;
+      overallQ2["createItem"]["item"]["title"] =
+          "Что вам не понравилось в преподавании " + teacherName + "?";
+      form["requests"].push_back(overallQ2);
+
+      json overallQ3 = jsonOverallQuestion;
+      overallQ3["createItem"]["item"]["title"] =
           "Есть ли у вас какие-нибудь пожелания по поводу преподавания " +
-          std::get<0>(teacher) + "?";
-      jsonOverallQuestion["createItem"]["item"]["title"] = question;
-      form["requests"].push_back(jsonOverallQuestion);
-      std::cout << "added 3\n";
-    } catch (...) {
-      std::cerr << "Gay\n";
+          teacherName + "?";
+      form["requests"].push_back(overallQ3);
+    } catch (const std::exception &e) {
+      std::cerr << "Error building questions for " << teacherName << ": "
+                << e.what() << std::endl;
     }
   }
+
   std::size_t index = 0;
   for (auto &request : form["requests"]) {
-    request["createItem"]["location"]["index"] = index++;
+    try {
+      request["createItem"]["location"]["index"] = index++;
+    } catch (const std::exception &e) {
+      std::cerr << "Error setting index for form request: " << e.what()
+                << std::endl;
+    }
   }
+
   return form;
 }
+
 json readJsonFromFile(const std::string &filePath) {
   std::ifstream file(filePath);
   if (!file.is_open()) {
@@ -185,7 +199,7 @@ void addFieldToForm(const std::string &formId, json jsonFile, Config &config,
       httpClient.performHttpRequest(url, "POST", accessToken, questionForm);
   json responseJson = json::parse(response);
   if (responseJson.contains("error")) {
-    std::cerr << "Ошибка: " << responseJson.dump() << std::endl;
+    std::cerr << "Error: " << responseJson.dump() << std::endl;
   }
 }
 
@@ -206,6 +220,38 @@ void deleteForm(const std::string &formId, Config &config,
       httpClient.performHttpRequest(url, "DELETE", accessToken);
 }
 
+json getFormResponses(const std::string &formId, Config &config,
+                      HttpClient &httpClient) {
+  std::string accessToken = refreshAccessToken(config, httpClient);
+  if (accessToken.empty()) {
+    std::cerr << "Failed to refresh access token" << std::endl;
+    return json();
+  }
+
+  std::string url =
+      "https://forms.googleapis.com/v1/forms/ " + formId + "/responses";
+
+  std::string response =
+      httpClient.performHttpRequest(url, "GET", accessToken, "");
+
+  try {
+    json jsonResponse = json::parse(response);
+    if (jsonResponse.contains("responses")) {
+      return jsonResponse;
+    } else {
+      std::cerr << "Error: 'responses' not found in response" << std::endl;
+      if (jsonResponse.contains("error")) {
+        std::cerr << "Error details: " << jsonResponse["error"].dump()
+                  << std::endl;
+      }
+      return json();
+    }
+  } catch (const std::exception &e) {
+    std::cerr << "JSON parsing error: " << e.what() << std::endl;
+    return json();
+  }
+}
+
 std::string Config::getEnvVar(const std::string &key) {
   const char *value = std::getenv(key.c_str());
   if (value == nullptr) {
@@ -221,4 +267,5 @@ Config::Config() {
   clientSecret = getEnvVar("GOOGLE_CLIENT_SECRET");
   refreshToken = getEnvVar("GOOGLE_REFRESH_TOKEN");
 }
+
 } // namespace sop
