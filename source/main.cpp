@@ -1,12 +1,14 @@
 #include <tgbot/tgbot.h>
 
+#include <chrono>
 #include <map>
 #include <memory>
 #include <mutex>
 #include <set>
+#include <thread>
 #include <vector>
 
-#include "BotToken.hpp"
+// #include "BotToken.hpp"
 #include "OfficeStaff.hpp"
 #include "Student.hpp"
 #include "Teacher.hpp"
@@ -18,6 +20,10 @@
 mtd::Discipline t;
 mtd::Subject OMP;
 std::vector<std::string> declarations;
+std::vector<std::string> quotes
+    = {"Учись так, как будто тебе предстоит жить вечно.", "Знание — сила.",
+       "Мотивация приходит во время действия.", "Каждый день — шанс стать лучше.",
+       "Не бойся ошибаться — бойся не попробовать."};
 
 TgBot::InlineKeyboardMarkup::Ptr CompleteButton() {
     TgBot::InlineKeyboardMarkup::Ptr keyboard(new TgBot::InlineKeyboardMarkup);
@@ -34,7 +40,7 @@ TgBot::InlineKeyboardMarkup::Ptr get_raiting_scale() {
     for (int i = 1; i < 11; ++i) {
         TgBot::InlineKeyboardButton::Ptr button(new TgBot::InlineKeyboardButton);
         button->text = std::to_string(i);
-        button->callbackData = std::to_string(i);  // Колбек-данные соответствуют цифре
+        button->callbackData = std::to_string(i);      // Колбек-данные соответствуют цифре
         keyboard->inlineKeyboard.push_back({button});  // Добавляем кнопки в строку клавиатуры
     }
     TgBot::InlineKeyboardButton::Ptr button(new TgBot::InlineKeyboardButton);
@@ -172,7 +178,7 @@ void TutorCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
 
 int main() {
     OMP.name_subject = "ОМП";
-    TgBot::Bot bot(mtd::token);
+    TgBot::Bot bot("7472835556:AAGGxuQuWDgYb9rskK3tn7YG660YEg7OgKM");
     std::map<int64_t, std::shared_ptr<mtd::User>> users;
     std::set<int64_t> NewUsers;
     std::mutex MutexForUsers;
@@ -207,6 +213,13 @@ int main() {
             bot.getApi().sendMessage(message->chat->id, "Кто ты?", 0, 0, keyboard);
         });
 
+    bot.getEvents().onCommand("quote", [&bot, &quotes](TgBot::Message::Ptr message) {
+        std::srand(std::time(nullptr));
+        int idx = std::rand() % quotes.size();
+        bot.getApi().sendChatAction(message->chat->id, "typing");  // имитируем "думает..."
+        std::this_thread::sleep_for(std::chrono::seconds(3));      // пауза 3 секунды
+        bot.getApi().sendMessage(message->chat->id, quotes[idx]);
+    });
     bot.getEvents().onCallbackQuery(
         [&bot, &users, &MutexForUsers, &NewUsers](TgBot::CallbackQuery::Ptr query) {
             std::lock_guard<std::mutex> lock(MutexForUsers);
@@ -275,12 +288,15 @@ int main() {
             return;
         } else if (user->GetState() == mtd::UserState::TUTOR_ADD_DECLARATION) {
             declarations.push_back(message->text);
-            bot.getApi().sendMessage(ChatId, "Объявление успешно создано и сделана рассылка пользователям", 0, 0, user->GetMenu());
+            bot.getApi().sendMessage(ChatId,
+                                     "Объявление успешно создано и сделана рассылка пользователям",
+                                     0, 0, user->GetMenu());
             for (const auto &iter : users) {
                 if (iter.first == ChatId) {
                     continue;
                 }
-                std::string dec = "Объвяление от " + message->chat->firstName + " " + message->chat->lastName + ":\n" + message->text;
+                std::string dec = "Объвяление от " + message->chat->firstName + " "
+                                  + message->chat->lastName + ":\n" + message->text;
                 bot.getApi().sendMessage(iter.first, dec, 0, 0, iter.second->GetMenu());
             }
             return;
