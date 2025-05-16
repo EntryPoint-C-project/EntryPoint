@@ -2,14 +2,11 @@ cmake_minimum_required(VERSION 3.22)
 
 project(ENTRYPOINT)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 find_package(CURL REQUIRED)
 include_directories(${CURL_INCLUDE_DIR})
-
-include(FetchContent)
-FetchContent_Declare(
-  googletest
-  URL https://github.com/google/googletest/archive/refs/heads/main.zip
-)
 
 include_directories(
     ${PROJECT_SOURCE_DIR}/inc
@@ -17,6 +14,13 @@ include_directories(
     /usr/include/nlohmann
     ${CURL_INCLUDE_DIR}
 )
+
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+)
+FetchContent_MakeAvailable(googletest)
 
 set (SOURCES
     src/main.cpp
@@ -32,16 +36,12 @@ target_link_libraries(program ${CURL_LIBRARIES})
 
 enable_testing()
 
-add_executable(runTests
+set (TEST_SOURCES
     tests/test_manageSOP.cpp
     src/manageSOP.cpp
 )
 
-target_link_libraries(runTests
-    GTest::gtest_main
-    ${CURL_LIBRARIES}
-    pthread
-)
-
+add_executable(run_test ${TEST_SOURCES} ${HEADERS})
+target_link_libraries(run_test ${CURL_LIBRARIES} GTest::gtest_main)
 include(GoogleTest)
-gtest_discover_tests(runTests)
+gtest_discover_tests(run_test)

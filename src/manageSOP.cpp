@@ -29,6 +29,8 @@ std::string HttpClient::performHttpRequest(const std::string &url,
     }
   } else if (method == "DELETE") {
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+  } else if (method == "GET") {
+    curl_easy_setopt(curl, CURLOPT_HTTPGET, 1L);
   }
 
   std::string response;
@@ -76,8 +78,8 @@ json generateQuestionsPerStudent(const ClassForJSONFormat &student) {
     const std::string &groupName = std::get<2>(teacher);
 
     try {
-      if (currentHeader != groupName) {
-        currentHeader = groupName;
+      if (currentHeader != subjectName) {
+        currentHeader = subjectName;
         header["createItem"]["item"]["title"] = subjectName;
         form["requests"].push_back(header);
       }
@@ -229,8 +231,7 @@ json getFormResponses(const std::string &formId, Config &config,
   }
 
   std::string url =
-      "https://forms.googleapis.com/v1/forms/ " + formId + "/responses";
-
+      "https://forms.googleapis.com/v1/forms/" + formId + "/responses";
   std::string response =
       httpClient.performHttpRequest(url, "GET", accessToken, "");
 
