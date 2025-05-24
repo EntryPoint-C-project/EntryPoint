@@ -15,10 +15,10 @@ int CreateCourse(pqxx::transaction_base& txn , const std::string &course_name) {
         }else {
             fmt::print("Запись уже существует с указанным course_name\n");
         }
-        txn.commit() ; 
+        //txn.commit() ; 
         return course_id;
 
-        txn.commit();
+        //txn.commit();
     } catch (const std::exception &e) {
         fmt::print("Ошибка при создании {}: {}", course_name, e.what()) ;
         throw ; 
@@ -30,7 +30,7 @@ std::string ReadCourse(pqxx::transaction_base& txn , int course_id) {
     try {
         std::string sql =  "SELECT course_name FROM Course WHERE course_id = $1";
         pqxx::result res = txn.exec_params(sql, course_id);
-        txn.commit();
+        //txn.commit();
         std::string course_name = res[0]["course_name"].as<std::string>();
         return course_name;
     } catch (const std::exception &e) {
@@ -43,7 +43,7 @@ void UpdateCourse(pqxx::transaction_base& txn, int course_id, std::string cew_Co
     try {
         std::string sql =  "UPDATE Course SET course_name = $1 WHERE course_id = $2";
         txn.exec_params(sql, cew_Course_name, course_id);
-        txn.commit();
+        //txn.commit();
     } catch (const std::exception &e) {
         fmt::print("Ошибка при обновлении {}: {}", course_id, e.what()) ;
         throw ; 
@@ -54,7 +54,7 @@ void DeleteCourse(pqxx::transaction_base& txn, int course_id) {
     try {
         std::string sql =  "DELETE FROM Course WHERE course_id = $1";
         txn.exec_params(sql, course_id);
-        txn.commit();
+        //txn.commit();
     } catch (const std::exception &e) {
         fmt::print("Ошибка при удалении {}: {}", course_id, e.what()) ;
         throw ; 

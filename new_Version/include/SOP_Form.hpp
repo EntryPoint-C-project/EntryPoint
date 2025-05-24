@@ -28,7 +28,7 @@ public :
 
 int CreateSOPForm(pqxx::transaction_base& txn ,int person_id, const std::string url , std::string tg_answer, std::string url_answer) ;
 std::tuple < int , std::string , std::string  , std::string , std::string > ReadSOPForm(pqxx::transaction_base& txn , int sop_id) ;
-
+std::vector <int> ReadSubjectId(pqxx::transaction_base& txn ) ;
 
 void UpdatePersonId(pqxx::transaction_base& txn, int sop_id, int new_person_id) ;
 void UpdateUrl(pqxx::transaction_base& txn, int sop_id, std::string new_url) ;

@@ -15,10 +15,10 @@ int CreateSOPForm(pqxx::transaction_base& txn , int person_id, const std::string
         }else { 
             fmt::print("Запись уже существует с указанным \n");
         }
-        txn.commit() ; 
+        //txn.commit() ; 
         return sop_id;
 
-        txn.commit();
+        //txn.commit();
     } catch (const std::exception &e) {
         fmt::print("Ошибка при создании {}: {}", url, e.what()) ;
         throw ; 
@@ -31,7 +31,7 @@ int CreateSOPForm(pqxx::transaction_base& txn , int person_id, const std::string
 
         std::string sql =  "SELECT person_id, url_out_sop, sop_status ,  tg_answer, url_answer FROM SOP_Form WHERE sop_id = $1";
         pqxx::result res = txn.exec_params(sql, sop_id);
-        txn.commit();
+        //txn.commit();
         if ( !res.empty() ) {
             int person_id = res[0]["person_id"].as<int>();
             std::string url = res[0]["url_out_sop"].as<std::string>();
@@ -52,7 +52,7 @@ void UpdatePersonId(pqxx::transaction_base& txn, int sop_id, int new_person_id) 
 
         std::string sql =  "UPDATE SOP_Form SET person_id = $1 WHERE sop_id = $2";
         txn.exec_params(sql, new_person_id, sop_id);
-        txn.commit();
+        //txn.commit();
     } catch (const std::exception &e) {
         fmt::print("Ошибка при обновлении {}: {}", sop_id, e.what()) ;
         throw ; 
@@ -64,10 +64,24 @@ void UpdateUrl(pqxx::transaction_base& txn, int sop_id, std::string new_url) {
 
         std::string sql =  "UPDATE SOP_Form SET url_out_sop = $1 WHERE sop_id = $2";
         txn.exec_params(sql, new_url, sop_id);
-        txn.commit();
+        //txn.commit();
     } catch (const std::exception &e) {
         fmt::print("Ошибка при обновлении {}: {}", sop_id, e.what()) ;
         throw ; 
+    }
+}
+std::vector <int> ReadSubjectId(pqxx::transaction_base& txn ) {
+    try {
+        std::string sql =  "SELECT person_id FROM SOP_Form";
+        pqxx::result res = txn.exec(sql);
+        std::vector <int> subject_id;
+        for ( auto row : res ) {
+            subject_id.push_back(row["person_id"].as<int>());
+        }
+        return subject_id;
+    } catch (const std::exception &e) {
+        fmt::print("Ошибка при чтении {}: {}", "subject_id", e.what()) ;
+        throw ;
     }
 }
 
@@ -80,7 +94,7 @@ void UpdateStatus(pqxx::transaction_base& txn, int sop_id, std::string new_statu
    
         std::string sql =  "UPDATE SOP_Form SET sop_status = $1 WHERE sop_id = $2";
         txn.exec_params(sql, new_status, sop_id);
-        txn.commit();
+        //txn.commit();
     } catch (const std::exception &e) {
         fmt::print("Ошибка при обновлении {}: {}", sop_id, e.what()) ;
         throw ; 
@@ -92,7 +106,7 @@ void UpdateTgAnswer(pqxx::transaction_base& txn, int sop_id, std::string new_tg_
 
         std::string sql =  "UPDATE SOP_Form SET tg_answer = $1 WHERE sop_id = $2";
         txn.exec_params(sql, new_tg_answer, sop_id);
-        txn.commit();
+        //txn.commit();
     } catch (const std::exception &e) {
         fmt::print("Ошибка при обновлении {}: {}", sop_id, e.what()) ;
         throw ; 
@@ -104,7 +118,7 @@ void UpdateUrlAnswer(pqxx::transaction_base& txn, int sop_id, std::string new_ur
 
         std::string sql =  "UPDATE SOP_Form SET url_answer = $1 WHERE sop_id = $2";
         txn.exec_params(sql, new_url_answer, sop_id);
-        txn.commit();
+        //txn.commit();
     } catch (const std::exception &e) {
         fmt::print("Ошибка при обновлении {}: {}", sop_id, e.what()) ;
         throw ; 
@@ -117,7 +131,7 @@ void DeleteSOP_Form(pqxx::transaction_base& txn, int sop_id) {
 
         std::string sql =  "DELETE FROM SOP_Form WHERE sop_id = $1";
         txn.exec_params(sql, sop_id);
-        txn.commit();
+        //txn.commit();
     } catch (const std::exception &e) {
         fmt::print("Ошибка при удалении {}: {}", sop_id, e.what()) ;
         throw ; 

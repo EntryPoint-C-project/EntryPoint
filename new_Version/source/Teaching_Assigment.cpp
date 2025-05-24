@@ -16,7 +16,6 @@ int CreateTeachingAssigment(pqxx::transaction_base& txn , int person_id, int off
         }else {
             fmt::print("Запись уже существует с указанным person_id, offer_id, subject_id\n");
         }
-        txn.commit() ; 
         return assignment_id;
 
     } catch (const std::exception &e) {
@@ -33,7 +32,7 @@ std::tuple < int , int , int > ReadTeachingAssigment(pqxx::transaction_base& txn
         
         std::string sql =  "SELECT person_id, offer_id, subject_id FROM Teaching_Assigment WHERE assignment_id = $1";
         pqxx::result res = txn.exec_params(sql, assignment_id);
-        txn.commit();
+        // //txn.commit();
         int person_id = res[0]["person_id"].as<int>();
         int offer_id = res[0]["offer_id"].as<int>();
         int subject_id = res[0]["subject_id"].as<int>();
@@ -49,7 +48,7 @@ std::vector< std::pair<int , int > > ReadInfoOnPersonId(pqxx::transaction_base& 
         
         std::string sql =  "SELECT offer_id, subject_id FROM Teaching_Assigment WHERE person_id = $1";
         pqxx::result res = txn.exec_params(sql, person_id);
-        txn.commit();
+        // //txn.commit();
         if (res.empty()) {
             fmt::print("Для person_id = {} нет данных в Teaching_Assigment\n", person_id);
         }
@@ -72,7 +71,7 @@ std::vector<std::pair <int, int> > ReadInfoOnOfferIdNoStudents(pqxx::transaction
         std::string sql =  "SELECT person_id, subject_id FROM Teaching_Assigment WHERE offer_id = $1 AND subject_id != $2";
         int subject_id = ReadSubjectId(txn, "Student");
         pqxx::result res = txn.exec_params(sql, offer_id , subject_id);
-        txn.commit();
+        // //txn.commit();
         if (res.empty()) {
             fmt::print("Для offer_id = {} нет данных в Teaching_Assigment\n", offer_id);
         }
@@ -94,7 +93,7 @@ void UpdateTeachingAssigment(pqxx::transaction_base& txn, int assignment_id, int
         
         std::string sql =  "UPDATE Teaching_Assigment SET person_id = $1, offer_id = $2, subject_id = $3 WHERE assignment_id = $4";
         txn.exec_params(sql, person_id, offer_id, subject_id, assignment_id);
-        txn.commit();
+        // //txn.commit();
     } catch (const std::exception &e) {
         fmt::print("Ошибка при обновлении {}: {}", assignment_id, e.what()) ;
         throw ; 
@@ -106,7 +105,7 @@ void DeleteTeachingAssigment(pqxx::transaction_base& txn, int assignment_id) {
         
         std::string sql =  "DELETE FROM Teaching_Assigment WHERE assignment_id = $1";
         txn.exec_params(sql, assignment_id);
-        txn.commit();
+        // //txn.commit();
     } catch (const std::exception &e) {
         fmt::print("Ошибка при удалении {}: {}", assignment_id, e.what()) ;
         throw ; 

@@ -145,7 +145,7 @@ void TEST_PERSON_GROUP(pqxx::transaction_base& txn  ) {
     // Delete_Person_Group(txn, person_group.GetPrimaryKey());
 }
 
-
+ 
 void TEST_SUBJECT_OFFER(pqxx::transaction_base& txn  ) {
     Subject_Offer subject_offer{1 , 1 , 1 };
     subject_offer.SetPrimaryKey(CreateSubjectOffer(txn , subject_offer.GetGroupId(), subject_offer.GetProgramId(), subject_offer.GetCourseId()));
@@ -238,9 +238,12 @@ void TEST_GET_ALL_TEACHERS(pqxx::transaction_base& txn) {
 
         // ================== 6. Тестируем функцию ==================
         fmt::print("=== Тестируем для student_1 = {} ===\n", student_1);
+
+
         auto teachers_1 = GetAllTeachersForStudent(txn, student_1);
 
         auto teachers_2 = GetAllTeachersForStudent(txn, student_2);
+
 
         // ================== 7. Проверяем результаты ==================
         fmt::print("Найдено учителей: {}\n", teachers_1.size());
@@ -285,10 +288,12 @@ void TEST_GET_ALL_TEACHERS(pqxx::transaction_base& txn) {
                     fmt::join(t.his_roles, ", "), 
                     t.subject_name);
             }
-
-
         }
 
+        std::vector <int> student_ids = ReadSubjectId(txn);
+        for ( auto id : student_ids) {
+            fmt::print("student_id: {}\n", id);
+        }
 
 
 

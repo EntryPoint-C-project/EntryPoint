@@ -16,10 +16,10 @@ int CreateRole(pqxx::transaction_base& txn , const std::string &role_name) {
         }else {
             fmt::print("Запись уже существует с указанным role_name\n");
         }
-        txn.commit() ; 
+        //txn.commit() ; 
         return role_id;
 
-        txn.commit();
+        //txn.commit();
     } catch (const std::exception &e) {
         fmt::print("Ошибка при создании {}: {}", role_name, e.what()) ;
         throw ; 
@@ -32,7 +32,7 @@ std::string ReadRole(pqxx::transaction_base& txn , int role_id) {
         
         std::string sql =  "SELECT role_name FROM Role WHERE role_id = $1";
         pqxx::result res = txn.exec_params(sql, role_id);
-        txn.commit();
+        //txn.commit();
         std::string role_name = res[0]["role_name"].as<std::string>();
         return role_name;
     } catch (const std::exception &e) {
@@ -46,7 +46,7 @@ void UpdateRole(pqxx::transaction_base& txn, int role_id, std::string new_role_n
         
         std::string sql =  "UPDATE Role SET role_name = $1 WHERE role_id = $2";
         txn.exec_params(sql, new_role_name, role_id);
-        txn.commit();
+        //txn.commit();
     } catch (const std::exception &e) {
         fmt::print("Ошибка при обновлении {}: {}", role_id, e.what()) ;
         throw ; 
@@ -58,7 +58,7 @@ void DeleteRole(pqxx::transaction_base& txn, int role_id) {
         
         std::string sql =  "DELETE FROM Role WHERE role_id = $1";
         txn.exec_params(sql, role_id);
-        txn.commit();
+        //txn.commit();
     } catch (const std::exception &e) {
         fmt::print("Ошибка при удалении {}: {}", role_id, e.what()) ;
         throw ; 

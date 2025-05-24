@@ -25,7 +25,7 @@ int  CreatePerson(pqxx::transaction_base& txn , const std::string first_name , c
             fmt::print("Запись уже существует с указанным tg_nick\n");
             // throw std::invalid_argument("Запись уже существует с указанным tg_nick");
         }
-        txn.commit();
+        //txn.commit();
         return person_id; 
     } catch (const std::exception &e) {
         fmt::print("Ошибка при создании {}: {}", first_name, e.what()) ;
@@ -62,7 +62,7 @@ void DeletePerson(pqxx::transaction_base& txn, int person_id) {
 
         std::string sql =  "DELETE FROM people WHERE person_id = $1";
         txn.exec_params(sql, person_id);
-        txn.commit();
+        //txn.commit();
     } catch (const std::exception &e) {
         fmt::print("Ошибка при удалении {}: {}", person_id, e.what()) ;
         throw ; 

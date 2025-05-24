@@ -15,10 +15,10 @@ int CreatePeopleGroup(pqxx::transaction_base& txn , const std::string &people_gr
         }else {
             fmt::print("Запись уже существует с указанным people_group_name\n");
         }
-        txn.commit() ; 
+        //txn.commit() ; 
         return people_group_id;
 
-        txn.commit();
+        //txn.commit();
     } catch (const std::exception &e) {
         fmt::print("Ошибка при создании {}: {}", people_group_name, e.what()) ;
         throw ; 
@@ -31,7 +31,7 @@ std::string ReadPeopleGroup(pqxx::transaction_base& txn , int people_group_id) {
 
         std::string sql =  "SELECT people_group_name FROM people_group WHERE people_group_id = $1";
         pqxx::result res = txn.exec_params(sql, people_group_id);
-        txn.commit();
+        //txn.commit();
         std::string people_group_name = res[0]["people_group_name"].as<std::string>();
         return people_group_name;
     } catch (const std::exception &e) {
@@ -45,7 +45,7 @@ void UpdatePeopleGroup(pqxx::transaction_base& txn, int people_group_id, std::st
 
         std::string sql =  "UPDATE people_group SET people_group_name = $1 WHERE people_group_id = $2";
         txn.exec_params(sql, new_people_group_name, people_group_id);
-        txn.commit();
+        //txn.commit();
     } catch (const std::exception &e) {
         fmt::print("Ошибка при обновлении {}: {}", people_group_id, e.what()) ;
         throw ; 
@@ -56,7 +56,7 @@ void DeletePersonGroup(pqxx::transaction_base& txn, int people_group_id) {
     try {
         std::string sql =  "DELETE FROM people_group WHERE people_group_id = $1";
         txn.exec_params(sql, people_group_id);
-        txn.commit();
+        //txn.commit();
     } catch (const std::exception &e) {
         fmt::print("Ошибка при удалении {}: {}", people_group_id, e.what()) ;
         throw ; 

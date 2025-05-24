@@ -16,7 +16,7 @@ int CreateSubjectOffer(pqxx::transaction_base& txn , int people_group_id, int pr
         }else {
             fmt::print("Запись уже существует с указанным people_group_id, program_id, course_id\n");
         }
-        txn.commit() ; 
+        //txn.commit() ; 
         return offer_id;
 
     } catch (const std::exception &e) {
@@ -33,7 +33,7 @@ std::tuple < int , int , int > ReadSubjectOffer(pqxx::transaction_base& txn , in
         
         std::string sql =  "SELECT people_group_id, program_id, course_id FROM subject_offer WHERE offer_id = $1";
         pqxx::result res = txn.exec_params(sql, offer_id);
-        txn.commit();
+        //txn.commit();
         int people_group_id = res[0]["people_group_id"].as<int>();
         int program_id = res[0]["program_id"].as<int>();
         int course_id = res[0]["course_id"].as<int>();
@@ -49,7 +49,7 @@ void UpdateSubjectOffer(pqxx::transaction_base& txn, int offer_id, int people_gr
         
         std::string sql =  "UPDATE subject_offer SET people_group_id = $1, program_id = $2, course_id = $3 WHERE offer_id = $4";
         txn.exec_params(sql, people_group_id, program_id, course_id, offer_id);
-        txn.commit();
+        //txn.commit();
     } catch (const std::exception &e) {
         fmt::print("Ошибка при обновлении {}: {}", offer_id, e.what()) ;
         throw ; 
@@ -61,7 +61,7 @@ void Delete_Subject_Offer(pqxx::transaction_base& txn, int offer_id) {
         
         std::string sql =  "DELETE FROM subject_offer WHERE offer_id = $1";
         txn.exec_params(sql, offer_id);
-        txn.commit();
+        //txn.commit();
     } catch (const std::exception &e) {
         fmt::print("Ошибка при удалении {}: {}", offer_id, e.what()) ;
         throw ; 
