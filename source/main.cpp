@@ -213,13 +213,6 @@ int main() {
             bot.getApi().sendMessage(message->chat->id, "Кто ты?", 0, 0, keyboard);
         });
 
-    bot.getEvents().onCommand("quote", [&bot, &quotes](TgBot::Message::Ptr message) {
-        std::srand(std::time(nullptr));
-        int idx = std::rand() % quotes.size();
-        bot.getApi().sendChatAction(message->chat->id, "typing");  // имитируем "думает..."
-        std::this_thread::sleep_for(std::chrono::seconds(3));      // пауза 3 секунды
-        bot.getApi().sendMessage(message->chat->id, quotes[idx]);
-    });
     bot.getEvents().onCallbackQuery(
         [&bot, &users, &MutexForUsers, &NewUsers](TgBot::CallbackQuery::Ptr query) {
             std::lock_guard<std::mutex> lock(MutexForUsers);
