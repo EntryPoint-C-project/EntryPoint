@@ -25,7 +25,29 @@ CPMAddPackage(
   GIT_TAG master  
 )
 
+CPMAddPackage(
+  NAME nlohmann_json
+  GIT_REPOSITORY https://github.com/nlohmann/json.git
+  GIT_TAG v3.11.2 
+)
+
+CPMAddPackage(
+  NAME libcurl
+  GIT_REPOSITORY https://github.com/curl/curl.git
+  GIT_TAG curl-8_1_2  
+  OPTIONS "BUILD_CURL_EXE OFF" "BUILD_TESTING OFF"
+)
+
+CPMAddPackage(
+  NAME libpqxx
+  GIT_REPOSITORY https://github.com/jtv/libpqxx.git
+  GIT_TAG 7.6.0  
+)
+
 target_link_libraries(main 
   Boost::system 
   TgBot 
+  nlohmann_json::nlohmann_json
+  curl
+  pqxx
 )
