@@ -2,14 +2,7 @@ cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
 project(MyProject)
 
-include_directories(include)
-
-file(GLOB SOURCES source/*.cpp) 
-
-add_executable(main ${SOURCES})
-
-add_subdirectory(tgBot)
-
+# Подключаем сторонние библиотеки через CPM
 include(cmake/CPM.cmake)
 
 CPMAddPackage(
@@ -24,40 +17,52 @@ CPMAddPackage(
 CPMAddPackage(
   NAME TgBot
   GIT_REPOSITORY https://github.com/reo7sp/tgbot-cpp.git
-  GIT_TAG master  
+  GIT_TAG master
 )
 
 CPMAddPackage(
   NAME nlohmann_json
   GIT_REPOSITORY https://github.com/nlohmann/json.git
-  GIT_TAG v3.11.2 
+  GIT_TAG v3.11.2
 )
 
 CPMAddPackage(
   NAME libcurl
   GIT_REPOSITORY https://github.com/curl/curl.git
-  GIT_TAG curl-8_1_2  
+  GIT_TAG curl-8_1_2
   OPTIONS "BUILD_CURL_EXE OFF" "BUILD_TESTING OFF"
 )
 
 CPMAddPackage(
   NAME libpqxx
   GIT_REPOSITORY https://github.com/jtv/libpqxx.git
-  GIT_TAG 7.6.0  
+  GIT_TAG 7.6.0
 )
 
 CPMAddPackage(
   NAME fmt
   GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-  GIT_TAG 10.2.1  # можно заменить на нужную версию
+  GIT_TAG 10.2.1
 )
 
-target_link_libraries(main 
-  Boost::system 
-  TgBot 
+# Добавляем поддиректорию tgBot
+add_subdirectory(tgBot)
+
+# Указываем путь к main.cpp
+set(MAIN_SOURCES
+    tgBot/source/main.cpp
+)
+
+add_executable(main ${MAIN_SOURCES})
+
+target_include_directories(main PRIVATE tgBot/include)
+
+target_link_libraries(main
+  Boost::system
+  TgBot
   nlohmann_json::nlohmann_json
   curl
   pqxx
   fmt::fmt
-  tgBotLib         
+  tgBotLib
 )
