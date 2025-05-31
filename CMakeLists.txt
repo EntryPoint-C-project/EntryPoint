@@ -8,6 +8,8 @@ file(GLOB SOURCES source/*.cpp)
 
 add_executable(main ${SOURCES})
 
+add_subdirectory(tgBot)
+
 include(cmake/CPM.cmake)
 
 CPMAddPackage(
@@ -57,4 +59,5 @@ target_link_libraries(main
   curl
   pqxx
   fmt::fmt
+  tgBotLib         
 )
