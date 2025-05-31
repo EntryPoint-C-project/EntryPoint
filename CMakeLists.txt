@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
-project(MyProject)
+project(MyProject LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Подключаем сторонние библиотеки через CPM
 include(cmake/CPM.cmake)
@@ -45,24 +48,26 @@ CPMAddPackage(
   GIT_TAG 10.2.1
 )
 
-# Добавляем поддиректорию tgBot
+# Подключаем поддиректорию библиотеки бота
 add_subdirectory(tgBot)
 
-# Указываем путь к main.cpp
-set(MAIN_SOURCES
-    tgBot/source/main.cpp
+# Основной исполняемый файл
+add_executable(main tgBot/source/main.cpp)
+
+# Включаем директории
+target_include_directories(main
+  PRIVATE
+    tgBot/include
 )
 
-add_executable(main ${MAIN_SOURCES})
-
-target_include_directories(main PRIVATE tgBot/include)
-
+# Линкуем с библиотеками
 target_link_libraries(main
-  Boost::system
-  TgBot
-  nlohmann_json::nlohmann_json
-  curl
-  pqxx
-  fmt::fmt
-  tgBotLib
+  PRIVATE
+    Boost::system
+    TgBot
+    nlohmann_json::nlohmann_json
+    curl
+    pqxx
+    fmt::fmt
+    tgBotLib
 )
