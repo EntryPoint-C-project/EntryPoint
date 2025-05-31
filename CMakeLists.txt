@@ -44,10 +44,17 @@ CPMAddPackage(
   GIT_TAG 7.6.0  
 )
 
+CPMAddPackage(
+  NAME fmt
+  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+  GIT_TAG 10.2.1  # можно заменить на нужную версию
+)
+
 target_link_libraries(main 
   Boost::system 
   TgBot 
   nlohmann_json::nlohmann_json
   curl
   pqxx
+  fmt::fmt
 )
