@@ -7,3 +7,7 @@ add_library(DataBaseLib STATIC ${BD_SOURCES})
 target_include_directories(DataBaseLib
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
+
+target_link_libraries(DataBaseLib
+    PRIVATE fmt::fmt
+)
