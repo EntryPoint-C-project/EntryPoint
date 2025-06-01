@@ -48,6 +48,7 @@ CPMAddPackage(
   GIT_TAG 10.2.1
 )
 
+add_subdirectory(DataBase)
 # Подключаем поддиректорию библиотеки бота
 add_subdirectory(tgBot)
 
