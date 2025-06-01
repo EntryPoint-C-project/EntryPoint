@@ -71,4 +71,5 @@ target_link_libraries(main
     pqxx
     fmt::fmt
     tgBotLib
+    DataBaseLib       # ← вот это нужно добавить
 )
