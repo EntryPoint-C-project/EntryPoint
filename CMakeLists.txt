@@ -61,7 +61,6 @@ target_include_directories(main
     tgBot/include
 )
 
-# Линкуем с библиотеками
 target_link_libraries(main
   PRIVATE
     Boost::system
@@ -69,7 +68,8 @@ target_link_libraries(main
     nlohmann_json::nlohmann_json
     curl
     pqxx
-    fmt::fmt
     tgBotLib
-    DataBaseLib       # ← вот это нужно добавить
+    DataBaseLib
+    fmt::fmt          # fmt после DataBaseLib
 )
+
