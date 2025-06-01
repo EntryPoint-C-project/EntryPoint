@@ -234,8 +234,8 @@ int main() {
     std::set<int64_t> NewUsers;
     std::mutex MutexForUsers;
 
-    std::thread t(InitDataBase);
-    t.detach();
+    std::thread thread_foor_data_base(InitDataBase);
+    thread_foor_data_base.detach();
 
     bot.getEvents().onCommand(
         "start", [&bot, &users, &MutexForUsers, &NewUsers](TgBot::Message::Ptr message) {
