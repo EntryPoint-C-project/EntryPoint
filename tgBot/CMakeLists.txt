@@ -32,4 +32,5 @@ target_include_directories(tgBotLib
 target_link_libraries(tgBotLib
     PUBLIC
         pqxx
+        fmt::fmt    # Добавить эту строку!
 )
