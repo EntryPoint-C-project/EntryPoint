@@ -37,6 +37,7 @@ int InitDataBase() {
     // const std::string conn_str = "dbname=postgres user=postgres password=spelaya_melon hostaddr=127.0.0.1 port=5432";
     const std::string conn_str = "dbname=ep_db user=danik password=60992425 hostaddr=127.0.0.1 port=5432";
 
+
     try {
         pqxx::connection conn(conn_str);
         // pqxx::work txn(conn); 
