@@ -264,7 +264,7 @@ struct Registration {
     int64_t chat_id;
     std::string name;
     std::string last_name;
-}
+};
 
 int main() {
     OMP.name_subject = "ОМП";
