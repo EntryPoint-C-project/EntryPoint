@@ -15,7 +15,7 @@ void CreateAllTable(pqxx::transaction_base& txn) {
      try {
 
         // chdir("/path/to/directory");
-        std::string sql =  ReadFileWithSql("../CreateAllTable.sql");
+        std::string sql =  ReadFileWithSql("CreateAllTable.sql");
         txn.exec(sql ); 
         // //txn.commit(); 
         fmt::print("All tables created)))") ; 
@@ -26,7 +26,7 @@ void CreateAllTable(pqxx::transaction_base& txn) {
 
 void DeleteAllTable(pqxx::transaction_base& txn) {
     try {
-        std::string sql =  ReadFileWithSql("../DeleteAllTable.sql");
+        std::string sql =  ReadFileWithSql("DeleteAllTable.sql");
         txn.exec(sql ); 
         // //txn.commit(); 
         fmt::print("All tables deleted)))") ; 
