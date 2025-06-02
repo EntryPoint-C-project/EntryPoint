@@ -99,7 +99,24 @@ CREATE TABLE IF NOT EXISTS Sop_Form (
 
 void DeleteAllTable(pqxx::transaction_base& txn) {
     try {
-        std::string sql =  ReadFileWithSql("DeleteAllTable.sql");
+        // std::string sql =  ReadFileWithSql("DeleteAllTable.sql");
+        std::string sql = R"(
+DROP TABLE IF EXISTS 
+    People , 
+    Roles,
+    Person_Role,
+    Subject_Offer,
+    Category_Tags,
+    Filters,
+    Person_Filter_Access,
+    Sop_Form, 
+    Course,
+    Teaching_Assigment,
+    People_Group,
+    Program,
+    Subjects,
+CASCADE;
+)";
         txn.exec(sql ); 
         // //txn.commit(); 
         fmt::print("All tables deleted)))") ; 
