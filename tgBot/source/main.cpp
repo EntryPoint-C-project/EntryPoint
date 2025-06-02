@@ -101,13 +101,6 @@ TgBot::InlineKeyboardMarkup::Ptr get_raiting_scale() {
     return keyboard;
 }
 
-
-    OMP.name_subject = "ОМП";
-    std::map<int64_t, std::shared_ptr<mtd::User>> users;
-    std::set<int64_t> NewUsers;
-    std::mutex MutexForUsers;
-
-
 void StudentCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
                           std::shared_ptr<mtd::User> user) {
     int64_t ChatId = user->id();
@@ -441,7 +434,10 @@ struct Registration {
 };
 
 int main() {
-
+    OMP.name_subject = "ОМП";
+    std::map<int64_t, std::shared_ptr<mtd::User>> users;
+    std::set<int64_t> NewUsers;
+    std::mutex MutexForUsers;
     TgBot::Bot bot("7472835556:AAGGxuQuWDgYb9rskK3tn7YG660YEg7OgKM");
     std::thread thread_foor_data_base(InitDataBase);
     thread_foor_data_base.detach();
