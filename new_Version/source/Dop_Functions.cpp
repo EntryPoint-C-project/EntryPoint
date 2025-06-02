@@ -62,34 +62,39 @@ void CreatePersonWithParams(pqxx::transaction_base& txn ,  Person person) {
         }
 
 
+        int subject_id
         if (IsThereARecordSubject(txn , person.subject_name)) {
-            int subject_id = ReadSubjectId(txn , person.subject_name);
+            subject_id = ReadSubjectId(txn , person.subject_name);
         } else {
             int subject_id = CreateSubject(txn , person.subject_name);
         }
 
+        int program_id;
         if ( IsThereARecordProgram(txn , person.program_name)) {
-            int program_id = ReadProgramId(txn , person.program_name);
+            program_id = ReadProgramId(txn , person.program_name);
         } else {
-            int program_id = CreateProgram(txn , person.program_name);
+            program_id = CreateProgram(txn , person.program_name);
         }
 
+        int course_id; 
         if (IsThereARecordCourse(txn , person.course_name)) {
-            int course_id = ReadCourseId(txn , person.course_name);
+            course_id = ReadCourseId(txn , person.course_name);
         } else {
-            int course_id = CreateCourse(txn , person.course_name);
+            course_id = CreateCourse(txn , person.course_name);
         }
 
+        int people_group_id ;
         if (IsThereARecordPeopleGroup(txn , person.people_group_name)) {
-            int people_group_id = ReadPeopleGroupId(txn , person.people_group_name);
+            people_group_id = ReadPeopleGroupId(txn , person.people_group_name);
         } else {
-            int people_group_id = CreatePeopleGroup(txn , person.people_group_name);
+            people_group_id = CreatePeopleGroup(txn , person.people_group_name);
         }
 
+        int offer_id ; 
         if (IsThereARecordOffer(txn , people_group_id, program_id, course_id)) {
-            int offer_id = GetOfferId(txn , people_group_id, program_id, course_id);
+            offer_id = GetOfferId(txn , people_group_id, program_id, course_id);
         } else {
-            int offer_id = CreateSubjectOffer(txn , people_group_id, program_id, course_id);
+            offer_id = CreateSubjectOffer(txn , people_group_id, program_id, course_id);
         }
 
         if (IsThereARecordTeachingAssigment(txn , person_id , offer_id , subject_id)) {
