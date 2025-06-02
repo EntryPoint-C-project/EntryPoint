@@ -227,6 +227,45 @@ void TutorCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
     }
 }
 
+void handleStartCommand(TgBot::Bot& bot, const TgBot::Message::Ptr& message,
+                        std::set<int64_t>& NewUsers, std::mutex& MutexForUsers) {
+    std::lock_guard<std::mutex> lock(MutexForUsers);
+    NewUsers.insert(message->chat->id);
+    std::cout << "User connect: " << message->chat->id << '\n';
+
+    TgBot::InlineKeyboardMarkup::Ptr keyboard(new TgBot::InlineKeyboardMarkup);
+
+    TgBot::InlineKeyboardButton::Ptr b1(new TgBot::InlineKeyboardButton);
+    b1->text = "Студент";
+    b1->callbackData = "student";
+
+    TgBot::InlineKeyboardButton::Ptr b2(new TgBot::InlineKeyboardButton);
+    b2->text = "Очебный офис";
+    b2->callbackData = "office_staff";
+
+    TgBot::InlineKeyboardButton::Ptr b3(new TgBot::InlineKeyboardButton);
+    b3->text = "Преподаватель";
+    b3->callbackData = "teacher";
+
+    TgBot::InlineKeyboardButton::Ptr b4(new TgBot::InlineKeyboardButton);
+    b4->text = "Куратор";
+    b4->callbackData = "tutor";
+
+    keyboard->inlineKeyboard.push_back({b1});
+    keyboard->inlineKeyboard.push_back({b2});
+    keyboard->inlineKeyboard.push_back({b3});
+    keyboard->inlineKeyboard.push_back({b4});
+
+    bot.getApi().sendMessage(message->chat->id, "Кто ты?", 0, 0, keyboard);
+}
+
+// ------------------------------------------------------------------------------------------------------------
+struct Registration {
+    int64_t chat_id;
+    std::string name;
+    std::string last_name;
+}
+
 int main() {
     OMP.name_subject = "ОМП";
     TgBot::Bot bot("7472835556:AAGGxuQuWDgYb9rskK3tn7YG660YEg7OgKM");
@@ -237,35 +276,11 @@ int main() {
     std::thread thread_foor_data_base(InitDataBase);
     thread_foor_data_base.detach();
 
-    bot.getEvents().onCommand(
-        "start", [&bot, &users, &MutexForUsers, &NewUsers](TgBot::Message::Ptr message) {
-            std::lock_guard<std::mutex> lock(MutexForUsers);
-            NewUsers.insert(message->chat->id);
-            std::cout << "User connect: " << message->chat->id << '\n';
-            TgBot::InlineKeyboardMarkup::Ptr keyboard(new TgBot::InlineKeyboardMarkup);
-            TgBot::InlineKeyboardButton::Ptr b1(new TgBot::InlineKeyboardButton);
-            b1->text = "Студент";
-            b1->callbackData = "student";
+    bot.getEvents().onCommand("start",
+    [&bot, &NewUsers, &MutexForUsers](TgBot::Message::Ptr message) {
+        handleStartCommand(bot, message, NewUsers, MutexForUsers);
+    });
 
-            TgBot::InlineKeyboardButton::Ptr b2(new TgBot::InlineKeyboardButton);
-            b2->text = "Очебный офис";
-            b2->callbackData = "office_staff";
-
-            TgBot::InlineKeyboardButton::Ptr b3(new TgBot::InlineKeyboardButton);
-            b3->text = "Преподаватель";
-            b3->callbackData = "teacher";
-
-            TgBot::InlineKeyboardButton::Ptr b4(new TgBot::InlineKeyboardButton);
-            b4->text = "Куратор";
-            b4->callbackData = "tutor";
-
-            keyboard->inlineKeyboard.push_back({b1});
-            keyboard->inlineKeyboard.push_back({b2});
-            keyboard->inlineKeyboard.push_back({b3});
-            keyboard->inlineKeyboard.push_back({b4});
-
-            bot.getApi().sendMessage(message->chat->id, "Кто ты?", 0, 0, keyboard);
-        });
 
     bot.getEvents().onCallbackQuery(
         [&bot, &users, &MutexForUsers, &NewUsers](TgBot::CallbackQuery::Ptr query) {
