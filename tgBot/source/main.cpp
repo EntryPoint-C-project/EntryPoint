@@ -1,5 +1,4 @@
 #include <tgbot/tgbot.h>
-
 #include <chrono>
 #include <map>
 #include <memory>
@@ -20,8 +19,19 @@
 #include "statistics.hpp"
 
 // Data Base 
-#include "../../DataBase/include/InteractionsWithTables.hpp"
 #include "../../DataBase/include/TESTS.hpp"
+#include "../../DataBase/include/Course.hpp"
+#include "../../DataBase/include/Dop_Functions.hpp"
+#include "../../DataBase/include/InteractionsWithTables.hpp"
+#include "../../DataBase/include/People_Group.hpp"
+#include "../../DataBase/include/Person.hpp"
+#include "../../DataBase/include/Person_Role.hpp"
+#include "../../DataBase/include/Program.hpp"
+#include "../../DataBase/include/Role.hpp"
+#include "../../DataBase/include/SOP_Form.hpp"
+#include "../../DataBase/include/Subject.hpp"
+#include "../../DataBase/include/Subject_Offer.hpp"
+#include "../../DataBase/include/Teaching_Assigment.hpp"
 
 int InitDataBase() {
     // const std::string conn_str = "dbname=postgres user=postgres password=spelaya_melon hostaddr=127.0.0.1 port=5432";
@@ -229,11 +239,7 @@ void TutorCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
 
 
 // ------------------------------------------------------------------------------------------------------------
-struct Registration {
-    int64_t chat_id;
-    std::string name;
-    std::string last_name;
-};
+
 
 int main() {
     OMP.name_subject = "ОМП";
