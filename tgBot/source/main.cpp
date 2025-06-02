@@ -241,6 +241,8 @@ void TutorCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
 
 // ------------------------------------------------------------------------------------------------------------
 
+std::set<int64_t> waiting_for_admin_code, users_admin;
+std::mutex mutes_for_admin; 
 
 int main() {
     OMP.name_subject = "ОМП";
@@ -251,6 +253,12 @@ int main() {
 
     std::thread thread_foor_data_base(InitDataBase);
     thread_foor_data_base.detach();
+
+    bot.getEvents("admin", [&bot](TgBot::Message::Ptr message) {
+        std::lock_guard<std::mutex> lock(mutes_for_admin);
+        waiting_for_admin_code.insert(message->chat->id);
+        bot.getApi().sendMessage(message->chat->id, "Введите пароль");
+    });
 
     bot.getEvents().onCommand(
         "start", [&bot, &users, &MutexForUsers, &NewUsers](TgBot::Message::Ptr message) {
@@ -332,6 +340,16 @@ int main() {
     bot.getEvents().onAnyMessage([&bot, &users, &MutexForUsers](TgBot::Message::Ptr message) {
         std::lock_guard<std::mutex> lock(MutexForUsers);
         int64_t ChatId = message->chat->id;
+
+        if (waiting_for_admin_code.find(CharId)) {
+            if (message->text == "123456") {
+                users_admin.insert(ChatId);
+                bot.getApi().sendMessage(ChatId, "Поздравляю!!! Вы теперь админ. При команде /secret у вас будет админская панель");
+                waiting_for_admin_code.erase(ChatId);
+            } else {
+                bot.getApi().sendMessage(ChatId, "Пароль неверн, вы можете попробовать еще раз. И не надо пиздеть, если ты не админ, то вали нахер отсуда. Алминская панель не для таких лохов как ты");
+            }
+        }
 
         if (users.find(ChatId) == users.end()) {
             std::cout << "=== Error 2 ===\n";
