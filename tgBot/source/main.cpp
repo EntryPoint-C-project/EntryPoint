@@ -254,7 +254,7 @@ int main() {
     std::thread thread_foor_data_base(InitDataBase);
     thread_foor_data_base.detach();
 
-    bot.getEvents("admin", [&bot](TgBot::Message::Ptr message) {
+    bot.getEvents().onAnyMessage("admin", [&bot](TgBot::Message::Ptr message) {
         std::lock_guard<std::mutex> lock(mutes_for_admin);
         waiting_for_admin_code.insert(message->chat->id);
         bot.getApi().sendMessage(message->chat->id, "Введите пароль");
@@ -341,7 +341,7 @@ int main() {
         std::lock_guard<std::mutex> lock(MutexForUsers);
         int64_t ChatId = message->chat->id;
 
-        if (waiting_for_admin_code.find(CharId)) {
+        if (waiting_for_admin_code.find(ChatId)) {
             if (message->text == "123456") {
                 users_admin.insert(ChatId);
                 bot.getApi().sendMessage(ChatId, "Поздравляю!!! Вы теперь админ. При команде /secret у вас будет админская панель");
