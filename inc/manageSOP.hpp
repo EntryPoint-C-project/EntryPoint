@@ -125,6 +125,8 @@ void addFieldToForm(const std::string &formId, json jsonFile, Config &config,
 std::string getFormUrl(const std::string &formId);
 json getFormResponses(const std::string &formId, Config &config,
                       HttpClient &httpClient);
+json readGoogleTable(const std::string &tableName, const std::string &range,
+                     Config &config, HttpClient &httpClient);
 } // namespace sop
 
 #endif // MANAGESOP_HPP

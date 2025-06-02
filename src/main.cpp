@@ -21,7 +21,9 @@ int main() {
   student.SetStudentId(1);
   student.SetSubjects(params);
   nlohmann::json question = sop::generateQuestionsPerStudent(student);
-  std::cout << question.dump() << '\n';
   sop::addFieldToForm(formId, question, config, httpClient);
   std::cout << sop::getFormUrl(formId) << '\n';
+  std::string tableId = "1I_rMWuaZ4jEE7MVAyatqlXsjmypwEmvXaek54AGJ2R0";
+  std::string range = "A1:E9";
+  std::cout << sop::readGoogleTable(tableId, range, config, httpClient);
 }

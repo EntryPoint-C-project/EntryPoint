@@ -253,10 +253,43 @@ json getFormResponses(const std::string &formId, Config &config,
   }
 }
 
+json readGoogleTable(const std::string &tableName, const std::string &range,
+                     Config &config, HttpClient &httpClient) {
+  std::string accessToken = refreshAccessToken(config, httpClient);
+  if (accessToken.empty()) {
+    std::cerr << "Failed to refresh access token" << std::endl;
+    return json();
+  }
+
+  std::cout << "accessToken: " << accessToken << std::endl;
+
+  std::string url = "https://sheets.googleapis.com/v4/spreadsheets/" +
+                    tableName + "/values:batchGet?ranges=" + range;
+  std::string response =
+      httpClient.performHttpRequest(url, "GET", accessToken, "");
+
+  try {
+    json jsonResponse = json::parse(response);
+    if (jsonResponse.contains("valueRanges")) {
+      return jsonResponse;
+    } else {
+      std::cerr << "Error: 'valueRanges' not found in response" << std::endl;
+      if (jsonResponse.contains("error")) {
+        std::cerr << "Error details: " << jsonResponse["error"].dump()
+                  << std::endl;
+      }
+      return json();
+    }
+  } catch (const std::exception &e) {
+    std::cerr << "JSON parsing error: " << e.what() << std::endl;
+    return json();
+  }
+}
+
 std::string Config::getEnvVar(const std::string &key) {
   const char *value = std::getenv(key.c_str());
   if (value == nullptr) {
-    std::cout << "Unable to get: " + key + '\n';
+    std::cerr << "Unable to get: " + key + '\n';
     return "";
   } else {
     return std::string(value);
