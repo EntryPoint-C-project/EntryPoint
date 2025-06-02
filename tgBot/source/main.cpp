@@ -327,8 +327,8 @@ void handleAnyMessage(TgBot::Bot& bot,
                       /* Здесь нужно передать объекты, которые используются в вашем коде, например: */
                       /* OMP и t - объекты, не показанные в вашем фрагменте, их нужно передавать сюда */
                       /* Например: */
-                      YourOMPType& OMP,
-                      YourTType& t)
+                      mtd::Subject& OMP,
+                      Discipline& t)
 {
     std::lock_guard<std::mutex> lock(MutexForUsers);
     int64_t ChatId = message->chat->id;
@@ -435,6 +435,7 @@ struct Registration {
 
 int main() {
     OMP.name_subject = "ОМП";
+    
     std::map<int64_t, std::shared_ptr<mtd::User>> users;
     std::set<int64_t> NewUsers;
     std::mutex MutexForUsers;
