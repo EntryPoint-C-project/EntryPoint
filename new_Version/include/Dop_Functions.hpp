@@ -28,3 +28,6 @@ struct Teacher{
 }; 
 
 std::vector<Teacher> GetAllTeachersForStudent(pqxx::transaction_base& txn, int student_id) ;
+
+bool CorrectSnils(pqxx::transaction_base& txn, int snils , std::string tg_nick) ;
+

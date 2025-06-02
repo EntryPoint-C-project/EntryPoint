@@ -5,16 +5,16 @@
 
 void TEST_PERSON(pqxx::transaction_base& txn  ) {   
 
-    People person1{"John", "Doe", "johвndoe", 0};
-    People person2{"Danik", "bla " , "dвanik_b" , 0} ; 
-    People person3{"Egor", "Schcred " , "eвgorik" , 1} ; 
-    People person4{"Egor", "PIDOR " , "eвgorikkk" , 0} ; 
+    People person1{"John", "Doe", "johвndoe", 0 , 12121};
+    People person2{"Danik", "bla " , "dвanik_b" , 0 , 12141} ; 
+    People person3{"Egor", "Schcred " , "eвgorik" , 1 , 141432 } ; 
+    People person4{"Egor", "PIDOR " , "eвgorikkk" , 0 , 1214213 } ; 
 
 
-    person1.SetPrimaryKey(CreatePerson(txn, person1.GetFirstName(), person1.GetLastName(), person1.GetTgNick(), person1.GetAccess()));
-    person2.SetPrimaryKey(CreatePerson(txn, person2.GetFirstName(), person2.GetLastName(), person2.GetTgNick(), person2.GetAccess()));
-    person3.SetPrimaryKey(CreatePerson(txn, person3.GetFirstName(), person3.GetLastName(), person3.GetTgNick(), person3.GetAccess()));
-    person4.SetPrimaryKey(CreatePerson(txn, person4.GetFirstName(), person4.GetLastName(), person4.GetTgNick(), person4.GetAccess()));
+    person1.SetPrimaryKey(CreatePerson(txn, person1.GetFirstName(), person1.GetLastName(), person1.GetTgNick(), person1.GetAccess() , person1.GetSnils() ));
+    person2.SetPrimaryKey(CreatePerson(txn, person2.GetFirstName(), person2.GetLastName(), person2.GetTgNick(), person2.GetAccess() , person2.GetSnils()));
+    person3.SetPrimaryKey(CreatePerson(txn, person3.GetFirstName(), person3.GetLastName(), person3.GetTgNick(), person3.GetAccess() , person3.GetSnils()));
+    person4.SetPrimaryKey(CreatePerson(txn, person4.GetFirstName(), person4.GetLastName(), person4.GetTgNick(), person4.GetAccess() , person4.GetSnils()));
     auto person4_read = ReadPerson(txn, person4.GetPrimaryKey()) ;
 
     std::cout << std::get<0>(person4_read) << std::endl;
@@ -185,27 +185,27 @@ void TEST_GET_ALL_TEACHERS(pqxx::transaction_base& txn) {
 
         // ================== 2. Создаем пользователей ==================
         // Создаем 1 студента
-        int student_1 = CreatePerson(txn, "Иван", "Иванов", "ivanov", 0);
+        int student_1 = CreatePerson(txn, "Иван", "Иванов", "ivanov", 0 , 12132);
         CreatePersonRole(txn, student_1, student_role);
 
-        int student_2 = CreatePerson(txn, "Вася", "Пупкин", "сися666", 0);
+        int student_2 = CreatePerson(txn, "Вася", "Пупкин", "сися666", 0 , 21412);
         CreatePersonRole(txn, student_2, student_role);
 
         // Создаем 3 преподавателей
-        int teacher1 = CreatePerson(txn, "Петр", "Петров", "petrov", 1);
+        int teacher1 = CreatePerson(txn, "Петр", "Петров", "petrov", 1 , 5943);
         CreatePersonRole(txn, teacher1, teacher_role);
         
-        int teacher2 = CreatePerson(txn, "Сергей", "Сергеев", "sergeev", 1);
+        int teacher2 = CreatePerson(txn, "Сергей", "Сергеев", "sergeev", 1 , 662662);
         CreatePersonRole(txn, teacher2, teacher_role);
         
-        int teacher3 = CreatePerson(txn, "Анна", "Сидорова", "sidorova", 1);
+        int teacher3 = CreatePerson(txn, "Анна", "Сидорова", "sidorova", 1 , 93993);
         CreatePersonRole(txn, teacher3, teacher_role);
 
         // Создаем 2 практиков
-        int practic1 = CreatePerson(txn, "Дмитрий", "Практиков", "practic1", 1);
+        int practic1 = CreatePerson(txn, "Дмитрий", "Практиков", "practic1", 1 , 32323);
         CreatePersonRole(txn, practic1, practice_role);
         
-        int practic2 = CreatePerson(txn, "Ольга", "Практикова", "practic2", 1);
+        int practic2 = CreatePerson(txn, "Ольга", "Практикова", "practic2", 1 , 849494);
         CreatePersonRole(txn, practic2, practice_role);
 
         // ================== 3. Создаем учебные предложения ==================

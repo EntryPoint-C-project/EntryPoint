@@ -39,9 +39,6 @@ int main() {
         txn.commit();
 
 
-
-
-
     
     }catch( const std::exception &e){
         fmt::print("произошла ошибка : {}\n", e.what());

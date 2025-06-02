@@ -15,7 +15,7 @@ std::vector<Teacher> GetAllTeachersForStudent(pqxx::transaction_base& txn, int s
             for (auto info : teacher_info) { //person_id , subject_id
                 int person_id = info.first;
                 std::string subject_name = ReadSubject(txn, info.second);
-                std::tuple<std::string , std::string , std::string , int > teacher_info = ReadPerson(txn, person_id);
+                std::tuple<std::string , std::string , std::string , int , int  > teacher_info = ReadPerson(txn, person_id);
 
                 Teacher teacher;
                 teacher.first_name = std::get<0>(teacher_info); 
@@ -36,3 +36,17 @@ std::vector<Teacher> GetAllTeachersForStudent(pqxx::transaction_base& txn, int s
         
     return teachers;
 }
+
+bool CorrectSnils(pqxx::transaction_base& txn, int snils , std::string tg_nick)  {
+    try {
+        std::string sql =  " SELECt EXISTS("
+                           "SELECT 1 FROM people WHERE snils = $1 AND tg_nick = $2"
+                           ")";
+        pqxx::result res = txn.exec_params(sql, snils, tg_nick);
+        return res[0][0].as<bool>();
+    } catch (const std::exception &e) {
+        fmt::print("Ошибка при чтении {}: {}", snils, e.what()) ;
+        throw ;
+    }
+}
+
