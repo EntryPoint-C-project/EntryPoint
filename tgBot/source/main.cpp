@@ -227,204 +227,6 @@ void TutorCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
     }
 }
 
-void handleStartCommand(TgBot::Bot& bot, const TgBot::Message::Ptr& message,
-                        std::set<int64_t>& NewUsers, std::mutex& MutexForUsers) {
-    std::lock_guard<std::mutex> lock(MutexForUsers);
-    NewUsers.insert(message->chat->id);
-    std::cout << "User connect: " << message->chat->id << '\n';
-
-    TgBot::InlineKeyboardMarkup::Ptr keyboard(new TgBot::InlineKeyboardMarkup);
-
-    TgBot::InlineKeyboardButton::Ptr b1(new TgBot::InlineKeyboardButton);
-    b1->text = "Студент";
-    b1->callbackData = "student";
-
-    TgBot::InlineKeyboardButton::Ptr b2(new TgBot::InlineKeyboardButton);
-    b2->text = "Очебный офис";
-    b2->callbackData = "office_staff";
-
-    TgBot::InlineKeyboardButton::Ptr b3(new TgBot::InlineKeyboardButton);
-    b3->text = "Преподаватель";
-    b3->callbackData = "teacher";
-
-    TgBot::InlineKeyboardButton::Ptr b4(new TgBot::InlineKeyboardButton);
-    b4->text = "Куратор";
-    b4->callbackData = "tutor";
-
-    keyboard->inlineKeyboard.push_back({b1});
-    keyboard->inlineKeyboard.push_back({b2});
-    keyboard->inlineKeyboard.push_back({b3});
-    keyboard->inlineKeyboard.push_back({b4});
-
-    bot.getApi().sendMessage(message->chat->id, "Кто ты?", 0, 0, keyboard);
-}
-
-void handleCallbackQuery(TgBot::Bot& bot,
-                         TgBot::CallbackQuery::Ptr query,
-                         std::map<int64_t, std::shared_ptr<mtd::User>>& users,
-                         std::set<int64_t>& NewUsers,
-                         std::mutex& MutexForUsers) {
-    std::lock_guard<std::mutex> lock(MutexForUsers);
-    int64_t ChatId = query->message->chat->id;
-
-    if (NewUsers.find(ChatId) != NewUsers.end()) {
-        if (query->data == "student") {
-            auto student_ptr = std::make_shared<mtd::Student>(ChatId);
-            users.insert({ChatId, student_ptr});
-        } else if (query->data == "office_staff") {
-            auto office_staff_ptr = std::make_shared<mtd::OfficeStaff>(ChatId);
-            users.insert({ChatId, office_staff_ptr});
-        } else if (query->data == "teacher") {
-            auto teacher_ptr = std::make_shared<mtd::Teacher>(ChatId);
-            users.insert({ChatId, teacher_ptr});
-        } else if (query->data == "tutor") {
-            auto tutor_ptr = std::make_shared<mtd::Tutor>(ChatId);
-            users.insert({ChatId, tutor_ptr});
-        }
-
-        bot.getApi().sendMessage(ChatId, "Меню", 0, 0, users[ChatId]->GetMenu());
-        NewUsers.erase(ChatId);
-        return;
-    }
-
-    if (users.find(ChatId) == users.end()) {
-        std::cout << "=== Error ===\n";
-        return;
-    }
-
-    auto& user = users[ChatId];
-
-    if (query->data == "complete_button") {
-        std::cout << "sfdfdfdf\n";
-        bot.getApi().sendMessage(ChatId, "_", 0, 0, user->GetMenu());
-        return;
-    }
-
-    switch (user->GetRole()) {
-        case mtd::UserRole::STUDENT:
-            StudentCallBackQuery(bot, query, user);
-            break;
-        case mtd::UserRole::OFFICE_STAFF:
-            OfficeStaffCallBackQuery(bot, query, user);
-            break;
-        case mtd::UserRole::TEACHER:
-            TeacherCallBackQuery(bot, query, user);
-            break;
-        case mtd::UserRole::TUTOR:
-            TutorCallBackQuery(bot, query, user);
-            break;
-        default:
-            std::cout << "Unknown user role\n";
-            break;
-    }
-}
-
-void handleAnyMessage(TgBot::Bot& bot,
-                      TgBot::Message::Ptr message,
-                      std::map<int64_t, std::shared_ptr<mtd::User>>& users,
-                      std::mutex& MutexForUsers,
-                      std::vector<std::string>& declarations,
-                      /* Здесь нужно передать объекты, которые используются в вашем коде, например: */
-                      /* OMP и t - объекты, не показанные в вашем фрагменте, их нужно передавать сюда */
-                      /* Например: */
-                      mtd::Subject& OMP,
-                      Discipline& t)
-{
-    std::lock_guard<std::mutex> lock(MutexForUsers);
-    int64_t ChatId = message->chat->id;
-
-    if (users.find(ChatId) == users.end()) {
-        std::cout << "=== Error 2 ===\n";
-        return;
-    }
-    auto& user = users[ChatId];
-
-    if (user->GetState() == mtd::UserState::TUTOR_SOP) {
-        int64_t student_ChatId = static_cast<int64_t>(std::stoll(message->text));
-        std::string s;
-        for (const auto i : users[student_ChatId]->GetEvaluations()) {
-            s += std::to_string(i) + " ";
-        }
-        bot.getApi().sendMessage(ChatId, "Оценки этого студента:\n" + s, 0, 0, user->BackButton());
-        return;
-    } 
-    else if (user->GetState() == mtd::UserState::TUTOR_ADD_DECLARATION) {
-        declarations.push_back(message->text);
-        bot.getApi().sendMessage(ChatId,
-                                 "Объявление успешно создано и сделана рассылка пользователям",
-                                 0, 0, user->GetMenu());
-        for (const auto& iter : users) {
-            if (iter.first == ChatId) {
-                continue;
-            }
-            std::string dec = "Объявление от " + message->chat->firstName + " "
-                              + message->chat->lastName + ":\n" + message->text;
-            bot.getApi().sendMessage(iter.first, dec, 0, 0, iter.second->GetMenu());
-        }
-        return;
-    } 
-    else if (user->GetState() == mtd::UserState::STUDENT_SOP) {
-        if (user->GetStep() == -1) {  // конец
-            OMP.comments.push_back(message->text);
-            bot.getApi().sendMessage(ChatId, "Меню", 0, 0, user->GetMenu());
-        }
-        if (user->GetStep() == 1) {
-            user->feedback.advantages = message->text;
-            bot.getApi().sendMessage(ChatId, "Что не нравится в лекциях?");
-            user->GetStep()++;
-        } else if (user->GetStep() == 2) {
-            if (user->feedback.index == 0) {
-                user->feedback.disadvantages = message->text;
-                mtd::LectionFeedback q;
-                q.grade = user->feedback.grade;
-                q.advantages = user->feedback.advantages;
-                q.disadvantages = user->feedback.disadvantages;
-                OMP.lections_result.push_back(q);
-            }
-            user->GetStep()++;
-            if (user->feedback.index < t.seminarians.size()) {
-                bot.getApi().sendMessage(
-                    ChatId, "Оцените практику с " + t.seminarians[user->feedback.index], 0, 0,
-                    get_raiting_scale());
-            } else {
-                user->GetStep() = -1;
-                bot.getApi().sendMessage(ChatId, "Введите какой-нибудь коммент");
-            }
-        } else if (user->GetStep() == 5) {
-            user->feedback.advantages = message->text;
-            bot.getApi().sendMessage(ChatId, "Что не нравится");
-            user->GetStep()++;
-        } else if (user->GetStep() == 6) {
-            user->feedback.disadvantages = message->text;
-            mtd::PracticeFeedback q;
-            q.grade = user->feedback.grade;
-            q.grade_for_homework = user->feedback.grade_home_work;
-            q.advantages = user->feedback.advantages;
-            q.disadvantages = user->feedback.disadvantages;
-            q.name_teacher = t.seminarians[user->feedback.index];
-            OMP.practice_result.push_back(q);
-            user->feedback.index++;
-            user->GetStep() = 2;
-            bot.getApi().sendMessage(ChatId, "Если хотите продолжить, введите что-то");
-        }
-    } 
-    else if (user->GetState() == mtd::UserState::CREATE_SOP) {
-        if (user->GetStep() == 0) {
-            t.name_subject = message->text;
-            user->GetStep()++;
-            bot.getApi().sendMessage(ChatId, "Как зовут лектора");
-        } else if (user->GetStep() == 1) {
-            t.lector = message->text;
-            user->GetStep()++;
-            bot.getApi().sendMessage(ChatId, "Как зовут практика", 0, 0, CompleteButton());
-        } else if (user->GetStep() == 2) {
-            t.seminarians.push_back(message->text);
-            bot.getApi().sendMessage(ChatId, "Как зовут практика", 0, 0, CompleteButton());
-        }
-    }
-}
-
-
 
 // ------------------------------------------------------------------------------------------------------------
 struct Registration {
@@ -435,29 +237,184 @@ struct Registration {
 
 int main() {
     OMP.name_subject = "ОМП";
-    
+    TgBot::Bot bot("7472835556:AAGGxuQuWDgYb9rskK3tn7YG660YEg7OgKM");
     std::map<int64_t, std::shared_ptr<mtd::User>> users;
     std::set<int64_t> NewUsers;
     std::mutex MutexForUsers;
-    TgBot::Bot bot("7472835556:AAGGxuQuWDgYb9rskK3tn7YG660YEg7OgKM");
+
     std::thread thread_foor_data_base(InitDataBase);
     thread_foor_data_base.detach();
 
-    bot.getEvents().onCommand("start",
-    [&bot, &NewUsers, &MutexForUsers](TgBot::Message::Ptr message) {
-        handleStartCommand(bot, message, NewUsers, MutexForUsers);
-    });
+    bot.getEvents().onCommand(
+        "start", [&bot, &users, &MutexForUsers, &NewUsers](TgBot::Message::Ptr message) {
+            std::lock_guard<std::mutex> lock(MutexForUsers);
+            NewUsers.insert(message->chat->id);
+            std::cout << "User connect: " << message->chat->id << '\n';
+            TgBot::InlineKeyboardMarkup::Ptr keyboard(new TgBot::InlineKeyboardMarkup);
+            TgBot::InlineKeyboardButton::Ptr b1(new TgBot::InlineKeyboardButton);
+            b1->text = "Студент";
+            b1->callbackData = "student";
 
+            TgBot::InlineKeyboardButton::Ptr b2(new TgBot::InlineKeyboardButton);
+            b2->text = "Очебный офис";
+            b2->callbackData = "office_staff";
+
+            TgBot::InlineKeyboardButton::Ptr b3(new TgBot::InlineKeyboardButton);
+            b3->text = "Преподаватель";
+            b3->callbackData = "teacher";
+
+            TgBot::InlineKeyboardButton::Ptr b4(new TgBot::InlineKeyboardButton);
+            b4->text = "Куратор";
+            b4->callbackData = "tutor";
+
+            keyboard->inlineKeyboard.push_back({b1});
+            keyboard->inlineKeyboard.push_back({b2});
+            keyboard->inlineKeyboard.push_back({b3});
+            keyboard->inlineKeyboard.push_back({b4});
+
+            bot.getApi().sendMessage(message->chat->id, "Кто ты?", 0, 0, keyboard);
+        });
 
     bot.getEvents().onCallbackQuery(
-    [&bot, &users, &NewUsers, &MutexForUsers](TgBot::CallbackQuery::Ptr query) {
-        handleCallbackQuery(bot, query, users, NewUsers, MutexForUsers);
-    });
+        [&bot, &users, &MutexForUsers, &NewUsers](TgBot::CallbackQuery::Ptr query) {
+            std::lock_guard<std::mutex> lock(MutexForUsers);
+            int64_t ChatId = query->message->chat->id;
 
-    bot.getEvents().onAnyMessage([&bot, &users, &MutexForUsers, &declarations, &OMP, &t](TgBot::Message::Ptr message) {
-        handleAnyMessage(bot, message, users, MutexForUsers, declarations, OMP, t);
-    });
+            if (NewUsers.find(ChatId) != NewUsers.end()) {
+                if (query->data == "student") {
+                    auto student_ptr = std::make_shared<mtd::Student>(ChatId);
+                    users.insert({ChatId, student_ptr});
+                } else if (query->data == "office_staff") {
+                    auto office_staff_ptr = std::make_shared<mtd::OfficeStaff>(ChatId);
+                    users.insert({ChatId, office_staff_ptr});
+                } else if (query->data == "teacher") {
+                    auto teacher_ptr = std::make_shared<mtd::Teacher>(ChatId);
+                    users.insert({ChatId, teacher_ptr});
+                } else if (query->data == "tutor") {
+                    auto tutor_ptr = std::make_shared<mtd::Tutor>(ChatId);
+                    users.insert({ChatId, tutor_ptr});
+                }
 
+                bot.getApi().sendMessage(ChatId, "Меню", 0, 0, users[ChatId]->GetMenu());
+                NewUsers.erase(ChatId);
+                return;
+            }
+            if (users.find(ChatId) == users.end()) {
+                std::cout << "=== Error ===\n";
+                return;
+            }
+            auto &user = users[ChatId];
+
+            if (query->data == "complete_button") {
+                std::cout << "sfdfdfdf\n";
+                bot.getApi().sendMessage(ChatId, "_", 0, 0, user->GetMenu());
+                return;
+            }
+
+            if (user->GetRole() == mtd::UserRole::STUDENT) {
+                StudentCallBackQuery(bot, query, user);
+            } else if (user->GetRole() == mtd::UserRole::OFFICE_STAFF) {
+                OfficeStaffCallBackQuery(bot, query, user);
+            } else if (user->GetRole() == mtd::UserRole::TEACHER) {
+                TeacherCallBackQuery(bot, query, user);
+            } else if (user->GetRole() == mtd::UserRole::TUTOR) {
+                TutorCallBackQuery(bot, query, user);
+            }
+        });
+
+    bot.getEvents().onAnyMessage([&bot, &users, &MutexForUsers](TgBot::Message::Ptr message) {
+        std::lock_guard<std::mutex> lock(MutexForUsers);
+        int64_t ChatId = message->chat->id;
+
+        if (users.find(ChatId) == users.end()) {
+            std::cout << "=== Error 2 ===\n";
+            return;
+        }
+        auto &user = users[ChatId];
+
+        if (user->GetState() == mtd::UserState::TUTOR_SOP) {
+            int64_t student_ChatId = static_cast<int64_t>(std::stoll(message->text));
+            std::string s;
+            for (const auto i : users[student_ChatId]->GetEvaluations()) {
+                s += std::to_string(i) + " ";
+            }
+            bot.getApi().sendMessage(ChatId, "Оценки этого студента:\n" + s, 0, 0,
+                                     user->BackButton());
+            return;
+        } else if (user->GetState() == mtd::UserState::TUTOR_ADD_DECLARATION) {
+            declarations.push_back(message->text);
+            bot.getApi().sendMessage(ChatId,
+                                     "Объявление успешно создано и сделана рассылка пользователям",
+                                     0, 0, user->GetMenu());
+            for (const auto &iter : users) {
+                if (iter.first == ChatId) {
+                    continue;
+                }
+                std::string dec = "Объвяление от " + message->chat->firstName + " "
+                                  + message->chat->lastName + ":\n" + message->text;
+                bot.getApi().sendMessage(iter.first, dec, 0, 0, iter.second->GetMenu());
+            }
+            return;
+        } else if (user->GetState() == mtd::UserState::STUDENT_SOP) {
+            if (user->GetStep() == -1) {  // конец
+                OMP.comments.push_back(message->text);
+                bot.getApi().sendMessage(ChatId, "Меню", 0, 0, user->GetMenu());
+            }
+            if (user->GetStep() == 1) {
+                user->feedback.advantages = message->text;
+                bot.getApi().sendMessage(ChatId, "Что не нравится в лекциях?");
+                user->GetStep()++;
+            } else if (user->GetStep() == 2) {
+                if (user->feedback.index == 0) {
+                    user->feedback.disadvantages = message->text;
+                    mtd::LectionFeedback q;
+                    q.grade = user->feedback.grade;
+                    q.advantages = user->feedback.advantages;
+                    q.disadvantages = user->feedback.disadvantages;
+                    OMP.lections_result.push_back(q);
+                }
+                user->GetStep()++;
+                if (user->feedback.index < t.seminarians.size()) {
+                    bot.getApi().sendMessage(
+                        ChatId, "Оцените практику с " + t.seminarians[user->feedback.index], 0, 0,
+                        get_raiting_scale());
+                } else {
+                    user->GetStep() = -1;
+                    bot.getApi().sendMessage(ChatId, "Введите какой-нибудь коммент");
+                }
+
+            } else if (user->GetStep() == 5) {
+                user->feedback.advantages = message->text;
+                bot.getApi().sendMessage(ChatId, "Что не нравится");
+                user->GetStep()++;
+            } else if (user->GetStep() == 6) {
+                user->feedback.disadvantages = message->text;
+                mtd::PracticeFeedback q;
+                q.grade = user->feedback.grade;
+                q.grade_for_homework = user->feedback.grade_home_work;
+                q.advantages = user->feedback.advantages;
+                q.disadvantages = user->feedback.disadvantages;
+                q.name_teacher = t.seminarians[user->feedback.index];
+                OMP.practice_result.push_back(q);
+                user->feedback.index++;
+                user->GetStep() = 2;
+                bot.getApi().sendMessage(ChatId, "Если хотите продолжить, введите что-то");
+            }
+        } else if (user->GetState() == mtd::UserState::CREATE_SOP) {
+            if (user->GetStep() == 0) {
+                t.name_subject = message->text;
+                user->GetStep()++;
+                bot.getApi().sendMessage(ChatId, "Как зовут лектора");
+            } else if (user->GetStep() == 1) {
+                t.lector = message->text;
+                user->GetStep()++;
+                bot.getApi().sendMessage(ChatId, "Как зовут практика", 0, 0, CompleteButton());
+            } else if (user->GetStep() == 2) {
+                t.seminarians.push_back(message->text);
+                bot.getApi().sendMessage(ChatId, "Как зовут практика", 0, 0, CompleteButton());
+            }
+        }
+    });
     try {
         std::cout << "Bot is running...\n";
         TgBot::TgLongPoll longPoll(bot);
