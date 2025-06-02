@@ -29,5 +29,7 @@ int CreateTeachingAssigment(pqxx::transaction_base& txn , int person_id, int off
 std::tuple< int , int , int > ReadTeachingAssigment(pqxx::transaction_base& txn , int assignment_id) ;
 std::vector< std::pair<int , int > > ReadInfoOnPersonId(pqxx::transaction_base& txn , int person_id) ;
 std::vector<std::pair <int, int> > ReadInfoOnOfferIdNoStudents(pqxx::transaction_base& txn , int offer_id) ;
+
+bool IsThereARecordTeachingAssigment(pqxx::transaction_base& txn, int person_id , int offer_id , int subject_id) ;
 void UpdateTeachingAssigment(pqxx::transaction_base& txn, int assignment_id, int person_id, int offer_id, int subject_id) ;
 void DeleteTeachingAssigment(pqxx::transaction_base& txn, int assignment_id) ;

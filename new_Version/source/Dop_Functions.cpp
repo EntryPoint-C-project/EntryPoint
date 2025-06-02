@@ -50,3 +50,57 @@ bool CorrectSnils(pqxx::transaction_base& txn, int snils , std::string tg_nick) 
     }
 }
 
+void CreatePersonWithParams(pqxx::transaction_base& txn ,  Person person) {
+    try {
+        int person_id = CreatePerson(txn , person.first_name , person.last_name , person.tg_nick , person.access , person.snils);
+        if ( person.role == "student"){
+            CreatePersonRole(txn , person_id , "student");
+        }else if (person.role == "lector"){
+            CreatePersonRole(txn , person_id , "lector");
+        }else if (person.role == "practitioner"){
+            CreatePersonRole(txn , person_id , "practitioner");
+        }
+
+
+        if (IsThereARecordSubject(txn , person.subject_name)) {
+            int subject_id = ReadSubjectId(txn , person.subject_name);
+        } else {
+            int subject_id = CreateSubject(txn , person.subject_name);
+        }
+
+        if ( IsThereARecordProgram(txn , person.program_name)) {
+            int program_id = ReadProgramId(txn , person.program_name);
+        } else {
+            int program_id = CreateProgram(txn , person.program_name);
+        }
+
+        if (IsThereARecordCourse(txn , person.course_name)) {
+            int course_id = ReadCourseId(txn , person.course_name);
+        } else {
+            int course_id = CreateCourse(txn , person.course_name);
+        }
+
+        if (IsThereARecordPeopleGroup(txn , person.people_group_name)) {
+            int people_group_id = ReadPeopleGroupId(txn , person.people_group_name);
+        } else {
+            int people_group_id = CreatePeopleGroup(txn , person.people_group_name);
+        }
+
+        if (IsThereARecordOffer(txn , people_group_id, program_id, course_id)) {
+            int offer_id = GetOfferId(txn , people_group_id, program_id, course_id);
+        } else {
+            int offer_id = CreateSubjectOffer(txn , people_group_id, program_id, course_id);
+        }
+
+        if (IsThereARecordTeachingAssigment(txn , person_id , offer_id , subject_id)) {
+            int teaching_assigment_id = GetTeachingAssigmentId(txn , person_id , offer_id , subject_id);
+        } else {
+            int teaching_assigment_id = CreateTeachingAssigment(txn , person_id , offer_id , subject_id);
+        }
+
+
+    } catch (const std::exception &e) {
+        fmt::print("Ошибка при создании {}: {}", person.first_name, e.what()) ;
+
+    }   
+}

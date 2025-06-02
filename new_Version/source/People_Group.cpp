@@ -62,3 +62,16 @@ void DeletePersonGroup(pqxx::transaction_base& txn, int people_group_id) {
         throw ; 
     }
 }
+
+bool IsThereARecordPeopleGroup(pqxx::transaction_base& txn, std::string people_group_name) {
+    try {
+        std::string sql =  " SELECt EXISTS("
+                           "SELECT 1 FROM people_group WHERE people_group_name = $1"
+                           ")";
+        pqxx::result res = txn.exec_params(sql, people_group_name);
+        return res[0][0].as<bool>();
+    } catch (const std::exception &e) {
+        fmt::print("Ошибка при чтении {}: {}", people_group_name, e.what()) ;
+        throw ;
+    }
+}

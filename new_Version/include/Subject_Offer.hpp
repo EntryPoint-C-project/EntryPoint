@@ -26,5 +26,8 @@ public:
 
 int CreateSubjectOffer(pqxx::transaction_base& txn , int people_group_id, int program_id, int course_id) ;
 std::tuple< int , int , int > ReadSubjectOffer(pqxx::transaction_base& txn , int offer_id) ;
+
+bool IsThereARecordOffer(pqxx::transaction_base& txn, int people_group_id, int program_id, int course_id) ;
+int GetOfferId(pqxx::transaction_base& txn, int people_group_id, int program_id, int course_id) ;
 void UpdateSubjectOffer(pqxx::transaction_base& txn, int offer_id, int people_group_id, int program_id, int course_id) ;
 void DeleteSubjectOffer(pqxx::transaction_base& txn, int offer_id) ;

@@ -21,5 +21,7 @@ public :
 
 int CreateCourse(pqxx::transaction_base& txn , const std::string &course_name) ;
 std::string ReadCourse(pqxx::transaction_base& txn , int course_id) ;
+
+bool IsThereARecordCourse(pqxx::transaction_base& txn, std::string course_name) ;
 void UpdateCourse(pqxx::transaction_base& txn, int course_id, std::string new_course_name) ;
 void  DeleteCource(pqxx::transaction_base& txn, int course_id) ;

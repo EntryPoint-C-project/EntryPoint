@@ -61,3 +61,16 @@ void DeleteProgram(pqxx::transaction_base& txn, int program_id) {
         throw ; 
     }
 }
+
+bool IsThereARecordProgram(pqxx::transaction_base& txn, std::string program_name) {
+    try {
+        std::string sql =  " SELECt EXISTS("
+                           "SELECT 1 FROM Program WHERE program_name = $1"
+                           ")";
+        pqxx::result res = txn.exec_params(sql, program_name);
+        return res[0][0].as<bool>();
+    } catch (const std::exception &e) {
+        fmt::print("Ошибка при чтении {}: {}", program_name, e.what()) ;
+        throw ;
+    }
+}

@@ -21,5 +21,7 @@ public :
 }; 
 int CreateProgram(pqxx::transaction_base& txn , const std::string &program_name) ;
 std::string ReadProgram(pqxx::transaction_base& txn , int program_id) ;
+
+bool IsThereARecordProgram(pqxx::transaction_base& txn, std::string program_name) ;
 void UpdateProgram(pqxx::transaction_base& txn, int program_id, std::string new_program_name) ;
 void  DeleteProgram(pqxx::transaction_base& txn, int program_id) ;

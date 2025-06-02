@@ -31,3 +31,18 @@ std::vector<Teacher> GetAllTeachersForStudent(pqxx::transaction_base& txn, int s
 
 bool CorrectSnils(pqxx::transaction_base& txn, int snils , std::string tg_nick) ;
 
+
+struct Person{
+    std::string first_name;
+    std::string last_name;
+    std::string tg_nick;
+    int access; // по умолчанию 0 
+    int snils;
+    std::string role;
+    std::string subject_name;
+    std::string course_name;
+    std::string program_name;
+    std::string people_group_name;
+};
+
+void CreatePersonWithParams(pqxx::transaction_base& txn , People person) ;
