@@ -16,7 +16,7 @@ void CreateAllTable(pqxx::transaction_base& txn) {
 
         // chdir("/path/to/directory");
         // std::string sql =  ReadFileWithSql("CreateAllTable.sql");
-        std::string sql = R"
+        std::string sql = R"(
 
 -- Таблица People
 CREATE TABLE IF NOT EXISTS People (
@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS Sop_Form (
     sop_status VARCHAR(100) NOT NULL,
     tg_answer TEXT,  -- Исправлено с NTEXT на TEXT
     url_answer TEXT   -- Исправлено с NTEXT на TEXT
-);";
+);)";
         txn.exec(sql ); 
         // //txn.commit(); 
         fmt::print("All tables created)))") ; 
