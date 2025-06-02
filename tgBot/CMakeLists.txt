@@ -1,3 +1,15 @@
+# В tgBot/CMakeLists.txt
+
+include(FetchContent)
+
+FetchContent_Declare(
+  libpqxx
+  GIT_REPOSITORY https://github.com/jtv/libpqxx.git
+  GIT_TAG 7.6.0
+)
+
+FetchContent_MakeAvailable(libpqxx)
+
 file(GLOB_RECURSE TGBOT_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp"
 )
@@ -10,13 +22,14 @@ add_library(tgBotLib STATIC
     ${TGBOT_SOURCES}
     ${DATABASE_SOURCES}
 )
-target_link_libraries(tgBotLib
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/build/_deps/libpqxx-build/src/libpqxx-7.6.a
-)
 
 target_include_directories(tgBotLib
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${CMAKE_SOURCE_DIR}/DataBase/include
+)
+
+target_link_libraries(tgBotLib
+    PUBLIC
+        pqxx
 )
