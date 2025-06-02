@@ -48,7 +48,7 @@ CPMAddPackage(
   GIT_TAG 10.2.1
 )
 
-add_subdirectory(DataBase)
+# add_subdirectory(DataBase)
 # Подключаем поддиректорию библиотеки бота
 add_subdirectory(tgBot)
 
@@ -69,7 +69,6 @@ target_link_libraries(main
     curl
     pqxx
     tgBotLib
-    DataBaseLib
     fmt::fmt          # fmt после DataBaseLib
 )
 
