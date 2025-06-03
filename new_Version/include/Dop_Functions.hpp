@@ -43,6 +43,11 @@ struct Person{
     std::string course_name;
     std::string program_name;
     std::string people_group_name;
+
+    Person(std::string first_name , std::string last_name, std::string tg_nick ,int access , int snils) : first_name(first_name), last_name(last_name), tg_nick(tg_nick) , access(access) , snils(snils){};
 };
 
 void CreatePersonWithParams(pqxx::transaction_base& txn , People person) ;
+
+
+void AssignCompletelyToPeople(pqxx::transaction_base& txn ) ;

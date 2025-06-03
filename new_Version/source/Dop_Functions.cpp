@@ -109,3 +109,20 @@ void CreatePersonWithParams(pqxx::transaction_base& txn ,  Person person) {
 
     }   
 }
+
+void AssignCompletelyToPeople(pqxx::transaction_base& txn) {
+  try {
+    std::string sql = "SELECT p.*"
+                      " FROM People p"
+                      " JOIN Person_Role pr ON p.id = pr.person_id"
+                      " WHERE pr.role = 'Student' AND p.status != 'Не начал проходить СОП'";
+    pqxx::result result = txn.exec(sql);
+    for (const auto& row : result) {
+
+      std::string update_sql = "UPDATE People SET status = 'Не начал проходить СОП' WHERE id = " + std::to_string(row["id"].as<int>());
+      txn.exec(update_sql);
+    }
+  } catch (const pqxx::sql_error& e) {
+    // обработка ошибки
+  }
+}
