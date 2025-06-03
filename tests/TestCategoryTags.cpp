@@ -20,7 +20,7 @@ int main() {
         } else {
             fmt::print("\u2713 Запись в filters уже существует!!!!\n");
         }
-        txn.commit();
+        //txn.commit();
 
         // Создание категории
         Categories category;
