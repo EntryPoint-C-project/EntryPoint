@@ -299,9 +299,9 @@ int main() {
 
     bot.getEvents().onCommand("secret", [&bot](TgBot::Message::Ptr message) {
         if (users_admin.cout(message->chat->id)) {
-            bot.getApi().sendMessage(message->cht->id, "Панель админимтратора:", 0, 0, getAdminKeyboard());
+            bot.getApi().sendMessage(message->chat->id, "Панель админимтратора:", 0, 0, getAdminKeyboard());
         } else {
-            bot.getApi().sendMessage(message->cht->id, "Вы не являетесь администратором");
+            bot.getApi().sendMessage(message->chat->id, "Вы не являетесь администратором");
         }
     });
     bot.getEvents().onCommand("admin", [&bot](TgBot::Message::Ptr message) {
