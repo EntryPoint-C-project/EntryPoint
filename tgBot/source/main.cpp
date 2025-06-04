@@ -241,6 +241,49 @@ void TutorCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
 
 // ------------------------------------------------------------------------------------------------------------
 
+#include <tgbot/tgbot.h>
+
+TgBot::InlineKeyboardMarkup::Ptr getAdminKeyboard() {
+    TgBot::InlineKeyboardMarkup::Ptr keyboard(new TgBot::InlineKeyboardMarkup);
+
+    // Первая строка: Открыть СОП
+    std::vector<TgBot::InlineKeyboardButton::Ptr> row1;
+    TgBot::InlineKeyboardButton::Ptr btnOpenSOP(new TgBot::InlineKeyboardButton);
+    btnOpenSOP->text = "📄 Открыть СОП";
+    btnOpenSOP->callbackData = "admin_open_sop";
+    row1.push_back(btnOpenSOP);
+
+    // Вторая строка: Сделать объявление
+    std::vector<TgBot::InlineKeyboardButton::Ptr> row2;
+    TgBot::InlineKeyboardButton::Ptr btnMakeAnnouncement(new TgBot::InlineKeyboardButton);
+    btnMakeAnnouncement->text = "📢 Сделать объявление";
+    btnMakeAnnouncement->callbackData = "admin_make_announcement";
+    row2.push_back(btnMakeAnnouncement);
+
+    // Третья строка: Добавить человека
+    std::vector<TgBot::InlineKeyboardButton::Ptr> row3;
+    TgBot::InlineKeyboardButton::Ptr btnAddUser(new TgBot::InlineKeyboardButton);
+    btnAddUser->text = "➕ Добавить человека";
+    btnAddUser->callbackData = "admin_add_user";
+    row3.push_back(btnAddUser);
+
+    // Четвёртая строка: Удалить человека
+    std::vector<TgBot::InlineKeyboardButton::Ptr> row4;
+    TgBot::InlineKeyboardButton::Ptr btnRemoveUser(new TgBot::InlineKeyboardButton);
+    btnRemoveUser->text = "➖ Удалить человека";
+    btnRemoveUser->callbackData = "admin_remove_user";
+    row4.push_back(btnRemoveUser);
+
+    // Добавляем все строки в клавиатуру
+    keyboard->inlineKeyboard.push_back(row1);
+    keyboard->inlineKeyboard.push_back(row2);
+    keyboard->inlineKeyboard.push_back(row3);
+    keyboard->inlineKeyboard.push_back(row4);
+
+    return keyboard;
+}
+
+
 std::set<int64_t> waiting_for_admin_code, users_admin;
 std::mutex mutes_for_admin; 
 
@@ -254,6 +297,13 @@ int main() {
     std::thread thread_foor_data_base(InitDataBase);
     thread_foor_data_base.detach();
 
+    bot.getEvents().onCommand("secret", [&bot](TgBot::Message::Ptr message) {
+        if (users_admin.cout(message->chat->id)) {
+            bot.getApi().sendMessage(message->cht->id, "Панель админимтратора:", 0, 0, getAdminKeyboard());
+        } else {
+            bot.getApi().sendMessage(message->cht->id, "Вы не являетесь администратором");
+        }
+    });
     bot.getEvents().onCommand("admin", [&bot](TgBot::Message::Ptr message) {
         std::lock_guard<std::mutex> lock(mutes_for_admin);
         waiting_for_admin_code.insert(message->chat->id);
