@@ -298,7 +298,7 @@ int main() {
     thread_foor_data_base.detach();
 
     bot.getEvents().onCommand("secret", [&bot](TgBot::Message::Ptr message) {
-        if (users_admin.cout(message->chat->id)) {
+        if (users_admin.count(message->chat->id)) {
             bot.getApi().sendMessage(message->chat->id, "Панель админимтратора:", 0, 0, getAdminKeyboard());
         } else {
             bot.getApi().sendMessage(message->chat->id, "Вы не являетесь администратором");
