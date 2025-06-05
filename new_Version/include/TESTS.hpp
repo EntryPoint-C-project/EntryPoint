@@ -43,3 +43,5 @@ void TEST_COURSE(pqxx::transaction_base& txn  ) ;
 
 void TEST_GET_ALL_TEACHERS(pqxx::transaction_base& txn  ) ;
 
+
+void TEST_CREATE_PERSON_WITH_PARAMS(pqxx::transaction_base& txn  ) ; 

@@ -75,3 +75,17 @@ bool IsThereARecordPeopleGroup(pqxx::transaction_base& txn, std::string people_g
         throw ;
     }
 }
+
+int ReadPeopleGroupId(pqxx::transaction_base& txn , std::string people_group_name) {
+    try {
+        
+        std::string sql =  "SELECT people_group_id FROM people_group WHERE people_group_name = $1";
+        pqxx::result res = txn.exec_params(sql, people_group_name);
+        //txn.commit();
+        int people_group_id = res[0]["people_group_id"].as<int>();
+        return people_group_id;
+    } catch (const std::exception &e) {
+        fmt::print("Ошибка при чтении {}: {}", people_group_name, e.what()) ;
+        throw ; 
+    }
+}

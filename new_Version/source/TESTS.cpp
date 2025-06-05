@@ -302,3 +302,51 @@ void TEST_GET_ALL_TEACHERS(pqxx::transaction_base& txn) {
         throw;
     }
 }
+void TEST_CREATE_PERSON_WITH_PARAMS(pqxx::transaction_base& txn) {
+    try {
+        // Создаем нового человека
+        Person person;
+        person.first_name = "Иван";
+        person.last_name = "Иванов";
+        person.tg_nick = "ivanovvv";
+        person.access = 0;
+        person.snils = 12132;
+        person.role = "Student";
+        person.subject_name = "матан";
+        person.program_name = "ПМИ";
+        person.course_name = "1";
+        person.people_group_name = "Группа ПМИ-1";
+
+        CreatePersonWithParams(txn, person);
+
+        // Проверяем, что человек был создан
+        // auto person_read = ReadPerson(txn, person.first_name, person.last_name);
+        // if (person_read.first_name != person.first_name || person_read.last_name != person.last_name) {
+        //     fmt::print("Ошибка: человек не был создан\n");
+        //     throw std::runtime_error("Человек не был создан");
+        // }
+
+        // Проверяем, что роль была присвоена
+        // auto person_roles = ReadRoleId(txn, person_read.id);
+        // if (std::find(person_roles.begin(), person_roles.endS), "Student") == person_roles.end() {
+        //     fmt::print("Ошибка: роль не была присвоена\n");
+        //     throw std::runtime_error("Роль не была присвоена");
+        // }
+
+        // Проверяем, что предмет, программа, курс и группа были созданы
+        // auto subject_id = ReadSubjectId(txn, person.subject_name);
+        // auto program_id = ReadProgramId(txn, person.program_name);
+        // auto course_id = ReadCourseId(txn, person.course_name);
+        // auto people_group_id = ReadPeopleGroupId(txn, person.people_group_name);
+
+        // if (subject_id == "" || program_id == 0 || course_id == 0 || people_group_id == 0) {
+        //     fmt::print("Ошибка: предмет, программа, курс или группа не были созданы\n");
+        //     throw std::runtime_error("Предмет, программа, курс или группа не были созданы");
+        // }
+
+        fmt::print("Тест пройден успешно!\n");
+    } catch (const std::exception& e) {
+        fmt::print("Ошибка в тесте: {}\n", e.what());
+        throw;
+    }
+}

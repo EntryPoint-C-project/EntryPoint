@@ -78,15 +78,15 @@ void DeleteSubject(pqxx::transaction_base& txn, int subject_id) {
     }
 }
 
-bool IsThereARecordSubject(pqxx::transaction_base& txn, int subject_id) {
+bool IsThereARecordSubject(pqxx::transaction_base& txn, std::string subject_name) {
     try {
-        std::string sql =  " SELECt EXISTS("
-                           "SELECT 1 FROM subjects WHERE subject_id = $1"
+        std::string sql =  "SELECT EXISTS("
+                           "SELECT 1 FROM subjects WHERE subject_name = $1"
                            ")";
-        pqxx::result res = txn.exec_params(sql, subject_id);
+        pqxx::result res = txn.exec_params(sql, subject_name);
         return res[0][0].as<bool>();
     } catch (const std::exception &e) {
-        fmt::print("Ошибка при чтении {}: {}", subject_id, e.what()) ;
+        fmt::print("Ошибка при чтении {}: {}", subject_name, e.what()) ;
         throw ;
     }
 }

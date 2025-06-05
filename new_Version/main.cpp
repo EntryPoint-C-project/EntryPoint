@@ -36,6 +36,7 @@ int main() {
 
         TEST_GET_ALL_TEACHERS(txn);
 
+        TEST_CREATE_PERSON_WITH_PARAMS(txn); 
         txn.commit();
 
 

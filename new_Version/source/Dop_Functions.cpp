@@ -53,16 +53,20 @@ bool CorrectSnils(pqxx::transaction_base& txn, int snils , std::string tg_nick) 
 void CreatePersonWithParams(pqxx::transaction_base& txn ,  Person person) {
     try {
         int person_id = CreatePerson(txn , person.first_name , person.last_name , person.tg_nick , person.access , person.snils);
+        int role_id ; 
         if ( person.role == "student"){
-            CreatePersonRole(txn , person_id , "student");
+            role_id = ReadRoleId(txn , "student");
+            CreatePersonRole(txn , person_id , role_id);
         }else if (person.role == "lector"){
-            CreatePersonRole(txn , person_id , "lector");
+            role_id = ReadRoleId(txn , "lector");
+            CreatePersonRole(txn , person_id , role_id);
         }else if (person.role == "practitioner"){
-            CreatePersonRole(txn , person_id , "practitioner");
+            role_id = ReadRoleId(txn , "practitioner");
+            CreatePersonRole(txn , person_id , role_id);
         }
 
 
-        int subject_id
+        int subject_id; 
         if (IsThereARecordSubject(txn , person.subject_name)) {
             subject_id = ReadSubjectId(txn , person.subject_name);
         } else {
@@ -110,19 +114,37 @@ void CreatePersonWithParams(pqxx::transaction_base& txn ,  Person person) {
     }   
 }
 
-void AssignCompletelyToPeople(pqxx::transaction_base& txn) {
+void AssignCompletelyToPeople(pqxx::transaction_base& txn) { // метод для нажатия кнопки ОКТРЫТЬ СОП //! для ТИМОФЕЯ
   try {
-    std::string sql = "SELECT p.*"
+    std::string sql = "SELECT  p.person_id "
                       " FROM People p"
-                      " JOIN Person_Role pr ON p.id = pr.person_id"
-                      " WHERE pr.role = 'Student' AND p.status != 'Не начал проходить СОП'";
+                      " JOIN Person_Role pr ON p.person_id = pr.person_id"
+                      " WHERE pr.role_name = 'Student'"; // получаем всех стдуентов 
     pqxx::result result = txn.exec(sql);
     for (const auto& row : result) {
-
-      std::string update_sql = "UPDATE People SET status = 'Не начал проходить СОП' WHERE id = " + std::to_string(row["id"].as<int>());
-      txn.exec(update_sql);
+        int person_id = row["person_id"].as<int>();
+        if (person_id != 0) { // добавляем проверку
+            CreateSOPForm(txn, person_id, "", "", "");
+        }
     }
   } catch (const pqxx::sql_error& e) {
-    // обработка ошибки
+        fmt::print("Error: {}\n", e.what());
+        throw ;
   }
+}
+
+void AssignStatusToAllPeople(pqxx::transaction_base& txn  , std::strig status  ) { //  метод который при нажатии и назначении статуса изменяет его всем студентам , сделан для того , что когда соп закончиться всем студентам взять и обновить статуст на "NOT_STARTED"
+    try {
+        std::string sql = "SELECT sop_id FROM SOP_Form";
+        pqxx::result result = txn.exec(sql);
+        for (const auto& row : result) {
+            int sop_id = row["sop_id"].as<int>();
+            if (sop_id != 0) { // добавляем проверку
+                UpdateStatus(txn, sop_id, status);
+            }
+        }
+    }catch (const pqxx::sql_error& e) {
+        fmt::print("Error: {}\n", e.what());
+        throw ;
+    }
 }
