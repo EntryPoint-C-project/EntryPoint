@@ -125,6 +125,7 @@ void AssignCompletelyToPeople(pqxx::transaction_base& txn) { // метод дл�
         int person_id = row["person_id"].as<int>();
         if (person_id != 0) { // добавляем проверку
             CreateSOPForm(txn, person_id, "", "", "");
+
         }
     }
   } catch (const pqxx::sql_error& e) {
@@ -133,7 +134,7 @@ void AssignCompletelyToPeople(pqxx::transaction_base& txn) { // метод дл�
   }
 }
 
-void AssignStatusToAllPeople(pqxx::transaction_base& txn  , std::strig status  ) { //  метод который при нажатии и назначении статуса изменяет его всем студентам , сделан для того , что когда соп закончиться всем студентам взять и обновить статуст на "NOT_STARTED"
+void AssignStatusToAllPeople(pqxx::transaction_base& txn  , std::string status  ) { //  метод который при нажатии и назначении статуса изменяет его всем студентам , сделан для того , что когда соп закончиться всем студентам взять и обновить статуст на "NOT_STARTED"
     try {
         std::string sql = "SELECT sop_id FROM SOP_Form";
         pqxx::result result = txn.exec(sql);
