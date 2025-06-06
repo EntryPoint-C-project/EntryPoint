@@ -54,3 +54,5 @@ void CreatePersonWithParams(pqxx::transaction_base& txn ,Person  person) ;
 void AssignCompletelyToPeople(pqxx::transaction_base& txn ) ;
 
 void AssignStatusToAllPeople(pqxx::transaction_base& txn , std::string status ) ;
+
+std::vector<int> GetAllPeopleInSopForm(pqxx::transaction_base& txn ) ;

@@ -10,8 +10,6 @@ int  CreatePerson(pqxx::transaction_base& txn , const std::string first_name , c
 
 
     try { 
-
-
         std::string sql =  "INSERT INTO people (first_name, last_name, tg_nick, access , snils) VALUES ($1, $2, $3, $4 , $5) ON CONFLICT (tg_nick) DO NOTHING RETURNING person_id";
 
         pqxx::result res = txn.exec_params(sql, first_name, last_name, tg_nick, access , snils);

@@ -29,6 +29,7 @@ std::vector<Teacher> GetAllTeachersForStudent(pqxx::transaction_base& txn, int s
                 teacher.his_roles = his_roles;
 
                 teacher.subject_name = subject_name;
+                
                 teachers.push_back(teacher);
             }
         }
@@ -134,6 +135,7 @@ void AssignCompletelyToPeople(pqxx::transaction_base& txn) { // метод дл�
   }
 }
 
+
 void AssignStatusToAllPeople(pqxx::transaction_base& txn  , std::string status  ) { //  метод который при нажатии и назначении статуса изменяет его всем студентам , сделан для того , что когда соп закончиться всем студентам взять и обновить статуст на "NOT_STARTED"
     try {
         std::string sql = "SELECT sop_id FROM SOP_Form";
@@ -146,6 +148,21 @@ void AssignStatusToAllPeople(pqxx::transaction_base& txn  , std::string status  
         }
     }catch (const pqxx::sql_error& e) {
         fmt::print("Error: {}\n", e.what());
+        throw ;
+    }
+}
+
+std::vector<int> GetAllPeopleInSopForm(pqxx::transaction_base& txn ) {
+    try {
+        std::string sql =  "SELECT person_id FROM SOP_Form";
+        pqxx::result res = txn.exec(sql);
+        std::vector <int> ids;
+        for ( auto row : res ) {
+            ids.push_back(row["person_id"].as<int>());
+        }
+        return ids;
+    } catch (const std::exception &e) {
+        fmt::print("Ошибка при чтении {}: {}", "ids", e.what()) ;
         throw ;
     }
 }
