@@ -347,7 +347,7 @@ int main() {
             });
 
         bot.getEvents().onCallbackQuery(
-            [&bot, &users, &MutexForUsers, &NewUsers](TgBot::CallbackQuery::Ptr query) {
+            [&](TgBot::CallbackQuery::Ptr query) {
                 std::lock_guard<std::mutex> lock(MutexForUsers);
                 int64_t ChatId = query->message->chat->id;
                 if (query->data == "admin_open_sop") {
