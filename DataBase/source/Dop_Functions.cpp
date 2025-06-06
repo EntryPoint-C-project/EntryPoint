@@ -1,5 +1,4 @@
 #include "Dop_Functions.hpp"
-#include "SOP_Form.hpp"
 
 std::vector<Teacher> GetAllTeachersForStudent(pqxx::transaction_base& txn, int student_id) {
     std::vector<Teacher> teachers;
@@ -126,6 +125,7 @@ void AssignCompletelyToPeople(pqxx::transaction_base& txn) { // метод дл�
         int person_id = row["person_id"].as<int>();
         if (person_id != 0) { // добавляем проверку
             CreateSOPForm(txn, person_id, "", "", "");
+
         }
     }
   } catch (const pqxx::sql_error& e) {
