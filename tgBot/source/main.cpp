@@ -350,7 +350,10 @@ int main() {
             [&bot, &users, &MutexForUsers, &NewUsers](TgBot::CallbackQuery::Ptr query) {
                 std::lock_guard<std::mutex> lock(MutexForUsers);
                 int64_t ChatId = query->message->chat->id;
-
+                if (query->data == "admin_open_sop") {
+                    AssignCompletelyToPeople(txn);
+                    bot.getApi().sendMessage(ChatId, "СОП открыт");
+                }
                 if (NewUsers.find(ChatId) != NewUsers.end()) {
                     if (query->data == "student") {
                         auto student_ptr = std::make_shared<mtd::Student>(ChatId);
