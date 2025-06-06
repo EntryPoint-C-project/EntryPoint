@@ -152,17 +152,3 @@ void AssignStatusToAllPeople(pqxx::transaction_base& txn  , std::string status  
     }
 }
 
-std::vector<int> GetAllPeopleInSopForm(pqxx::transaction_base& txn ) {
-    try {
-        std::string sql =  "SELECT person_id FROM SOP_Form";
-        pqxx::result res = txn.exec(sql);
-        std::vector <int> ids;
-        for ( auto row : res ) {
-            ids.push_back(row["person_id"].as<int>());
-        }
-        return ids;
-    } catch (const std::exception &e) {
-        fmt::print("Ошибка при чтении {}: {}", "ids", e.what()) ;
-        throw ;
-    }
-}
