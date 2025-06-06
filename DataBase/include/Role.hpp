@@ -23,3 +23,5 @@ int CreateRole(pqxx::transaction_base& txn , const std::string &role_name) ;
 std::string ReadRole(pqxx::transaction_base& txn , int role_id) ;
 void UpdateRole(pqxx::transaction_base& txn, int role_id, std::string new_role_name) ;
 void  DeleteRole(pqxx::transaction_base& txn, int role_id) ;
+
+int  ReadRoleId(pqxx::transaction_base& txn , const std::string &role_name) ;

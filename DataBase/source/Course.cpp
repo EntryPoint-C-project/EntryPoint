@@ -60,3 +60,30 @@ void DeleteCourse(pqxx::transaction_base& txn, int course_id) {
         throw ; 
     }
 }
+
+bool IsThereARecordCourse(pqxx::transaction_base& txn, std::string course_name) {
+    try {
+        std::string sql =  " SELECt EXISTS("
+                           "SELECT 1 FROM Course WHERE course_name = $1"
+                           ")";
+        pqxx::result res = txn.exec_params(sql, course_name);
+        return res[0][0].as<bool>();
+    } catch (const std::exception &e) {
+        fmt::print("Ошибка при чтении {}: {}", course_name, e.what()) ;
+        throw ;
+    }
+}
+
+int ReadCourseId(pqxx::transaction_base& txn ,  std::string course_name) {
+    try {
+        
+        std::string sql =  "SELECT course_id FROM Course WHERE course_name = $1";
+        pqxx::result res = txn.exec_params(sql, course_name);
+        //txn.commit();
+        int course_id = res[0]["course_id"].as<int>();
+        return course_id;
+    } catch (const std::exception &e) {
+        fmt::print("Ошибка при чтении {}: {}", course_name, e.what()) ;
+        throw ; 
+    }
+}

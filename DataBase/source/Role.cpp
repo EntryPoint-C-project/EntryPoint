@@ -64,3 +64,22 @@ void DeleteRole(pqxx::transaction_base& txn, int role_id) {
         throw ; 
     }
 }
+
+int  ReadRoleId(pqxx::transaction_base& txn , const std::string &role_name) {
+    try {
+        
+        std::string sql =  "SELECT role_id FROM Role WHERE role_name = $1";
+        pqxx::result res = txn.exec_params(sql, role_name);
+        if ( res.empty() ) {
+            CreateRole(txn, role_name);
+            res = txn.exec_params(sql, role_name);
+            fmt::print("Запись создана , и добавленно в таблицу Role новое запись : {}\n"  , role_name);
+        }
+        //txn.commit();
+        int role_id = res[0]["role_id"].as<int>();
+        return role_id;
+    } catch (const std::exception &e) {
+        fmt::print("Ошибка при чтении {}: {}", role_name, e.what()) ;
+        throw ; 
+    }
+}

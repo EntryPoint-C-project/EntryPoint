@@ -21,5 +21,8 @@ public :
 
 int CreatePeopleGroup(pqxx::transaction_base& txn , const std::string &people_group_name) ;
 std::string ReadPeopleGroup(pqxx::transaction_base& txn , int people_group_id) ;
+int ReadPeopleGroupId(pqxx::transaction_base& txn , std::string people_group_name) ;
+
+bool IsThereARecordPeopleGroup(pqxx::transaction_base& txn, std::string people_group_name) ;
 void UpdatePeopleGroup(pqxx::transaction_base& txn, int people_group_id, std::string new_people_group_name) ;
 void  DeletePersonGroup(pqxx::transaction_base& txn, int people_group_id) ;

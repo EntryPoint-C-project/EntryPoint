@@ -67,3 +67,28 @@ void Delete_Subject_Offer(pqxx::transaction_base& txn, int offer_id) {
         throw ; 
     }
 }
+
+bool IsThereARecordOffer(pqxx::transaction_base& txn, int people_group_id, int program_id, int course_id) {
+    try {
+        std::string sql =  " SELECt EXISTS("
+                           "SELECT 1 FROM subject_offer WHERE people_group_id = $1 AND program_id = $2 AND course_id = $3"
+                           ")";
+        pqxx::result res = txn.exec_params(sql, people_group_id, program_id, course_id);
+        return res[0][0].as<bool>();
+    } catch (const std::exception &e) {
+        fmt::print("Ошибка при чтении {}: {}", people_group_id, e.what()) ;
+        throw ;
+    }
+}
+
+
+int GetOfferId(pqxx::transaction_base& txn, int people_group_id, int program_id, int course_id) {
+    try {
+        std::string sql =  " SELECt offer_id FROM subject_offer WHERE people_group_id = $1 AND program_id = $2 AND course_id = $3";
+        pqxx::result res = txn.exec_params(sql, people_group_id, program_id, course_id);
+        return res[0]["offer_id"].as<int>();
+    } catch (const std::exception &e) {
+        fmt::print("Ошибка при чтении {}: {}", people_group_id, e.what()) ;
+        throw ;
+    }
+}

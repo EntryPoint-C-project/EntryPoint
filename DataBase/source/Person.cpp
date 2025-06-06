@@ -2,20 +2,19 @@
 
 
 
-int  CreatePerson(pqxx::transaction_base& txn , const std::string first_name , const std::string last_name, const std::string tg_nick , int access)  {
-    if ( first_name.empty() || last_name.empty() || tg_nick.empty() ) {
+int  CreatePerson(pqxx::transaction_base& txn , const std::string first_name , const std::string last_name, const std::string tg_nick , int access ,int snils)  {
+    if ( first_name.empty() || last_name.empty() || tg_nick.empty() ||snils ==0 ) {
         fmt::print("Заполните все поля\n");
         throw std::invalid_argument("Заполните все поля");
     }
 
 
     try { 
-        // todo : checker : 
-        // todo: check(first_name, last_name, tg_nick)  --> std::tuple{role , his_params} , his_params = {course , group , program }
 
-        std::string sql =  "INSERT INTO people (first_name, last_name, tg_nick, access) VALUES ($1, $2, $3, $4) ON CONFLICT (tg_nick) DO NOTHING RETURNING person_id";
 
-        pqxx::result res = txn.exec_params(sql, first_name, last_name, tg_nick, access);
+        std::string sql =  "INSERT INTO people (first_name, last_name, tg_nick, access , snils) VALUES ($1, $2, $3, $4 , $5) ON CONFLICT (tg_nick) DO NOTHING RETURNING person_id";
+
+        pqxx::result res = txn.exec_params(sql, first_name, last_name, tg_nick, access , snils);
         int person_id  ;
 
         if (!res.empty() && !res[0]["person_id"].is_null()) {
@@ -34,10 +33,10 @@ int  CreatePerson(pqxx::transaction_base& txn , const std::string first_name , c
 }
 
 
-std::tuple<std::string, std::string, std::string, int> ReadPerson(pqxx::transaction_base& txn, int person_id) {
+std::tuple<std::string, std::string, std::string, int , int > ReadPerson(pqxx::transaction_base& txn, int person_id) {
     try {
 
-        std::string sql = "SELECT first_name, last_name, tg_nick, access FROM people WHERE person_id = $1";
+        std::string sql = "SELECT first_name, last_name, tg_nick, access , snils FROM people WHERE person_id = $1";
         pqxx::result res = txn.exec_params(sql, person_id);
 
         if (res.empty()) {
@@ -49,8 +48,9 @@ std::tuple<std::string, std::string, std::string, int> ReadPerson(pqxx::transact
         std::string last_name  = row["last_name"].is_null()  ? "" : row["last_name"].as<std::string>();
         std::string tg_nick    = row["tg_nick"].is_null()    ? "" : row["tg_nick"].as<std::string>();
         int access = row["access"].as<int>();
+        int snils = row["snils"].as<int>();
 
-        return {first_name, last_name, tg_nick, access};
+        return {first_name, last_name, tg_nick, access , snils};
     }catch (const std::exception &e) {
         fmt::print("Ошибка при чтении {}: {}", person_id, e.what()) ;
         throw ;

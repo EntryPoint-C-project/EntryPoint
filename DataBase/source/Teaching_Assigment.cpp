@@ -111,3 +111,30 @@ void DeleteTeachingAssigment(pqxx::transaction_base& txn, int assignment_id) {
         throw ; 
     }
 }
+
+bool IsThereARecordTeachingAssigment(pqxx::transaction_base& txn, int person_id , int offer_id , int subject_id) {
+    try {
+        
+        std::string sql =  " SELECt EXISTS("
+                           "SELECT 1 FROM Teaching_Assigment WHERE person_id = $1 AND offer_id = $2 AND subject_id = $3"
+                           ")";
+        pqxx::result res = txn.exec_params(sql, person_id, offer_id, subject_id);
+        return res[0][0].as<bool>();
+    } catch (const std::exception &e) {
+        fmt::print("Ошибка при чтении {}: {}", person_id, e.what()) ;
+        throw ;
+    }
+}
+
+int GetTeachingAssigmentId( pqxx::transaction_base& txn ,int person_id , int offer_id , int subject_id){
+    try {
+        
+        std::string sql =  "SELECT assignment_id FROM Teaching_Assigment WHERE person_id = $1 AND offer_id = $2 AND subject_id = $3";
+        pqxx::result res = txn.exec_params(sql, person_id, offer_id, subject_id);
+        // //txn.commit();
+        return res[0]["assignment_id"].as<int>();
+    } catch (const std::exception &e) {
+        fmt::print("Ошибка при чтении {}: {}", person_id, e.what()) ;
+        throw ; 
+    }
+}

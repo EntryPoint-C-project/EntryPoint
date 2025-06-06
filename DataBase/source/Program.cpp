@@ -39,6 +39,8 @@ std::string ReadProgram(pqxx::transaction_base& txn , int program_id) {
     }
 }
 
+
+
 void UpdateProgram(pqxx::transaction_base& txn, int program_id, std::string new_program_name) {
     try {
 
@@ -58,6 +60,33 @@ void DeleteProgram(pqxx::transaction_base& txn, int program_id) {
         //txn.commit();
     } catch (const std::exception &e) {
         fmt::print("Ошибка при удалении {}: {}", program_id, e.what()) ;
+        throw ; 
+    }
+}
+
+bool IsThereARecordProgram(pqxx::transaction_base& txn, std::string program_name) {
+    try {
+        std::string sql =  " SELECt EXISTS("
+                           "SELECT 1 FROM Program WHERE program_name = $1"
+                           ")";
+        pqxx::result res = txn.exec_params(sql, program_name);
+        return res[0][0].as<bool>();
+    } catch (const std::exception &e) {
+        fmt::print("Ошибка при чтении {}: {}", program_name, e.what()) ;
+        throw ;
+    }
+}
+
+int ReadProgramId(pqxx::transaction_base& txn , std::string program_name) {
+    try {
+        
+        std::string sql =  "SELECT program_id FROM Program WHERE program_name = $1";
+        pqxx::result res = txn.exec_params(sql, program_name);
+        //txn.commit();
+        int program_id = res[0]["program_id"].as<int>();
+        return program_id;
+    } catch (const std::exception &e) {
+        fmt::print("Ошибка при чтении {}: {}", program_name, e.what()) ;
         throw ; 
     }
 }
