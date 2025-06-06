@@ -5,8 +5,24 @@ project(ENTRYPOINT)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+include(FetchContent)
+FetchContent_Declare(
+  fmt
+  GIT_REPOSITORY https://github.com/fmtlib/fmt.git 
+  GIT_TAG        master
+)
+FetchContent_MakeAvailable(fmt)
+
 find_package(CURL REQUIRED)
 include_directories(${CURL_INCLUDE_DIR})
+
+include(FetchContent)
+FetchContent_Declare(
+  fmt
+  GIT_REPOSITORY https://github.com/fmtlib/fmt.git 
+  GIT_TAG        master
+)
+FetchContent_MakeAvailable(fmt)
 
 include_directories(
     ${PROJECT_SOURCE_DIR}/inc
@@ -32,7 +48,7 @@ set(HEADERS
 )
 
 add_executable(program ${SOURCES} ${HEADERS})
-target_link_libraries(program ${CURL_LIBRARIES})
+target_link_libraries(program ${CURL_LIBRARIES} fmt::fmt-header-only)
 
 enable_testing()
 
@@ -42,6 +58,6 @@ set (TEST_SOURCES
 )
 
 add_executable(run_test ${TEST_SOURCES} ${HEADERS})
-target_link_libraries(run_test ${CURL_LIBRARIES} GTest::gtest_main)
+target_link_libraries(run_test PRIVATE ${CURL_LIBRARIES} GTest::gtest_main fmt::fmt-header-only)
 include(GoogleTest)
 gtest_discover_tests(run_test)

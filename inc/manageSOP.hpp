@@ -1,6 +1,8 @@
 #ifndef MANAGESOP_HPP
 #define MANAGESOP_HPP
 
+#include "Dop_Functions.hpp"
+#include "SOP_Form.hpp"
 #include <chrono>
 #include <curl/curl.h>
 #include <fstream>
@@ -8,36 +10,6 @@
 #include <nlohmann/json.hpp>
 #include <pqxx/pqxx>
 #include <string>
-// #include "../DataBase/inc/DopMethods.hpp"
-// #include "../DataBase/inc/Students.hpp"
-// #include "../DataBase/inc/PeopleSubject.hpp"
-
-class ClassForJSONFormat {
-private:
-  std::vector<std::tuple<std::string, std::string, std::string>> subjects;
-  int student_id;
-
-public:
-  std::vector<std::tuple<std::string, std::string, std::string>>
-  GetSubjects() const {
-    return subjects;
-  }
-
-  int GetStudenId() const { return student_id; }
-
-  void SetStudentId(int new_student_id) { student_id = new_student_id; }
-
-  void
-  AddSubject(std::tuple<std::string, std::string, std::string> new_subject) {
-    subjects.push_back(new_subject);
-  }
-
-  void SetSubjects(
-      const std::vector<std::tuple<std::string, std::string, std::string>>
-          &params) {
-    subjects = params;
-  }
-};
 
 namespace sop {
 
@@ -119,7 +91,7 @@ std::string createForm(const std::string &jsonFilePath, Config &config,
                        HttpClient &httpClient);
 void deleteForm(const std::string &formId, Config &config);
 json readJsonFromFile(const std::string &filePath);
-json generateQuestionsPerStudent(const ClassForJSONFormat &student);
+json generateQuestionsPerStudent(pqxx::transaction_base &txn, int student_id);
 void addFieldToForm(const std::string &formId, json jsonFile, Config &config,
                     HttpClient &httpClient);
 std::string getFormUrl(const std::string &formId);
@@ -127,6 +99,10 @@ json getFormResponses(const std::string &formId, Config &config,
                       HttpClient &httpClient);
 json readGoogleTable(const std::string &tableName, const std::string &range,
                      Config &config, HttpClient &httpClient);
+void fillDataBaseWithStudents(pqxx::transaction_base &txn,
+                              const std::string &tableName, int cnt_students,
+                              Config &config, HttpClient &httpClient);
+
 } // namespace sop
 
 #endif // MANAGESOP_HPP

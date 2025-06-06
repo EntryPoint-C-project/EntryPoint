@@ -2,6 +2,13 @@
 
 namespace sop {
 
+bool comp(const Teacher &lhs, const Teacher &rhs) {
+  if (lhs.subject_name != rhs.subject_name) {
+    return lhs.subject_name < rhs.subject_name;
+  }
+  return lhs.his_roles[0] < rhs.his_roles[0];
+}
+
 std::string HttpClient::performHttpRequest(const std::string &url,
                                            const std::string &method,
                                            const std::string &accessToken,
@@ -55,7 +62,7 @@ size_t HttpClient::WriteCallback(void *contents, size_t size, size_t nmemb,
   return totalSize;
 }
 
-json generateQuestionsPerStudent(const ClassForJSONFormat &student) {
+json generateQuestionsPerStudent(pqxx::transaction_base &txn, int student_id) {
   json form;
   form["requests"] = json::array();
 
@@ -69,13 +76,15 @@ json generateQuestionsPerStudent(const ClassForJSONFormat &student) {
     return {};
   }
 
-  auto teachers = student.GetSubjects();
+  std::vector<Teacher> teachers = GetAllTeachersForStudent(txn, student_id);
+  sort(teachers.begin(), teachers.end(), comp);
   std::string currentHeader;
 
   for (const auto &teacher : teachers) {
-    const std::string &teacherName = std::get<0>(teacher);
-    const std::string &subjectName = std::get<1>(teacher);
-    const std::string &groupName = std::get<2>(teacher);
+    const std::string &teacherName =
+        teacher.first_name + " " + teacher.last_name;
+    const std::string &subjectName = teacher.subject_name;
+    const std::string &groupName = teacher.his_roles[0];
 
     try {
       if (currentHeader != subjectName) {
@@ -148,18 +157,23 @@ std::string refreshAccessToken(Config &config, HttpClient &httpClient) {
   std::string response = httpClient.performHttpRequest(
       "https://oauth2.googleapis.com/token", "POST", "", postData);
 
-  json jsonResponse = json::parse(response);
-  if (jsonResponse.contains("access_token")) {
-    config.setLastUpdateTime();
-    std::string accessToken = jsonResponse["access_token"].get<std::string>();
-    return config.setAccessToken(accessToken);
-  } else {
-    std::cerr << "Error: 'access_token' not found in response" << std::endl;
-    if (jsonResponse.contains("error")) {
-      std::cerr << "Error details: " << jsonResponse["error"].dump()
-                << std::endl;
+  try {
+    json jsonResponse = json::parse(response);
+    if (jsonResponse.contains("access_token")) {
+      config.setLastUpdateTime();
+      std::string accessToken = jsonResponse["access_token"].get<std::string>();
+      return config.setAccessToken(accessToken);
+    } else {
+      std::cerr << "Error: 'access_token' not found in response" << std::endl;
+      if (jsonResponse.contains("error")) {
+        std::cerr << "Error details: " << jsonResponse["error"].dump()
+                  << std::endl;
+      }
+      return "";
     }
-    return "";
+  } catch (const std::exception &e) {
+    std::cerr << "JSON parsing error: " << e.what() << std::endl;
+    return json();
   }
 }
 
@@ -174,16 +188,22 @@ std::string createForm(const std::string &jsonFilePath, Config &config,
   std::string formTitle = readJsonFromFile(jsonFilePath).dump();
   std::string response = httpClient.performHttpRequest(
       "https://forms.googleapis.com/v1/forms", "POST", accessToken, formTitle);
-  json jsonResponse = json::parse(response);
-  if (jsonResponse.contains("formId")) {
-    return jsonResponse["formId"].get<std::string>();
-  } else {
-    std::cerr << "Error: 'formId' not found in response" << std::endl;
-    if (jsonResponse.contains("error")) {
-      std::cerr << "Error details: " << jsonResponse["error"].dump()
-                << std::endl;
+
+  try {
+    json jsonResponse = json::parse(response);
+    if (jsonResponse.contains("formId")) {
+      return jsonResponse["formId"].get<std::string>();
+    } else {
+      std::cerr << "Error: 'formId' not found in response" << std::endl;
+      if (jsonResponse.contains("error")) {
+        std::cerr << "Error details: " << jsonResponse["error"].dump()
+                  << std::endl;
+      }
+      return "";
     }
-    return "";
+  } catch (const std::exception &e) {
+    std::cerr << "JSON parsing error: " << e.what() << std::endl;
+    return json();
   }
 }
 
@@ -199,9 +219,13 @@ void addFieldToForm(const std::string &formId, json jsonFile, Config &config,
       "https://forms.googleapis.com/v1/forms/" + formId + ":batchUpdate";
   std::string response =
       httpClient.performHttpRequest(url, "POST", accessToken, questionForm);
-  json responseJson = json::parse(response);
-  if (responseJson.contains("error")) {
-    std::cerr << "Error: " << responseJson.dump() << std::endl;
+  try {
+    json responseJson = json::parse(response);
+    if (responseJson.contains("error")) {
+      std::cerr << "Error: " << responseJson.dump() << std::endl;
+    }
+  } catch (const std::exception &e) {
+    std::cerr << "JSON parsing error: " << e.what() << std::endl;
   }
 }
 
@@ -261,8 +285,6 @@ json readGoogleTable(const std::string &tableName, const std::string &range,
     return json();
   }
 
-  std::cout << "accessToken: " << accessToken << std::endl;
-
   std::string url = "https://sheets.googleapis.com/v4/spreadsheets/" +
                     tableName + "/values:batchGet?ranges=" + range;
   std::string response =
@@ -283,6 +305,39 @@ json readGoogleTable(const std::string &tableName, const std::string &range,
   } catch (const std::exception &e) {
     std::cerr << "JSON parsing error: " << e.what() << std::endl;
     return json();
+  }
+}
+
+void fillDataBaseWithStudents(pqxx::transaction_base &txn,
+                              const std::string &tableName, int cnt_students,
+                              Config &config, HttpClient &httpClient) {
+  std::string range = "A2:E" + std::to_string(cnt_students + 1);
+  json StudentTable = readGoogleTable(tableName, range, config, httpClient);
+  if (StudentTable.contains("valueRanges")) {
+    auto valueRanges = StudentTable["valueRanges"];
+    if (!valueRanges.contains("values")) {
+      std::cerr << "Error 'values' not found in table" << std::endl;
+      return;
+    }
+    Person person;
+    for (int i = 1; i <= cnt_students; i++) {
+      const auto row = valueRanges["values"][i];
+      bool isEmpty = true;
+      for (const auto &cell : row) {
+        if (!cell.get<std::string>().empty()) {
+          isEmpty = false;
+          break;
+        }
+      }
+      if (!isEmpty) {
+        person.last_name = row[0];
+        person.first_name = row[1];
+        person.snils = row[2];
+        person.tg_nick = row[3];
+        person.people_group_name = row[4];
+      }
+      CreatePersonWithParams(txn, person);
+    }
   }
 }
 
