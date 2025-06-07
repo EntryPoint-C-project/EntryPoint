@@ -411,7 +411,7 @@ int main() {
                 }
             });
 
-        bot.getEvents().onAnyMessage([&bot, &users, &MutexForUsers](TgBot::Message::Ptr message) {
+        bot.getEvents().onAnyMessage([&bot, &users, &MutexForUsers, &txn](TgBot::Message::Ptr message) {
             std::lock_guard<std::mutex> lock(MutexForUsers);
             int64_t ChatId = message->chat->id;
 
