@@ -71,7 +71,7 @@ void CreatePersonWithParams(pqxx::transaction_base& txn ,  Person person) {
         if (IsThereARecordSubject(txn , person.subject_name)) {
             subject_id = ReadSubjectId(txn , person.subject_name);
         } else {
-            int subject_id = CreateSubject(txn , person.subject_name);
+            subject_id = CreateSubject(txn , person.subject_name);
         }
 
         int program_id;
