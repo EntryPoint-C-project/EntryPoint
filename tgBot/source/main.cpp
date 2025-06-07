@@ -292,6 +292,9 @@ int main() {
         fmt::print("✓ Подключено к: {}\n", conn.dbname());
         pqxx::work txn(conn);
 
+        DeleteAllTable(txn);
+        CreateAllTable(txn);
+
         //-----------------------------------------------------
         OMP.name_subject = "ОМП";
         TgBot::Bot bot("7472835556:AAGGxuQuWDgYb9rskK3tn7YG660YEg7OgKM");
