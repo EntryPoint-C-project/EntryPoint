@@ -415,7 +415,7 @@ int main() {
             int64_t ChatId = message->chat->id;
 
             if (users_admin.cout(ChatId) && AdminStarus[ChatId] == AdminState::ADD_USER) {
-                CreatePersonWithParams(txn, People(message->text);
+                CreatePersonWithParams(txn, Person(message->text);
             }
 
             if (waiting_for_admin_code.count(ChatId)) {
