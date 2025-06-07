@@ -279,7 +279,14 @@ TgBot::InlineKeyboardMarkup::Ptr getAdminKeyboard() {
 std::set<int64_t> waiting_for_admin_code, users_admin;
 std::mutex mutes_for_admin;
 
+enum class AdminState {
+    ADD_USER,
+    MAKE_ANOUNSMENT,
+    DELETE_USER
+};
+
 int main() {
+    
     const std::string conn_str
         = "dbname=ep_db user=danik password=60992425 hostaddr=127.0.0.1 port=5432";
 
@@ -296,6 +303,7 @@ int main() {
         CreateAllTable(txn);
 
         //-----------------------------------------------------
+        std::map<int64_t, AdminState> AdminStarus;
         OMP.name_subject = "ОМП";
         TgBot::Bot bot("7472835556:AAGGxuQuWDgYb9rskK3tn7YG660YEg7OgKM");
         std::map<int64_t, std::shared_ptr<mtd::User>> users;
@@ -357,8 +365,8 @@ int main() {
                     AssignCompletelyToPeople(txn);
                     bot.getApi().sendMessage(ChatId, "СОП открыт");
                 } else if (query->data == "admin_add_user") {
-                    CreatePersonWithParams(txn, Person{"a", "b", "@lox", 0, 123456, "teacher", "matan", "dfs", "PMI", "dsfsdf"});
-                    bot.getApi().sendMessage(ChatId, "Пользователь добавлен");
+                    bot.getApi().sendMessage(ChatId, "Введите данные:");
+                    AdminStarus[ChatId] = AdminState::ADD_USER;
                 }
                 if (NewUsers.find(ChatId) != NewUsers.end()) {
                     if (query->data == "student") {
@@ -405,6 +413,10 @@ int main() {
         bot.getEvents().onAnyMessage([&bot, &users, &MutexForUsers](TgBot::Message::Ptr message) {
             std::lock_guard<std::mutex> lock(MutexForUsers);
             int64_t ChatId = message->chat->id;
+
+            if (users_admin.cout(ChatId) && AdminStarus[ChatId] == AdminState::ADD_USER) {
+                CreatePersonWithParams(txn, People(message->text);
+            }
 
             if (waiting_for_admin_code.count(ChatId)) {
                 if (message->text == "123456") {
