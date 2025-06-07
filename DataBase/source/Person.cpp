@@ -4,14 +4,12 @@
 
 int  CreatePerson(pqxx::transaction_base& txn , const std::string first_name , const std::string last_name, const std::string tg_nick , int access ,int snils)  {
     if ( first_name.empty() || last_name.empty() || tg_nick.empty() ||snils ==0 ) {
-        fmt::print("Заполните все поля\n");
-        throw std::invalid_argument("Заполните все поля");
+        fmt::print("Заполните все поля в Person\n");
+        throw std::invalid_argument("Заполните все поля в Person");
     }
 
 
     try { 
-
-
         std::string sql =  "INSERT INTO people (first_name, last_name, tg_nick, access , snils) VALUES ($1, $2, $3, $4 , $5) ON CONFLICT (tg_nick) DO NOTHING RETURNING person_id";
 
         pqxx::result res = txn.exec_params(sql, first_name, last_name, tg_nick, access , snils);

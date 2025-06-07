@@ -1,10 +1,7 @@
 #include "SOP_Form.hpp"
 
 int CreateSOPForm(pqxx::transaction_base& txn , int person_id, const std::string url, std::string tg_answer, std::string url_answer) {
-    if ( url.empty() || person_id == 0 || tg_answer.empty() || url_answer.empty() ) {
-        fmt::print("Заполните все поля\n");
-        throw std::invalid_argument("Заполните все поля");
-    }
+
     try {
         // Проверяем, есть ли уже запись для данного человека в таблице Sop_Form
         std::string sql = "SELECT sop_id FROM Sop_Form WHERE person_id = $1";
@@ -139,6 +136,20 @@ void UpdateUrlAnswer(pqxx::transaction_base& txn, int sop_id, std::string new_ur
         //txn.commit();
     } catch (const std::exception &e) {
         fmt::print("Ошибка при обновлении {}: {}", sop_id, e.what()) ;
+        throw ; 
+    }
+}
+
+int ReadSopId(pqxx::transaction_base& txn , int person_id) {
+    try {
+        std::string sql =  "SELECT sop_id FROM SOP_Form WHERE person_id = $1";
+        pqxx::result res = txn.exec_params(sql, person_id);
+        if ( !res.empty() ) {
+            return res[0]["sop_id"].as<int>();
+        }
+        return 0;
+    } catch (const std::exception &e) {
+        fmt::print("Ошибка при чтении {}: {}", person_id, e.what()) ;
         throw ; 
     }
 }

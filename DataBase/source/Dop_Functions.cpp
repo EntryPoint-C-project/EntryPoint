@@ -29,6 +29,7 @@ std::vector<Teacher> GetAllTeachersForStudent(pqxx::transaction_base& txn, int s
                 teacher.his_roles = his_roles;
 
                 teacher.subject_name = subject_name;
+                
                 teachers.push_back(teacher);
             }
         }
@@ -54,14 +55,14 @@ void CreatePersonWithParams(pqxx::transaction_base& txn ,  Person person) {
     try {
         int person_id = CreatePerson(txn , person.first_name , person.last_name , person.tg_nick , person.access , person.snils);
         int role_id ; 
-        if ( person.role == "student"){
-            role_id = ReadRoleId(txn , "student");
+        if ( person.role == "Student"){
+            role_id = ReadRoleId(txn , "Student");
             CreatePersonRole(txn , person_id , role_id);
-        }else if (person.role == "lector"){
-            role_id = ReadRoleId(txn , "lector");
+        }else if (person.role == "Lector"){
+            role_id = ReadRoleId(txn , "Lector");
             CreatePersonRole(txn , person_id , role_id);
-        }else if (person.role == "practitioner"){
-            role_id = ReadRoleId(txn , "practitioner");
+        }else if (person.role == "Practitioner"){
+            role_id = ReadRoleId(txn , "Practitioner");
             CreatePersonRole(txn , person_id , role_id);
         }
 
@@ -117,9 +118,10 @@ void CreatePersonWithParams(pqxx::transaction_base& txn ,  Person person) {
 void AssignCompletelyToPeople(pqxx::transaction_base& txn) { // метод для нажатия кнопки ОКТРЫТЬ СОП //! для ТИМОФЕЯ
   try {
     std::string sql = "SELECT  p.person_id "
-                      " FROM People p"
-                      " JOIN Person_Role pr ON p.person_id = pr.person_id"
-                      " WHERE pr.role_name = 'Student'"; // получаем всех стдуентов 
+                  " FROM People p"
+                  " JOIN Person_Role pr ON p.person_id = pr.person_id"
+                  " JOIN Role r ON pr.role_id = r.role_id"
+                  " WHERE r.role_name = 'Student'";
     pqxx::result result = txn.exec(sql);
     for (const auto& row : result) {
         int person_id = row["person_id"].as<int>();
@@ -133,6 +135,7 @@ void AssignCompletelyToPeople(pqxx::transaction_base& txn) { // метод дл�
         throw ;
   }
 }
+
 
 void AssignStatusToAllPeople(pqxx::transaction_base& txn  , std::string status  ) { //  метод который при нажатии и назначении статуса изменяет его всем студентам , сделан для того , что когда соп закончиться всем студентам взять и обновить статуст на "NOT_STARTED"
     try {
