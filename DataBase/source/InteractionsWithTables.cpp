@@ -24,7 +24,8 @@ CREATE TABLE IF NOT EXISTS People (
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
     tg_nick VARCHAR(100) UNIQUE,
-    access INT 
+    access INT, 
+    snils INT
 );
 
 -- Таблица Role
