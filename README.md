@@ -1,32 +1,33 @@
-# 🚀 EntryPoint
+# 🎓 EntryPoint: Telegram Bot for Educational Institutions
 
-A **Telegram Bot** designed for students, teachers, administration, and educational process organizers.
-
-## 📌 Project Description
-
-EntryPoint is a Telegram bot with an authorization system for different roles in the educational process:
-
-- **Students** — can anonymously evaluate teaching quality and receive important announcements.
-- **Teachers & Curators** — can send notifications to students with read confirmation.
-- **Administration** — can manage information distribution within the university.
-
-🔹 The bot also allows storing useful subject-related information (links, tables, files, chats).  
-🔹 Any student can edit the materials **Wiki-style**, with a change history feature.
+**EntryPoint** is a versatile Telegram bot written in C++ using the [tgbot-cpp](https://github.com/reo7sp/tgbot-cpp) library, designed to streamline communication and management within educational environments.
 
 ---
 
-## 🛠 Installation & Build
+## 🚀 Features
 
-### 🔹 1. Clone the repository
-```sh
-git clone git@github.com:EntryPoint-C-project/EntryPoint.git
+- 📢 Send announcements and notifications from teachers and curators with read confirmations
+- 🗣️ Collect anonymous feedback from students
+- 🧠 Manage groups, courses, roles, and users via PostgreSQL integration
+- 🛡️ Flexible role-based access control for students, teachers, administrators, curators, and more
+- 🔍 Smart routing and handling of user requests and messages
+
+---
+
+## 🛠 Technologies Used
+
+- **Language:** C++
+- **Telegram API:** tgbot-cpp
+- **Database:** PostgreSQL
+- **Quality Tools:** clang-format, clang-tidy
+- **CI/CD:** GitHub Actions
+
+---
+
+```bash
+git clone https://github.com/EntryPoint-C-project/EntryPoint.git
 cd EntryPoint
-# You need to make a telegram-bot token
-mkdir build && cd build  
-cmake -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..  # Enable clang-tidy support
-ninja
+mkdir build && cd build
+cmake ..
+make
 ``` 
-### 🔹 2. Running clang-tidy
-```sh
-run-clang-tidy -p build/
-```
