@@ -353,6 +353,9 @@ int main() {
                 if (query->data == "admin_open_sop") {
                     AssignCompletelyToPeople(txn);
                     bot.getApi().sendMessage(ChatId, "СОП открыт");
+                } else if (query->data == "admin_add_user") {
+                    CreatePersonWithParams(txn, People{"a", "b", "@lox", 0, 123456, "teacher", "matan", "dfs", "PMI", "dsfsdf"});
+                    bot.getApi().sendMessage(ChatId, "Польщователь добавлен")
                 }
                 if (NewUsers.find(ChatId) != NewUsers.end()) {
                     if (query->data == "student") {
