@@ -16,7 +16,7 @@ void CreateAllTable(pqxx::transaction_base& txn) {
 
         // chdir("/path/to/directory");
         // std::string sql =  ReadFileWithSql("CreateAllTable.sql");
-        std::string sql = R'(
+        std::string sql = R"(
 -- Таблица People
 CREATE TABLE IF NOT EXISTS People (
     person_id SERIAL PRIMARY KEY,
@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS Sop_Form (
     tg_answer TEXT,  -- Исправлено с NTEXT на TEXT
     url_answer TEXT   -- Исправлено с NTEXT на TEXT
 );
-)';
+)";
         txn.exec(sql ); 
         // //txn.commit(); 
         fmt::print("All tables created)))") ; 
@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS Sop_Form (
 void DeleteAllTable(pqxx::transaction_base& txn) {
     try {
         // std::string sql =  ReadFileWithSql("DeleteAllTable.sql");
-        std::string sql = R'(
+        std::string sql = R"(
 DROP TABLE IF EXISTS 
     People , 
     Roles,
@@ -116,7 +116,7 @@ DROP TABLE IF EXISTS
     Program,
     Subjects,
 CASCADE;
-)';
+)";
         txn.exec(sql ); 
         // //txn.commit(); 
         fmt::print("All tables deleted)))") ; 
