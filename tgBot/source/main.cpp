@@ -284,6 +284,7 @@ enum class AdminState {
     MAKE_ANOUNSMENT,
     DELETE_USER
 };
+std::map<int64_t, AdminState> AdminStarus;
 
 int main() {
     
@@ -303,7 +304,7 @@ int main() {
         CreateAllTable(txn);
 
         //-----------------------------------------------------
-        std::map<int64_t, AdminState> AdminStarus;
+        
         OMP.name_subject = "ОМП";
         TgBot::Bot bot("7472835556:AAGGxuQuWDgYb9rskK3tn7YG660YEg7OgKM");
         std::map<int64_t, std::shared_ptr<mtd::User>> users;
@@ -414,7 +415,7 @@ int main() {
             std::lock_guard<std::mutex> lock(MutexForUsers);
             int64_t ChatId = message->chat->id;
 
-            if (users_admin.cout(ChatId) && AdminStarus[ChatId] == AdminState::ADD_USER) {
+            if (users_admin.count(ChatId) && AdminStarus[ChatId] == AdminState::ADD_USER) {
                 CreatePersonWithParams(txn, Person(message->text));
             }
 
