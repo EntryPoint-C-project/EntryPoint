@@ -37,6 +37,8 @@ int main() {
         TEST_GET_ALL_TEACHERS(txn);
 
         TEST_CREATE_PERSON_WITH_PARAMS(txn); 
+
+        TEST_ASSIGN_COMPLETLY_TO_PEOPLE_AND_STATUS(txn)  ;
         txn.commit();
 
 

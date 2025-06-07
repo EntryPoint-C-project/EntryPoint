@@ -1078,6 +1078,7 @@ CMakeFiles/EP_dpw.dir/main.cpp.o: /Users/qwertz/Desktop/code/EntryPoint/new_Vers
   /Users/qwertz/Desktop/code/EntryPoint/new_Version/include/Person_Role.hpp \
   /Users/qwertz/Desktop/code/EntryPoint/new_Version/include/Program.hpp \
   /Users/qwertz/Desktop/code/EntryPoint/new_Version/include/Role.hpp \
+  /Users/qwertz/Desktop/code/EntryPoint/new_Version/include/SOP_Form.hpp \
   /Users/qwertz/Desktop/code/EntryPoint/new_Version/include/Subject.hpp \
   /Users/qwertz/Desktop/code/EntryPoint/new_Version/include/Subject_Offer.hpp \
   /Users/qwertz/Desktop/code/EntryPoint/new_Version/include/Teaching_Assigment.hpp \
@@ -3324,6 +3325,7 @@ CMakeFiles/EP_dpw.dir/source/Dop_Functions.cpp.o: /Users/qwertz/Desktop/code/Ent
   /Users/qwertz/Desktop/code/EntryPoint/new_Version/include/Person_Role.hpp \
   /Users/qwertz/Desktop/code/EntryPoint/new_Version/include/Program.hpp \
   /Users/qwertz/Desktop/code/EntryPoint/new_Version/include/Role.hpp \
+  /Users/qwertz/Desktop/code/EntryPoint/new_Version/include/SOP_Form.hpp \
   /Users/qwertz/Desktop/code/EntryPoint/new_Version/include/Subject.hpp \
   /Users/qwertz/Desktop/code/EntryPoint/new_Version/include/Subject_Offer.hpp \
   /Users/qwertz/Desktop/code/EntryPoint/new_Version/include/Teaching_Assigment.hpp \
@@ -14523,6 +14525,7 @@ CMakeFiles/EP_dpw.dir/source/TESTS.cpp.o: /Users/qwertz/Desktop/code/EntryPoint/
   /Users/qwertz/Desktop/code/EntryPoint/new_Version/include/Person_Role.hpp \
   /Users/qwertz/Desktop/code/EntryPoint/new_Version/include/Program.hpp \
   /Users/qwertz/Desktop/code/EntryPoint/new_Version/include/Role.hpp \
+  /Users/qwertz/Desktop/code/EntryPoint/new_Version/include/SOP_Form.hpp \
   /Users/qwertz/Desktop/code/EntryPoint/new_Version/include/Subject.hpp \
   /Users/qwertz/Desktop/code/EntryPoint/new_Version/include/Subject_Offer.hpp \
   /Users/qwertz/Desktop/code/EntryPoint/new_Version/include/TESTS.hpp \

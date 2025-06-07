@@ -2,8 +2,8 @@
 
 std::pair<int,int> CreatePersonRole(pqxx::transaction_base& txn , int person_id, int role_id) {
     if (!person_id || !role_id) {
-        fmt::print("Заполните все поля\n");
-        throw std::invalid_argument("Заполните все поля");
+        fmt::print("Заполните все поля в Person_Role\n");
+        throw std::invalid_argument("Заполните все поля в Person_Role");
     }
 
     try {

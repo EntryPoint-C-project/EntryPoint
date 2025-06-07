@@ -14,7 +14,7 @@ private:
     int snils; 
 
 public: 
-    People( const std::string &first_name, const std::string &last_name, const std::string &tg_nick ,int access , int snils) : person_id(person_id), first_name(first_name), last_name(last_name), tg_nick(tg_nick) , access(access) , snils(snils){}
+    People( const std::string &first_name, const std::string &last_name, const std::string &tg_nick ,int access , int snils) :  first_name(first_name), last_name(last_name), tg_nick(tg_nick) , access(access) , snils(snils){}
 
     int GetPrimaryKey() const { return person_id; }
     std::string GetFirstName() const { return first_name; }

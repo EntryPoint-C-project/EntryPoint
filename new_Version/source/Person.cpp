@@ -4,8 +4,8 @@
 
 int  CreatePerson(pqxx::transaction_base& txn , const std::string first_name , const std::string last_name, const std::string tg_nick , int access ,int snils)  {
     if ( first_name.empty() || last_name.empty() || tg_nick.empty() ||snils ==0 ) {
-        fmt::print("Заполните все поля\n");
-        throw std::invalid_argument("Заполните все поля");
+        fmt::print("Заполните все поля в Person\n");
+        throw std::invalid_argument("Заполните все поля в Person");
     }
 
 

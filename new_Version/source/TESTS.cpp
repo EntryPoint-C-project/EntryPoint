@@ -319,30 +319,59 @@ void TEST_CREATE_PERSON_WITH_PARAMS(pqxx::transaction_base& txn) {
 
         CreatePersonWithParams(txn, person);
 
-        // Проверяем, что человек был создан
-        // auto person_read = ReadPerson(txn, person.first_name, person.last_name);
-        // if (person_read.first_name != person.first_name || person_read.last_name != person.last_name) {
-        //     fmt::print("Ошибка: человек не был создан\n");
-        //     throw std::runtime_error("Человек не был создан");
-        // }
+        fmt::print("Тест пройден успешно!\n");
+    } catch (const std::exception& e) {
+        fmt::print("Ошибка в тесте: {}\n", e.what());
+        throw;
+    }
+}
 
-        // Проверяем, что роль была присвоена
-        // auto person_roles = ReadRoleId(txn, person_read.id);
-        // if (std::find(person_roles.begin(), person_roles.endS), "Student") == person_roles.end() {
-        //     fmt::print("Ошибка: роль не была присвоена\n");
-        //     throw std::runtime_error("Роль не была присвоена");
-        // }
+void TEST_ASSIGN_COMPLETLY_TO_PEOPLE_AND_STATUS(pqxx::transaction_base& txn) {
+    try {
+        // ================== 1. Подготовка тестовых данных ==================
+        // Очистка старых данных (для чистоты теста)
 
-        // Проверяем, что предмет, программа, курс и группа были созданы
-        // auto subject_id = ReadSubjectId(txn, person.subject_name);
-        // auto program_id = ReadProgramId(txn, person.program_name);
-        // auto course_id = ReadCourseId(txn, person.course_name);
-        // auto people_group_id = ReadPeopleGroupId(txn, person.people_group_name);
+        // Создаем роли
+        int student_role = CreateRole(txn, "Student");
+        int teacher_role = CreateRole(txn, "Teacher");
 
-        // if (subject_id == "" || program_id == 0 || course_id == 0 || people_group_id == 0) {
-        //     fmt::print("Ошибка: предмет, программа, курс или группа не были созданы\n");
-        //     throw std::runtime_error("Предмет, программа, курс или группа не были созданы");
-        // }
+        // Создаем 2 студентов
+        int student_1 = CreatePerson(txn, "Иван", "Иваxxнов", "ivanmmov", 0, 1213332);
+        CreatePersonRole(txn, student_1, student_role);
+
+        int student_2 = CreatePerson(txn, "Вася", "Пупкин", "сися66dfs6", 0, 22321412);
+        CreatePersonRole(txn, student_2, student_role);
+
+        // ================== 2. Тестируем метод AssignCompletelyToPeople ==================
+        AssignCompletelyToPeople(txn);
+
+        // Проверяем, что для каждого студента создан SOP_Form
+        std::string sql = "SELECT sop_id FROM SOP_Form WHERE person_id = $1";
+        pqxx::result result = txn.exec_params(sql, student_1);
+        if (result.empty()) {
+            fmt::print("Ошибка: не найден SOP_Form для студента {}\n", student_1);
+        }
+
+        result = txn.exec_params(sql, student_2);
+        if (result.empty()) {
+            fmt::print("Ошибка: не найден SOP_Form для студента {}\n", student_2);
+        }
+
+        // ================== 3. Тестируем метод AssignStatusToAllPeople ==================
+        AssignStatusToAllPeople(txn, "NOT_STARTED");
+
+
+        // Проверяем, что статус для каждого SOP_Form обновлен
+        sql = "SELECT sop_status FROM SOP_Form WHERE sop_id = $1";
+        result = txn.exec_params(sql , ReadSopId(txn,  student_1));
+        if (result[0]["sop_status"].as<std::string>() != "NOT_STARTED") {
+            fmt::print("Ошибка: статус для SOP_Form {} не обновлен\n", result[0]["sop_id"].as<int>());
+        }
+
+        result = txn.exec_params(sql, ReadSopId(txn, student_2));
+        if (result[0]["sop_status"].as<std::string>() != "NOT_STARTED") {
+            fmt::print("Ошибка: статус для SOP_Form {} не обновлен\n", result[1]["sop_id"].as<int>());
+        }
 
         fmt::print("Тест пройден успешно!\n");
     } catch (const std::exception& e) {

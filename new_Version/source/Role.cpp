@@ -2,8 +2,8 @@
 
 int CreateRole(pqxx::transaction_base& txn , const std::string &role_name) {
     if ( role_name.empty() ) {
-        fmt::print("Заполните все поля\n");
-        throw std::invalid_argument("Заполните все поля");
+        fmt::print("Заполните все поля в Role\n");
+        throw std::invalid_argument("Заполните все поля в Role");
     }
     
     try {
@@ -43,10 +43,15 @@ std::string ReadRole(pqxx::transaction_base& txn , int role_id) {
 
 void UpdateRole(pqxx::transaction_base& txn, int role_id, std::string new_role_name) {
     try {
-        
-        std::string sql =  "UPDATE Role SET role_name = $1 WHERE role_id = $2";
-        txn.exec_params(sql, new_role_name, role_id);
+        if ( new_role_name.empty() || new_role_name != "Student" || new_role_name != "Lector" || new_role_name != "Practitioner" ) {
+            fmt::print("Заполните все поля\n");
+
+        }else {
+
+            std::string sql =  "UPDATE Role SET role_name = $1 WHERE role_id = $2";
+            txn.exec_params(sql, new_role_name, role_id);
         //txn.commit();
+        }
     } catch (const std::exception &e) {
         fmt::print("Ошибка при обновлении {}: {}", role_id, e.what()) ;
         throw ; 
