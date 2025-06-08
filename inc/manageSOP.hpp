@@ -1,8 +1,9 @@
 #ifndef MANAGESOP_HPP
 #define MANAGESOP_HPP
 
-#include "Dop_Functions.hpp"
-#include "SOP_Form.hpp"
+#include "../new_Version/include/Dop_Functions.hpp"
+#include "../new_Version/include/SOP_Form.hpp"
+#include "logger.hpp"
 #include <chrono>
 #include <curl/curl.h>
 #include <fstream>

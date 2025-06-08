@@ -41,10 +41,12 @@ FetchContent_MakeAvailable(googletest)
 set (SOURCES
     src/main.cpp
     src/manageSOP.cpp
+    src/logger.cpp
 )
 
 set(HEADERS
     inc/manageSOP.hpp
+    inc/logger.hpp
 )
 
 add_executable(program ${SOURCES} ${HEADERS})
@@ -55,6 +57,7 @@ enable_testing()
 set (TEST_SOURCES
     tests/test_manageSOP.cpp
     src/manageSOP.cpp
+    src/logger.cpp
 )
 
 add_executable(run_test ${TEST_SOURCES} ${HEADERS})

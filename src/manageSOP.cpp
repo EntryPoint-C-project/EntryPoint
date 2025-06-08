@@ -14,7 +14,7 @@ std::string HttpClient::performHttpRequest(const std::string &url,
                                            const std::string &accessToken,
                                            const std::string &postData) {
   if (!curl) {
-    std::cerr << "Failed to initialize CURL" << std::endl;
+    Logger::getInstance().error("Failed to initialize CURL");
     return "";
   }
 
@@ -46,7 +46,7 @@ std::string HttpClient::performHttpRequest(const std::string &url,
 
   CURLcode res = curl_easy_perform(curl);
   if (res != CURLE_OK) {
-    std::cerr << "CURL error: " << curl_easy_strerror(res) << std::endl;
+    Logger::getInstance().error("CURL error: {}", curl_easy_strerror(res));
   }
 
   curl_slist_free_all(headers);
@@ -72,7 +72,7 @@ json generateQuestionsPerStudent(pqxx::transaction_base &txn, int student_id) {
     jsonOverallQuestion = readJsonFromFile("json/overallQuestion.json");
     header = readJsonFromFile("json/headerOfQuestionsBlock.json");
   } catch (const std::exception &e) {
-    std::cerr << "Error reading JSON templates: " << e.what() << std::endl;
+    Logger::getInstance().error("Error reading JSON templates: {}", e.what());
     return {};
   }
 
@@ -115,8 +115,8 @@ json generateQuestionsPerStudent(pqxx::transaction_base &txn, int student_id) {
           teacherName + "?";
       form["requests"].push_back(overallQ3);
     } catch (const std::exception &e) {
-      std::cerr << "Error building questions for " << teacherName << ": "
-                << e.what() << std::endl;
+      Logger::getInstance().error("Error building questions for ", teacherName,
+                                  ": ", e.what());
     }
   }
 
@@ -125,8 +125,8 @@ json generateQuestionsPerStudent(pqxx::transaction_base &txn, int student_id) {
     try {
       request["createItem"]["location"]["index"] = index++;
     } catch (const std::exception &e) {
-      std::cerr << "Error setting index for form request: " << e.what()
-                << std::endl;
+      Logger::getInstance().error("Error setting index for form request: ",
+                                  e.what());
     }
   }
 
@@ -136,7 +136,7 @@ json generateQuestionsPerStudent(pqxx::transaction_base &txn, int student_id) {
 json readJsonFromFile(const std::string &filePath) {
   std::ifstream file(filePath);
   if (!file.is_open()) {
-    std::cerr << "Failed to open file\n";
+    Logger::getInstance().error("Failed to open {}", filePath);
   }
   json jsonData;
   file >> jsonData;
@@ -164,15 +164,16 @@ std::string refreshAccessToken(Config &config, HttpClient &httpClient) {
       std::string accessToken = jsonResponse["access_token"].get<std::string>();
       return config.setAccessToken(accessToken);
     } else {
-      std::cerr << "Error: 'access_token' not found in response" << std::endl;
+      Logger::getInstance().error(
+          "Error: 'access_token' not found in response");
       if (jsonResponse.contains("error")) {
-        std::cerr << "Error details: " << jsonResponse["error"].dump()
-                  << std::endl;
+        Logger::getInstance().info("Error details: ",
+                                   jsonResponse["error"].dump());
       }
       return "";
     }
   } catch (const std::exception &e) {
-    std::cerr << "JSON parsing error: " << e.what() << std::endl;
+    Logger::getInstance().error("JSON parsing error: ", e.what());
     return json();
   }
 }
@@ -181,7 +182,8 @@ std::string createForm(const std::string &jsonFilePath, Config &config,
                        HttpClient &httpClient) {
   std::string accessToken = refreshAccessToken(config, httpClient);
   if (accessToken.empty()) {
-    std::cerr << "Failed to refresh access token" << std::endl;
+    Logger::getInstance().error(
+        "Failed to refresh access token while creating form");
     return "";
   }
 
@@ -194,15 +196,15 @@ std::string createForm(const std::string &jsonFilePath, Config &config,
     if (jsonResponse.contains("formId")) {
       return jsonResponse["formId"].get<std::string>();
     } else {
-      std::cerr << "Error: 'formId' not found in response" << std::endl;
+      Logger::getInstance().error("Error: 'formId' not found in response");
       if (jsonResponse.contains("error")) {
-        std::cerr << "Error details: " << jsonResponse["error"].dump()
-                  << std::endl;
+        Logger::getInstance().info("Error details: ",
+                                   jsonResponse["error"].dump());
       }
       return "";
     }
   } catch (const std::exception &e) {
-    std::cerr << "JSON parsing error: " << e.what() << std::endl;
+    Logger::getInstance().error("JSON parsing error: ", e.what());
     return json();
   }
 }
@@ -211,7 +213,8 @@ void addFieldToForm(const std::string &formId, json jsonFile, Config &config,
                     HttpClient &httpClient) {
   std::string accessToken = refreshAccessToken(config, httpClient);
   if (accessToken.empty()) {
-    std::cerr << "Failed to refresh access token" << std::endl;
+    Logger::getInstance().error(
+        "Failed to refresh access token while add field to form");
     return;
   }
   std::string questionForm = jsonFile.dump();
@@ -222,10 +225,10 @@ void addFieldToForm(const std::string &formId, json jsonFile, Config &config,
   try {
     json responseJson = json::parse(response);
     if (responseJson.contains("error")) {
-      std::cerr << "Error: " << responseJson.dump() << std::endl;
+      Logger::getInstance().error("Error: ", responseJson.dump());
     }
   } catch (const std::exception &e) {
-    std::cerr << "JSON parsing error: " << e.what() << std::endl;
+    Logger::getInstance().error("JSON parsing error: ", e.what());
   }
 }
 
@@ -237,7 +240,8 @@ void deleteForm(const std::string &formId, Config &config,
                 HttpClient &httpClient) {
   std::string accessToken = refreshAccessToken(config, httpClient);
   if (accessToken.empty()) {
-    std::cerr << "Failed to refresh access token" << std::endl;
+    Logger::getInstance().error(
+        "Failed to refresh access token while delete form");
     return;
   }
 
@@ -250,7 +254,8 @@ json getFormResponses(const std::string &formId, Config &config,
                       HttpClient &httpClient) {
   std::string accessToken = refreshAccessToken(config, httpClient);
   if (accessToken.empty()) {
-    std::cerr << "Failed to refresh access token" << std::endl;
+    Logger::getInstance().error(
+        "Failed to refresh access token while get form response");
     return json();
   }
 
@@ -264,15 +269,15 @@ json getFormResponses(const std::string &formId, Config &config,
     if (jsonResponse.contains("responses")) {
       return jsonResponse;
     } else {
-      std::cerr << "Error: 'responses' not found in response" << std::endl;
+      Logger::getInstance().error("Error: 'responses' not found in response");
       if (jsonResponse.contains("error")) {
-        std::cerr << "Error details: " << jsonResponse["error"].dump()
-                  << std::endl;
+        Logger::getInstance().info("Error details: ",
+                                   jsonResponse["error"].dump());
       }
       return json();
     }
   } catch (const std::exception &e) {
-    std::cerr << "JSON parsing error: " << e.what() << std::endl;
+    Logger::getInstance().info("JSON parsing error: ", e.what());
     return json();
   }
 }
@@ -281,7 +286,8 @@ json readGoogleTable(const std::string &tableName, const std::string &range,
                      Config &config, HttpClient &httpClient) {
   std::string accessToken = refreshAccessToken(config, httpClient);
   if (accessToken.empty()) {
-    std::cerr << "Failed to refresh access token" << std::endl;
+    Logger::getInstance().error(
+        "Failed to refresh access token while read Google table");
     return json();
   }
 
@@ -295,15 +301,15 @@ json readGoogleTable(const std::string &tableName, const std::string &range,
     if (jsonResponse.contains("valueRanges")) {
       return jsonResponse;
     } else {
-      std::cerr << "Error: 'valueRanges' not found in response" << std::endl;
+      Logger::getInstance().error("Error: 'valueRanges' not found in response");
       if (jsonResponse.contains("error")) {
-        std::cerr << "Error details: " << jsonResponse["error"].dump()
-                  << std::endl;
+        Logger::getInstance().info("Error details: ",
+                                   jsonResponse["error"].dump());
       }
       return json();
     }
   } catch (const std::exception &e) {
-    std::cerr << "JSON parsing error: " << e.what() << std::endl;
+    Logger::getInstance().error("JSON parsing error: ", e.what());
     return json();
   }
 }
@@ -316,7 +322,7 @@ void fillDataBaseWithStudents(pqxx::transaction_base &txn,
   if (StudentTable.contains("valueRanges")) {
     auto valueRanges = StudentTable["valueRanges"];
     if (!valueRanges.contains("values")) {
-      std::cerr << "Error 'values' not found in table" << std::endl;
+      Logger::getInstance().error("Error 'values' not found in table");
       return;
     }
     Person person;
@@ -344,7 +350,7 @@ void fillDataBaseWithStudents(pqxx::transaction_base &txn,
 std::string Config::getEnvVar(const std::string &key) {
   const char *value = std::getenv(key.c_str());
   if (value == nullptr) {
-    std::cerr << "Unable to get: " + key + '\n';
+    Logger::getInstance().error("Unable to get: " + key);
     return "";
   } else {
     return std::string(value);
