@@ -1,0 +1,28 @@
+---
+BasedOnStyle: Google
+
+AccessModifierOffset: -4
+
+AlignTrailingComments: true
+IndentPPDirectives: AfterHash
+IndentWidth: 4
+NamespaceIndentation: None
+
+BreakBeforeBraces: Attach
+BreakBeforeBinaryOperators: All
+BreakBeforeTernaryOperators: true
+
+ColumnLimit: 100
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+
+IncludeBlocks: Regroup  
+
+SortIncludes: true
+
+SpaceBeforeParens: ControlStatements
+AllowShortFunctionsOnASingleLine: InlineOnly
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+
+...
+
