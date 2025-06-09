@@ -55,14 +55,14 @@ std::tuple<std::string, std::string, std::string, int , int > ReadPerson(pqxx::t
     }
 }
 
-void DeletePerson(pqxx::transaction_base& txn, int person_id) {
+void DeletePerson(pqxx::transaction_base& txn, std::string tg_nick ) {
     try {
 
-        std::string sql =  "DELETE FROM people WHERE person_id = $1";
-        txn.exec_params(sql, person_id);
+        std::string sql =  "DELETE FROM people WHERE tg_nick = $1";
+        txn.exec_params(sql,tg_nick );
         //txn.commit();
     } catch (const std::exception &e) {
-        fmt::print("Ошибка при удалении {}: {}", person_id, e.what()) ;
+        fmt::print("Ошибка при удалении {}: {}", tg_nick, e.what()) ;
         throw ; 
     }
 }

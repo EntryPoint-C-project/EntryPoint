@@ -279,15 +279,10 @@ TgBot::InlineKeyboardMarkup::Ptr getAdminKeyboard() {
 std::set<int64_t> waiting_for_admin_code, users_admin;
 std::mutex mutes_for_admin;
 
-enum class AdminState {
-    ADD_USER,
-    MAKE_ANOUNSMENT,
-    DELETE_USER
-};
+enum class AdminState { ADD_USER, MAKE_ANOUNSMENT, DELETE_USER };
 std::map<int64_t, AdminState> AdminStarus;
 
 int main() {
-    
     const std::string conn_str
         = "dbname=ep_db user=danik password=60992425 hostaddr=127.0.0.1 port=5432";
 
@@ -304,7 +299,7 @@ int main() {
         CreateAllTable(txn);
 
         //-----------------------------------------------------
-        
+
         OMP.name_subject = "ОМП";
         TgBot::Bot bot("7472835556:AAGGxuQuWDgYb9rskK3tn7YG660YEg7OgKM");
         std::map<int64_t, std::shared_ptr<mtd::User>> users;
@@ -358,65 +353,71 @@ int main() {
                 bot.getApi().sendMessage(message->chat->id, "Кто ты?", 0, 0, keyboard);
             });
 
-        bot.getEvents().onCallbackQuery(
-            [&](TgBot::CallbackQuery::Ptr query) {
-                std::lock_guard<std::mutex> lock(MutexForUsers);
-                int64_t ChatId = query->message->chat->id;
-                if (query->data == "admin_open_sop") {
-                    AssignCompletelyToPeople(txn);
-                    bot.getApi().sendMessage(ChatId, "СОП открыт");
-                } else if (query->data == "admin_add_user") {
-                    bot.getApi().sendMessage(ChatId, "Введите данные:");
-                    AdminStarus[ChatId] = AdminState::ADD_USER;
-                }
-                if (NewUsers.find(ChatId) != NewUsers.end()) {
-                    if (query->data == "student") {
-                        auto student_ptr = std::make_shared<mtd::Student>(ChatId);
-                        users.insert({ChatId, student_ptr});
-                    } else if (query->data == "office_staff") {
-                        auto office_staff_ptr = std::make_shared<mtd::OfficeStaff>(ChatId);
-                        users.insert({ChatId, office_staff_ptr});
-                    } else if (query->data == "teacher") {
-                        auto teacher_ptr = std::make_shared<mtd::Teacher>(ChatId);
-                        users.insert({ChatId, teacher_ptr});
-                    } else if (query->data == "tutor") {
-                        auto tutor_ptr = std::make_shared<mtd::Tutor>(ChatId);
-                        users.insert({ChatId, tutor_ptr});
-                    }
-
-                    bot.getApi().sendMessage(ChatId, "Меню", 0, 0, users[ChatId]->GetMenu());
-                    NewUsers.erase(ChatId);
-                    return;
-                }
-                if (users.find(ChatId) == users.end()) {
-                    std::cout << "=== Error ===\n";
-                    return;
-                }
-                auto &user = users[ChatId];
-
-                if (query->data == "complete_button") {
-                    std::cout << "sfdfdfdf\n";
-                    bot.getApi().sendMessage(ChatId, "_", 0, 0, user->GetMenu());
-                    return;
+        bot.getEvents().onCallbackQuery([&](TgBot::CallbackQuery::Ptr query) {
+            std::lock_guard<std::mutex> lock(MutexForUsers);
+            int64_t ChatId = query->message->chat->id;
+            if (query->data == "admin_open_sop") {
+                AssignCompletelyToPeople(txn);
+                bot.getApi().sendMessage(ChatId, "СОП открыт");
+            } else if (query->data == "admin_add_user") {
+                bot.getApi().sendMessage(ChatId, "Введите данные:");
+                AdminStarus[ChatId] = AdminState::ADD_USER;
+            } else if (query->data == "admin_remove_user") {
+                bot.getApi().sendMessage(ChatId, "Напиши тгник");
+                AdminStarus[ChatId] = AdminState::DELETE_USER;
+            }
+            if (NewUsers.find(ChatId) != NewUsers.end()) {
+                if (query->data == "student") {
+                    auto student_ptr = std::make_shared<mtd::Student>(ChatId);
+                    users.insert({ChatId, student_ptr});
+                } else if (query->data == "office_staff") {
+                    auto office_staff_ptr = std::make_shared<mtd::OfficeStaff>(ChatId);
+                    users.insert({ChatId, office_staff_ptr});
+                } else if (query->data == "teacher") {
+                    auto teacher_ptr = std::make_shared<mtd::Teacher>(ChatId);
+                    users.insert({ChatId, teacher_ptr});
+                } else if (query->data == "tutor") {
+                    auto tutor_ptr = std::make_shared<mtd::Tutor>(ChatId);
+                    users.insert({ChatId, tutor_ptr});
                 }
 
-                if (user->GetRole() == mtd::UserRole::STUDENT) {
-                    StudentCallBackQuery(bot, query, user);
-                } else if (user->GetRole() == mtd::UserRole::OFFICE_STAFF) {
-                    OfficeStaffCallBackQuery(bot, query, user);
-                } else if (user->GetRole() == mtd::UserRole::TEACHER) {
-                    TeacherCallBackQuery(bot, query, user);
-                } else if (user->GetRole() == mtd::UserRole::TUTOR) {
-                    TutorCallBackQuery(bot, query, user);
-                }
-            });
+                bot.getApi().sendMessage(ChatId, "Меню", 0, 0, users[ChatId]->GetMenu());
+                NewUsers.erase(ChatId);
+                return;
+            }
+            if (users.find(ChatId) == users.end()) {
+                std::cout << "=== Error ===\n";
+                return;
+            }
+            auto &user = users[ChatId];
 
-        bot.getEvents().onAnyMessage([&bot, &users, &MutexForUsers, &txn](TgBot::Message::Ptr message) {
+            if (query->data == "complete_button") {
+                std::cout << "sfdfdfdf\n";
+                bot.getApi().sendMessage(ChatId, "_", 0, 0, user->GetMenu());
+                return;
+            }
+
+            if (user->GetRole() == mtd::UserRole::STUDENT) {
+                StudentCallBackQuery(bot, query, user);
+            } else if (user->GetRole() == mtd::UserRole::OFFICE_STAFF) {
+                OfficeStaffCallBackQuery(bot, query, user);
+            } else if (user->GetRole() == mtd::UserRole::TEACHER) {
+                TeacherCallBackQuery(bot, query, user);
+            } else if (user->GetRole() == mtd::UserRole::TUTOR) {
+                TutorCallBackQuery(bot, query, user);
+            }
+        });
+
+        bot.getEvents().onAnyMessage([&bot, &users, &MutexForUsers,
+                                      &txn](TgBot::Message::Ptr message) {
             std::lock_guard<std::mutex> lock(MutexForUsers);
             int64_t ChatId = message->chat->id;
 
             if (users_admin.count(ChatId) && AdminStarus[ChatId] == AdminState::ADD_USER) {
                 CreatePersonWithParams(txn, {'a', 'a', 'a', 1, 1, 'a', 'a', 'a', 'a', 'b'});
+            } else if (users_admin.count(ChatId) && AdminStarus[ChatId] == AdminState::DELETE_USER) {
+                bot.getApi().sendMessage(ChatId, "Person is deleted");
+                DeletePerson(txn, message->text);
             }
 
             if (waiting_for_admin_code.count(ChatId)) {
