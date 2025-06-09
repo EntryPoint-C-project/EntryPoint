@@ -362,7 +362,7 @@ int main() {
             } else if (query->data == "admin_add_user") {
                 bot.getApi().sendMessage(ChatId, "Введите данные:");
                 AdminStarus[ChatId] = AdminState::ADD_USER;
-                CreatePersonWithParams(txn, Person{"a", "a", "a", 1, 1, "a", "a", "a", "a", "b"})
+                CreatePersonWithParams(txn, Person{"a", "a", "a", 1, 1, "a", "a", "a", "a", "b"});
             } else if (query->data == "admin_remove_user") {
                 bot.getApi().sendMessage(ChatId, "Напиши тгник");
                 AdminStarus[ChatId] = AdminState::DELETE_USER;
