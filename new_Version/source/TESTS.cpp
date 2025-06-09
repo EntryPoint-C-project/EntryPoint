@@ -23,7 +23,8 @@ void TEST_PERSON(pqxx::transaction_base& txn  ) {
     std::cout << std::get<3>(person4_read) << std::endl;
     int i = 22 ; 
 
-    // DeletePerson(txn, i);
+    DeletePerson(txn, person4.GetTgNick());
+    std::cout << "человек успешно удален\n" ; 
 }
 
 

@@ -56,6 +56,7 @@ void DeleteCourse(pqxx::transaction_base& txn, int course_id) {
         txn.exec_params(sql, course_id);
         //txn.commit();
     } catch (const std::exception &e) {
+        txn.abort();
         fmt::print("Ошибка при удалении {}: {}", course_id, e.what()) ;
         throw ; 
     }

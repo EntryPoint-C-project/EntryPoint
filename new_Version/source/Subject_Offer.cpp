@@ -63,6 +63,7 @@ void Delete_Subject_Offer(pqxx::transaction_base& txn, int offer_id) {
         txn.exec_params(sql, offer_id);
         //txn.commit();
     } catch (const std::exception &e) {
+        txn.abort();
         fmt::print("Ошибка при удалении {}: {}", offer_id, e.what()) ;
         throw ; 
     }

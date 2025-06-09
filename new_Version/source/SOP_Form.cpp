@@ -113,6 +113,7 @@ void DeleteSOP_Form(pqxx::transaction_base& txn, int sop_id) {
         txn.exec_params(sql, sop_id);
         //txn.commit();
     } catch (const std::exception &e) {
+        txn.abort();
         fmt::print("Ошибка при удалении {}: {}", sop_id, e.what()) ;
         throw ; 
     }

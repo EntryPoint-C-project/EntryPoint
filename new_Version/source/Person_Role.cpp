@@ -70,6 +70,7 @@ void DeletePersonRole(pqxx::transaction_base& txn, int person_id, int role_id) {
         txn.exec_params(sql, person_id, role_id);
         //txn.commit();
     } catch (const std::exception &e) {
+        txn.abort();
         fmt::print("Ошибка при удалении {}: {}", person_id, e.what()) ;
         throw ; 
     }

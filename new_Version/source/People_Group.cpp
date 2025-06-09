@@ -58,6 +58,7 @@ void DeletePersonGroup(pqxx::transaction_base& txn, int people_group_id) {
         txn.exec_params(sql, people_group_id);
         //txn.commit();
     } catch (const std::exception &e) {
+        txn.abort();
         fmt::print("Ошибка при удалении {}: {}", people_group_id, e.what()) ;
         throw ; 
     }

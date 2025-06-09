@@ -107,6 +107,7 @@ void DeleteTeachingAssigment(pqxx::transaction_base& txn, int assignment_id) {
         txn.exec_params(sql, assignment_id);
         // //txn.commit();
     } catch (const std::exception &e) {
+        txn.abort();
         fmt::print("Ошибка при удалении {}: {}", assignment_id, e.what()) ;
         throw ; 
     }

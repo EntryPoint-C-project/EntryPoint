@@ -59,6 +59,7 @@ void DeleteProgram(pqxx::transaction_base& txn, int program_id) {
         txn.exec_params(sql, program_id);
         //txn.commit();
     } catch (const std::exception &e) {
+        txn.abort();
         fmt::print("Ошибка при удалении {}: {}", program_id, e.what()) ;
         throw ; 
     }
