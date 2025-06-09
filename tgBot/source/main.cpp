@@ -414,7 +414,7 @@ int main() {
             int64_t ChatId = message->chat->id;
 
             if (users_admin.count(ChatId) && AdminStarus[ChatId] == AdminState::ADD_USER) {
-                CreatePersonWithParams(txn, {'a', 'a', 'a', 1, 1, 'a', 'a', 'a', 'a', 'b'});
+                CreatePersonWithParams(txn, Person{'a', 'a', 'a', 1, 1, 'a', 'a', 'a', 'a', 'b'});
             } else if (users_admin.count(ChatId) && AdminStarus[ChatId] == AdminState::DELETE_USER) {
                 bot.getApi().sendMessage(ChatId, "Person is deleted");
                 DeletePerson(txn, message->text);
