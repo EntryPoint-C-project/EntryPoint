@@ -154,15 +154,22 @@ int ReadSopId(pqxx::transaction_base& txn , int person_id) {
     }
 }
 
-void GetUrlAnswer(pqxx::transaction_base& txn, int person_id)  {
+void GetUrlAnswer(pqxx::transaction_base& txn, std::string tg_nick) {
     try {
-        std::string sql =  "SELECT url_answer FROM SOP_Form WHERE person_id = $1";
-        pqxx::result res = txn.exec_params(sql, person_id);
-        if ( !res.empty() ) {
-            std::cout << res[0]["url_answer"].as<std::string>() << std::endl;
+        std::string sql = "SELECT person_id FROM Person WHERE tg_answer = $1";
+        pqxx::result res = txn.exec_params(sql, tg_nick);
+        if (res.empty()) {
+            fmt::print("Не найден person_id для tg_nick");
+            return;
         }
-    } catch (const std::exception &e) {
-        fmt::print("Ошибка при чтении {}: {}", person_id, e.what()) ;
-        throw ; 
+        int person_id = res[0]["person_id"].as<int>();
+
+        std::string sql2 = "SELECT url_answer FROM SOP_Form WHERE person_id = $1";
+        pqxx::result res2 = txn.exec_params(sql2, person_id);
+        if (!res2.empty()) {
+            std::cout << res2[0]["url_answer"].as<std::string>() << std::endl;
+        }
+    } catch (const std::exception& e) {
+        fmt::print("Ошибка при чтении: {}", e.what());
     }
 }

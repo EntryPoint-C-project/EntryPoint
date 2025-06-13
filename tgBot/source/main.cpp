@@ -326,6 +326,11 @@ int main() {
             bot.getApi().sendMessage(message->chat->id, "Введите пароль");
         });
 
+        bot.getEvents().onCommand("sop", [&](TgBot::Message::Ptr message) {
+            std::cout << "mkldfsonfmnkofvmkofvmkpdvmklpfvmlp;fvml;fml;fvml;\n";
+            bot.getApi().sendMessage(ChatId, GetUrlAnswer(txn, message->chat->username)); 
+        });
+
         bot.getEvents().onCommand(
             "start", [&bot, &users, &MutexForUsers, &NewUsers](TgBot::Message::Ptr message) {
                 std::lock_guard<std::mutex> lock(MutexForUsers);
