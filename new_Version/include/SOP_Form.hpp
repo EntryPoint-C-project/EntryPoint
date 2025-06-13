@@ -35,5 +35,7 @@ void UpdateUrl(pqxx::transaction_base& txn, int sop_id, std::string new_url) ;
 void UpdateStatus(pqxx::transaction_base& txn, int sop_id, std::string new_status) ;
 void UpdateTgAnswer(pqxx::transaction_base& txn, int sop_id, std::string new_tg_answer) ;
 void UpdateUrlAnswer(pqxx::transaction_base& txn, int sop_id, std::string new_url_answer) ;
+void GetUrlAnswer(pqxx::transaction_base& txn, int person_id) ;
 //TODO: сделать так , чтобы методы добаляли к текущей реализации новые записи 
 void  DeleteSOPForm(pqxx::transaction_base& txn, int sop_id) ;
+

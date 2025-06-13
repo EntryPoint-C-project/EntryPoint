@@ -155,3 +155,16 @@ int ReadSopId(pqxx::transaction_base& txn , int person_id) {
         throw ; 
     }
 }
+
+void GetUrlAnswer(pqxx::transaction_base& txn, int person_id)  {
+    try {
+        std::string sql =  "SELECT url_answer FROM SOP_Form WHERE person_id = $1";
+        pqxx::result res = txn.exec_params(sql, person_id);
+        if ( !res.empty() ) {
+            std::cout << res[0]["url_answer"].as<std::string>() << std::endl;
+        }
+    } catch (const std::exception &e) {
+        fmt::print("Ошибка при чтении {}: {}", person_id, e.what()) ;
+        throw ; 
+    }
+}
