@@ -305,7 +305,7 @@ std::mutex mutes_for_admin;
 
 enum class AdminState { ADD_USER, MAKE_ANOUNSMENT, DELETE_USER };
 std::map<int64_t, AdminState> AdminStarus;
-vector<int> ReadPersonId(pqxx::transaction_base& txn) {
+std::vector<int> ReadPersonId__(pqxx::transaction_base& txn) {
     try {
         std::string sql =  "SELECT person_id FROM People";
         pqxx::result res = txn.exec(sql);
@@ -475,7 +475,7 @@ int main() {
             
             std::cout << "User write message\n";
             std::cout << "All users:\n";
-            auto res = ReadPersonId(txn);
+            auto res = ReadPersonId__(txn);
             for (auto p : res) {
                 std::cout << p << ' ';
             }
