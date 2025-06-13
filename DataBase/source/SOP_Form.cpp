@@ -106,41 +106,39 @@ void UpdateStatus(pqxx::transaction_base& txn, int sop_id, std::string new_statu
 
 
 
-void DeleteSOP_Form(pqxx::transaction_base& txn, int person_id) {
+void DeleteSOP_Form(pqxx::transaction_base& txn, int sop_id) {
     try {
 
-        std::string sql =  "DELETE FROM SOP_Form WHERE person_id = $1";
-        txn.exec_params(sql, person_id);
+        std::string sql =  "DELETE FROM SOP_Form WHERE sop_id = $1";
+        txn.exec_params(sql, sop_id);
         //txn.commit();
     } catch (const std::exception &e) {
-        txn.abort();
-        fmt::print("Ошибка при удалении {}: {}", person_id, e.what()) ;
+        fmt::print("Ошибка при удалении {}: {}", sop_id, e.what()) ;
         throw ; 
     }
 }
 
-void UpdateTgAnswer(pqxx::transaction_base& txn, int person_id, std::string new_tg_answer) { // обновленные методы , для того , чтобы у нас была конкатенация ответов , а не просто замена одного на другое 
+void UpdateTgAnswer(pqxx::transaction_base& txn, int sop_id, std::string new_tg_answer) { // обновленные методы , для того , чтобы у нас была конкатенация ответов , а не просто замена одного на другое 
     try {
-        std::string sql =  "UPDATE SOP_Form SET tg_answer = tg_answer || '\t' || $1 WHERE person_id = $2";
-        txn.exec_params(sql, new_tg_answer, person_id);
+        std::string sql =  "UPDATE SOP_Form SET tg_answer = tg_answer || '\t' || $1 WHERE sop_id = $2";
+        txn.exec_params(sql, new_tg_answer, sop_id);
         //txn.commit();
     } catch (const std::exception &e) {
-        fmt::print("Ошибка при обновлении {}: {}", person_id, e.what()) ;
+        fmt::print("Ошибка при обновлении {}: {}", sop_id, e.what()) ;
         throw ; 
     }
 }
 
-void UpdateUrlAnswer(pqxx::transaction_base& txn, int person_id, std::string new_url_answer) { // обновленные методы , для того , чтобы у нас была конкатенация ответов , а не просто замена одного на другое 
+void UpdateUrlAnswer(pqxx::transaction_base& txn, int sop_id, std::string new_url_answer) { // обновленные методы , для того , чтобы у нас была конкатенация ответов , а не просто замена одного на другое 
     try {
-        std::string sql =  "UPDATE SOP_Form SET url_answer = url_answer || '\t' || $1 WHERE person_id = $2";
-        txn.exec_params(sql, new_url_answer, person_id);
+        std::string sql =  "UPDATE SOP_Form SET url_answer = url_answer || '\t' || $1 WHERE sop_id = $2";
+        txn.exec_params(sql, new_url_answer, sop_id);
         //txn.commit();
     } catch (const std::exception &e) {
-        fmt::print("Ошибка при обновлении {}: {}", person_id, e.what()) ;
+        fmt::print("Ошибка при обновлении {}: {}", sop_id, e.what()) ;
         throw ; 
     }
 }
-
 
 int ReadSopId(pqxx::transaction_base& txn , int person_id) {
     try {
@@ -150,6 +148,19 @@ int ReadSopId(pqxx::transaction_base& txn , int person_id) {
             return res[0]["sop_id"].as<int>();
         }
         return 0;
+    } catch (const std::exception &e) {
+        fmt::print("Ошибка при чтении {}: {}", person_id, e.what()) ;
+        throw ; 
+    }
+}
+
+void GetUrlAnswer(pqxx::transaction_base& txn, int person_id)  {
+    try {
+        std::string sql =  "SELECT url_answer FROM SOP_Form WHERE person_id = $1";
+        pqxx::result res = txn.exec_params(sql, person_id);
+        if ( !res.empty() ) {
+            std::cout << res[0]["url_answer"].as<std::string>() << std::endl;
+        }
     } catch (const std::exception &e) {
         fmt::print("Ошибка при чтении {}: {}", person_id, e.what()) ;
         throw ; 
