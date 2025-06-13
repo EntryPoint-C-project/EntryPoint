@@ -1,5 +1,3 @@
-# В tgBot/CMakeLists.txt
-
 include(FetchContent)
 
 FetchContent_Declare(
@@ -18,19 +16,25 @@ file(GLOB_RECURSE DATABASE_SOURCES
     "${CMAKE_SOURCE_DIR}/DataBase/source/*.cpp"
 )
 
+file(GLOB_RECURSE GOOGLE_API_SOURCES
+    "${CMAKE_SOURCE_DIR}/Google API/src/*.cpp"
+)
+
 add_library(tgBotLib STATIC
     ${TGBOT_SOURCES}
     ${DATABASE_SOURCES}
+    ${GOOGLE_API_SOURCES}        # Добавили исходники Google API
 )
 
 target_include_directories(tgBotLib
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${CMAKE_SOURCE_DIR}/DataBase/include
+        ${CMAKE_SOURCE_DIR}/Google API/inc      # Добавили include Google API
 )
 
 target_link_libraries(tgBotLib
     PUBLIC
         pqxx
-        fmt::fmt    # Добавить эту строку!
+        fmt::fmt    # Добавлено
 )
