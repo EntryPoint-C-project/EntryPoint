@@ -305,7 +305,20 @@ std::mutex mutes_for_admin;
 
 enum class AdminState { ADD_USER, MAKE_ANOUNSMENT, DELETE_USER };
 std::map<int64_t, AdminState> AdminStarus;
-
+vector<int> ReadPersonId(pqxx::transaction_base& txn) {
+    try {
+        std::string sql =  "SELECT person_id FROM People";
+        pqxx::result res = txn.exec(sql);
+        std::vector<int> person_ids;
+        for (auto row : res) {
+            person_ids.push_back(row["person_id"].as<int>());
+        }
+        return person_ids;
+    } catch (const std::exception &e) {
+        fmt::print("Ошибка при чтении {}: {}", "person_id", e.what()) ;
+        throw ;
+    }
+}
 int main() {
     const std::string conn_str
         = "dbname=ep_db user=danik password=60992425 hostaddr=127.0.0.1 port=5432";
@@ -461,6 +474,11 @@ int main() {
             int64_t ChatId = message->chat->id;
             
             std::cout << "User write message\n";
+            std::cout << "All users:\n";
+            for (auto p : ReadPersonId(txn)) {
+                std::cout << p << ' ';
+            }
+            std::cout << '\n';
             if (users_admin.count(ChatId) && AdminStarus[ChatId] == AdminState::ADD_USER) {
                 std::cout << "Admin want add user\n";
                 CreatePerson(txn, "Egorig", "b", "@jnfvjnfvjnfvjnfvjnvjnf", 0, 123);
