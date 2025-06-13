@@ -84,7 +84,7 @@ std::string createForm(const std::string &jsonFilePath, Config &config, HttpClie
 void deleteForm(const std::string &formId, Config &config);
 json readJsonFromFile(const std::string &filePath);
 json generateQuestionsPerStudent(pqxx::transaction_base &txn, int student_id);
-void addFieldToForm(const std::string &formId, json jsonFile, Config &config,
+inline void addFieldToForm(const std::string &formId, json jsonFile, Config &config,
                     HttpClient &httpClient) {
     std::string accessToken = refreshAccessToken(config, httpClient);
     if (accessToken.empty()) {

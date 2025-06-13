@@ -209,28 +209,28 @@ std::string createForm(const std::string &jsonFilePath, Config &config,
   }
 }
 
-void addFieldToForm(const std::string &formId, json jsonFile, Config &config,
-                    HttpClient &httpClient) {
-  std::string accessToken = refreshAccessToken(config, httpClient);
-  if (accessToken.empty()) {
-    Logger::getInstance().error(
-        "Failed to refresh access token while add field to form");
-    return;
-  }
-  std::string questionForm = jsonFile.dump();
-  std::string url =
-      "https://forms.googleapis.com/v1/forms/" + formId + ":batchUpdate";
-  std::string response =
-      httpClient.performHttpRequest(url, "POST", accessToken, questionForm);
-  try {
-    json responseJson = json::parse(response);
-    if (responseJson.contains("error")) {
-      Logger::getInstance().error("Error: ", responseJson.dump());
-    }
-  } catch (const std::exception &e) {
-    Logger::getInstance().error("JSON parsing error: ", e.what());
-  }
-}
+// void addFieldToForm(const std::string &formId, json jsonFile, Config &config,
+//                     HttpClient &httpClient) {
+//   std::string accessToken = refreshAccessToken(config, httpClient);
+//   if (accessToken.empty()) {
+//     Logger::getInstance().error(
+//         "Failed to refresh access token while add field to form");
+//     return;
+//   }
+//   std::string questionForm = jsonFile.dump();
+//   std::string url =
+//       "https://forms.googleapis.com/v1/forms/" + formId + ":batchUpdate";
+//   std::string response =
+//       httpClient.performHttpRequest(url, "POST", accessToken, questionForm);
+//   try {
+//     json responseJson = json::parse(response);
+//     if (responseJson.contains("error")) {
+//       Logger::getInstance().error("Error: ", responseJson.dump());
+//     }
+//   } catch (const std::exception &e) {
+//     Logger::getInstance().error("JSON parsing error: ", e.what());
+//   }
+// }
 
 std::string getFormUrl(const std::string &formId) {
   return "https://docs.google.com/forms/d/" + formId + "/viewform";
