@@ -460,7 +460,7 @@ int main() {
 
             if (users_admin.count(ChatId) && AdminStarus[ChatId] == AdminState::ADD_USER) {
                 CreatePersonWithParams(
-                    txn, Person("Egorik", "Anderson", "@st_luka", 1, 684999776, "student", "Math",
+                    txn, Person("Egorik", "Anderson", "@st_luka", 1, 684999776, "Student", "Math",
                                 "1st Year", "Bachelor", "Group A"));
             } else if (users_admin.count(ChatId)
                        && AdminStarus[ChatId] == AdminState::DELETE_USER) {
