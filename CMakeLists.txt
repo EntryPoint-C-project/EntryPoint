@@ -5,7 +5,6 @@ project(MyProject LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Подключаем сторонние библиотеки через CPM
 include(cmake/CPM.cmake)
 
 CPMAddPackage(
@@ -48,27 +47,18 @@ CPMAddPackage(
   GIT_TAG 10.2.1
 )
 
-# add_subdirectory(DataBase)
-# Подключаем поддиректорию библиотеки бота
 add_subdirectory(tgBot)
 
-# Основной исполняемый файл
 add_executable(main tgBot/source/main.cpp)
 
-# Включаем директории
-target_include_directories(main
-  PRIVATE
-    tgBot/include
-)
+target_include_directories(main PRIVATE tgBot/include)
 
 target_link_libraries(main
   PRIVATE
     Boost::system
-    TgBot
     nlohmann_json::nlohmann_json
     curl
     pqxx
     tgBotLib
-    fmt::fmt          # fmt после DataBaseLib
+    fmt::fmt
 )
-
