@@ -377,6 +377,7 @@ int main() {
 
                 bot.getApi().sendMessage(ChatId, "СОП открыт");
             } else if (query->data == "admin_add_user") {
+                std::cout << "admin_add_user\n";
                 bot.getApi().sendMessage(ChatId, "Введите данные:");
                 AdminStarus[ChatId] = AdminState::ADD_USER;
             } else if (query->data == "admin_remove_user") {
