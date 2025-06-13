@@ -1,4 +1,4 @@
-#include "logger.hpp"
+#include "../inc/logger.hpp"
 
 void Logger::log(const std::string &message) {
   std::lock_guard<std::mutex> lock(mtx);
