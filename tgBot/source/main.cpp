@@ -372,7 +372,7 @@ int main() {
                     nlohmann::json question = sop::generateQuestionsPerStudent(txn, id);
                     sop::addFieldToForm(formId, question, config, httpClient);
                     CreateSOPForm(txn, id, sop::getFormUrl(formId),
-                                  " "
+                                  " ",
                                   " ");
                 }
 
