@@ -34,6 +34,9 @@
 #include "../../DataBase/include/TESTS.hpp"
 #include "../../DataBase/include/Teaching_Assigment.hpp"
 
+// Google API
+#include "../../Google API/inc/manageSOP.hpp"
+
 int InitDataBase() {
     // const std::string conn_str = "dbname=postgres user=postgres password=spelaya_melon
     // hostaddr=127.0.0.1 port=5432";
@@ -358,6 +361,19 @@ int main() {
             int64_t ChatId = query->message->chat->id;
             if (query->data == "admin_open_sop") {
                 AssignCompletelyToPeople(txn);
+                std::vector<int> subject_id = ReadSubjectId(txn);
+
+                sop::Config config = sop::Config::getInstance();
+                sop::HttpClient httpClient;
+                std::string file_path = "json/formTitle.json";
+                
+                for (const auto &id : subject_id) {
+                    std::string formId = sop::createForm(file_path, config, httpClient);
+                    nlohmann::json question = sop::generateQuestionsPerStudent(txn, id);
+                    sop::addFieldToForm(formId, question, config, httpClient);
+                    UpdateUrl(sop::getFormUrl(formId));
+                }
+                
                 bot.getApi().sendMessage(ChatId, "СОП открыт");
             } else if (query->data == "admin_add_user") {
                 bot.getApi().sendMessage(ChatId, "Введите данные:");
@@ -414,10 +430,15 @@ int main() {
             int64_t ChatId = message->chat->id;
 
             if (users_admin.count(ChatId) && AdminStarus[ChatId] == AdminState::ADD_USER) {
-                CreatePersonWithParams(txn, Person{"a", "a", "a", 1, 1, "a", "a", "a", "a", "b"});
-            } else if (users_admin.count(ChatId) && AdminStarus[ChatId] == AdminState::DELETE_USER) {
+                CreatePersonWithParams(
+                    txn, Person("Alice", "Anderson", "@alice_bot", 1, 123456789, "student", "Math",
+                                "1st Year", "Bachelor", "Group A"));
+            } else if (users_admin.count(ChatId)
+                       && AdminStarus[ChatId] == AdminState::DELETE_USER) {
                 bot.getApi().sendMessage(ChatId, "Person is deleted");
-                DeletePerson(txn, message->text);
+                {
+                    pqxx::work() DeletePerson(txn, message->text);
+                }
             }
 
             if (waiting_for_admin_code.count(ChatId)) {
