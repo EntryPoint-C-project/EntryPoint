@@ -347,7 +347,7 @@ int main() {
             bot.getApi().sendMessage(message->chat->id, "Введите пароль");
         });
 
-        bot.getEvents().onCommand("sop", [&](TgBot::Message::Ptr message) {
+        bot.getEvents().onCommand("sop_", [&](TgBot::Message::Ptr message) {
             std::cout << "mkldfsonfmnkofvmkofvmkpdvmklpfvmlp;fvml;fml;fvml;\n";
             bot.getApi().sendMessage(message->chat->id, GetUrlFuckMe_(txn, message->chat->username)); 
         });
