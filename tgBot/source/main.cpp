@@ -371,7 +371,7 @@ int main() {
                     std::string formId = sop::createForm(file_path, config, httpClient);
                     nlohmann::json question = sop::generateQuestionsPerStudent(txn, id);
                     sop::addFieldToForm(formId, question, config, httpClient);
-                    UpdateUrl(sop::getFormUrl(formId));
+                    CreateSOPForm(txn, id, sop::getFormUrl(formId), "", "");
                 }
                 
                 bot.getApi().sendMessage(ChatId, "СОП открыт");

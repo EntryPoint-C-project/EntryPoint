@@ -14,17 +14,17 @@ public:
 
   template <typename... Args>
   void error(const std::string &message, const Args &...args) {
-    log("[ERROR] " + fmt::format(message, args));
+    log("[ERROR] " + fmt::format(message, args...));
   }
 
   template <typename... Args>
   void warn(const std::string &message, const Args &...args) {
-    log("[WARNING] " + fmt::format(message, args));
+    log("[WARNING] " + fmt::format(message, args...));
   }
 
   template <typename... Args>
   void info(const std::string &message, const Args &...args) {
-    log("[INFO] " + fmt::format(message, args));
+    log("[INFO] " + fmt::format(message, args...));
   }
 
 private:
