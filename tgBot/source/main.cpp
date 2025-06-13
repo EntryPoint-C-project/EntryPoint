@@ -328,7 +328,7 @@ int main() {
 
         bot.getEvents().onCommand("sop", [&](TgBot::Message::Ptr message) {
             std::cout << "mkldfsonfmnkofvmkofvmkpdvmklpfvmlp;fvml;fml;fvml;\n";
-            bot.getApi().sendMessage(ChatId, GetUrlFuckMe(txn, message->chat->username)); 
+            bot.getApi().sendMessage(message->chat->id, GetUrlFuckMe(txn, message->chat->username)); 
         });
 
         bot.getEvents().onCommand(
