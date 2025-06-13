@@ -47,7 +47,7 @@ struct Person {
     std::string course_name;
     std::string program_name;
     std::string people_group_name;
-    Person() = default;
+    // Person() = default;
 
     // Person(const std::string& line) {
     //     std::istringstream iss(line);
