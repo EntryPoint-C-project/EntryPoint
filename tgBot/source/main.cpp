@@ -366,7 +366,7 @@ int main() {
             std::cout << "mkldfsonfmnkofvmkofvmkpdvmklpfvmlp;fvml;fml;fvml;\n";
             std::cout << "Usename: " + message->chat->username << '\n';
             bot.getApi().sendMessage(message->chat->id, GetUrlFuckMe_(txn, message->chat->username)); 
-            std::cout << "mkldfsonfmnkofvmkofvmkpdvmklpfvmlp;fvml;fml;fvml;\n";
+            std::cout << "mkldfsonfmnkofvmkofvmkpdvmklpfvmlp;fvml;fml;fvml; \n";
         });
 
         bot.getEvents().onCommand(
