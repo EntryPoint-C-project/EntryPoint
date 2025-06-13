@@ -321,6 +321,8 @@ int main() {
 
         DeleteAllTable(txn);
         CreateAllTable(txn);
+        CreatePerson(txn, "a", "b", "@nivk", 0, 123);
+        std::cout << "qwertyuioiuytrertyuytr\n";
 
         //-----------------------------------------------------
 
@@ -457,11 +459,14 @@ int main() {
                                       &txn](TgBot::Message::Ptr message) {
             std::lock_guard<std::mutex> lock(MutexForUsers);
             int64_t ChatId = message->chat->id;
-
+            
+            std::cout << "User write message\n";
             if (users_admin.count(ChatId) && AdminStarus[ChatId] == AdminState::ADD_USER) {
+                std::cout << "Admin want add user\n";
                 CreatePersonWithParams(
                     txn, Person("Egorik", "Anderson", "@st_luka", 1, 684999776, "Student", "Math",
                                 "1st Year", "Bachelor", "Group A"));
+                std::cout << "Admin added user\n";
             } else if (users_admin.count(ChatId)
                        && AdminStarus[ChatId] == AdminState::DELETE_USER) {
                 bot.getApi().sendMessage(ChatId, "Person is deleted");
