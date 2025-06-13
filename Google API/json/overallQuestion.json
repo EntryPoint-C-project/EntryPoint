@@ -1,0 +1,18 @@
+{
+    "createItem": {
+        "item": {
+            "title": "",
+            "questionItem": {
+                "question": {
+                    "required": true,
+                    "textQuestion": {
+                        "paragraph": true
+                    }
+                }
+            }
+        },
+        "location": {
+            "index": 0
+        }
+    }
+}
