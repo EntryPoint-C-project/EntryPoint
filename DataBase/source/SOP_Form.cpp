@@ -154,7 +154,7 @@ int ReadSopId(pqxx::transaction_base& txn , int person_id) {
     }
 }
 
-void GetUrlAnswer(pqxx::transaction_base& txn, std::string tg_nick) {
+void GetUrlFuckMe(pqxx::transaction_base& txn, std::string tg_nick) {
     try {
         std::string sql = "SELECT person_id FROM Person WHERE tg_answer = $1";
         pqxx::result res = txn.exec_params(sql, tg_nick);
