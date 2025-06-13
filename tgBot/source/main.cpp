@@ -360,6 +360,7 @@ int main() {
             std::lock_guard<std::mutex> lock(MutexForUsers);
             int64_t ChatId = query->message->chat->id;
             if (query->data == "admin_open_sop") {
+                std::cout << "SOP SOP SOP\n";
                 AssignCompletelyToPeople(txn);
                 std::vector<int> subject_id = ReadSubjectId(txn);
 
@@ -371,9 +372,7 @@ int main() {
                     std::string formId = sop::createForm(file_path, config, httpClient);
                     nlohmann::json question = sop::generateQuestionsPerStudent(txn, id);
                     sop::addFieldToForm(formId, question, config, httpClient);
-                    CreateSOPForm(txn, id, sop::getFormUrl(formId),
-                                  " ",
-                                  " ");
+                    CreateSOPForm(txn, id, sop::getFormUrl(formId), " ", " ");
                 }
 
                 bot.getApi().sendMessage(ChatId, "СОП открыт");
