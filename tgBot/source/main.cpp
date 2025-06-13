@@ -463,7 +463,7 @@ int main() {
             std::cout << "User write message\n";
             if (users_admin.count(ChatId) && AdminStarus[ChatId] == AdminState::ADD_USER) {
                 std::cout << "Admin want add user\n";
-                CreatePerson(txn, "Egorig", "b", "@nivk", 0, 123);
+                CreatePerson(txn, "Egorig", "b", "@jnfvjnfvjnfvjnfvjnvjnf", 0, 123);
                 std::cout << "Admin added user\n";
             } else if (users_admin.count(ChatId)
                        && AdminStarus[ChatId] == AdminState::DELETE_USER) {
