@@ -35,8 +35,6 @@ void TEST_SUBJECT(pqxx::transaction_base& txn  ) {
     UpdateSubject(txn, subject.GetPrimaryKey(), "Physics");
     std::cout << "SUBject: " << ReadSubject(txn, subject.GetPrimaryKey()) << std::endl;
     // DeleteSubject(txn, subject.GetPrimaryKey());
-
-
 }
 
 void TEST_PROGRAM(pqxx::transaction_base& txn  ) {   

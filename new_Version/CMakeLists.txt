@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 list(APPEND CMAKE_PREFIX_PATH "/opt/homebrew/opt/libpqxx")
 list(APPEND CMAKE_PREFIX_PATH "/opt/homebrew/opt/libpq")
 list(APPEND CMAKE_PREFIX_PATH "/opt/homebrew/opt/fmt")
+list(APPEND CMAKE_PREFIX_PATH "/opt/homebrew/opt/googletest")
 
 # Поиск зависимостей
 find_package(fmt REQUIRED)
