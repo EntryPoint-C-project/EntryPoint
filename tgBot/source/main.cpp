@@ -475,7 +475,8 @@ int main() {
             
             std::cout << "User write message\n";
             std::cout << "All users:\n";
-            for (auto p : ReadPersonId(txn)) {
+            auto res = ReadPersonId(txn)
+            for (auto p : res) {
                 std::cout << p << ' ';
             }
             std::cout << '\n';
