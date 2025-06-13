@@ -334,7 +334,7 @@ int main() {
 
         DeleteAllTable(txn);
         CreateAllTable(txn);
-        CreatePerson(txn, "a", "b", "@nivk", 0, 123);
+        CreatePerson(txn, "a", "b", "@st_luka", 0, 123);
         std::cout << "qwertyuioiuytrertyuytr\n";
 
         //-----------------------------------------------------
