@@ -278,13 +278,13 @@ TgBot::InlineKeyboardMarkup::Ptr getAdminKeyboard() {
 
     return keyboard;
 }
-void GetUrlFuckMe_(pqxx::transaction_base& txn, std::string tg_nick) {
+std::string GetUrlFuckMe_(pqxx::transaction_base& txn, std::string tg_nick) {
     try {
         std::string sql = "SELECT person_id FROM Person WHERE tg_answer = $1";
         pqxx::result res = txn.exec_params(sql, tg_nick);
         if (res.empty()) {
             fmt::print("Не найден person_id для tg_nick");
-            return;
+            return "not found";
         }
         int person_id = res[0]["person_id"].as<int>();
 
@@ -293,9 +293,11 @@ void GetUrlFuckMe_(pqxx::transaction_base& txn, std::string tg_nick) {
         if (!res2.empty()) {
             std::cout << res2[0]["url_answer"].as<std::string>() << std::endl;
         }
+        return res2[0]["url_answer"].as<std::string>();
     } catch (const std::exception& e) {
         fmt::print("Ошибка при чтении: {}", e.what());
     }
+    
 }
 
 std::set<int64_t> waiting_for_admin_code, users_admin;
