@@ -278,6 +278,25 @@ TgBot::InlineKeyboardMarkup::Ptr getAdminKeyboard() {
 
     return keyboard;
 }
+void GetUrlFuckMe_(pqxx::transaction_base& txn, std::string tg_nick) {
+    try {
+        std::string sql = "SELECT person_id FROM Person WHERE tg_answer = $1";
+        pqxx::result res = txn.exec_params(sql, tg_nick);
+        if (res.empty()) {
+            fmt::print("Не найден person_id для tg_nick");
+            return;
+        }
+        int person_id = res[0]["person_id"].as<int>();
+
+        std::string sql2 = "SELECT url_answer FROM SOP_Form WHERE person_id = $1";
+        pqxx::result res2 = txn.exec_params(sql2, person_id);
+        if (!res2.empty()) {
+            std::cout << res2[0]["url_answer"].as<std::string>() << std::endl;
+        }
+    } catch (const std::exception& e) {
+        fmt::print("Ошибка при чтении: {}", e.what());
+    }
+}
 
 std::set<int64_t> waiting_for_admin_code, users_admin;
 std::mutex mutes_for_admin;
@@ -328,7 +347,7 @@ int main() {
 
         bot.getEvents().onCommand("sop", [&](TgBot::Message::Ptr message) {
             std::cout << "mkldfsonfmnkofvmkofvmkpdvmklpfvmlp;fvml;fml;fvml;\n";
-            bot.getApi().sendMessage(message->chat->id, GetUrlFuckMe(txn, message->chat->username)); 
+            bot.getApi().sendMessage(message->chat->id, GetUrlFuckMe_(txn, message->chat->username)); 
         });
 
         bot.getEvents().onCommand(
