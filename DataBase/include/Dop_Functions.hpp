@@ -44,18 +44,22 @@ struct Person {
     std::string course_name;
     std::string program_name;
     std::string people_group_name;
-    Person(std::string n, std::string s, std::string p, int a, int c, std::string u, std::string f,
-           std::string y, std::string d, std::string g)
-        : name(n),
-          surname(s),
-          phone(p),
-          age(a),
-          course(c),
-          university(u),
-          faculty(f),
-          year(y),
-          degree(d),
-          group(g) {}
+
+    // Конструктор
+    Person(const std::string& first_name, const std::string& last_name, const std::string& tg_nick,
+           int access, int snils, const std::string& role, const std::string& subject_name,
+           const std::string& course_name, const std::string& program_name,
+           const std::string& people_group_name)
+        : first_name(first_name),
+          last_name(last_name),
+          tg_nick(tg_nick),
+          access(access),
+          snils(snils),
+          role(role),
+          subject_name(subject_name),
+          course_name(course_name),
+          program_name(program_name),
+          people_group_name(people_group_name) {}
 };
 
 void CreatePersonWithParams(pqxx::transaction_base& txn, Person person);
