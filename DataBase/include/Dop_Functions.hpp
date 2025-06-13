@@ -44,7 +44,7 @@ struct Person {
     std::string course_name;
     std::string program_name;
     std::string people_group_name;
-
+    Person() = default;
     // Конструктор
     Person(const std::string& first_name, const std::string& last_name, const std::string& tg_nick,
            int access, int snils, const std::string& role, const std::string& subject_name,
