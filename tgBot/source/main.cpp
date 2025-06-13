@@ -366,14 +366,16 @@ int main() {
                 sop::Config config = sop::Config::getInstance();
                 sop::HttpClient httpClient;
                 std::string file_path = "json/formTitle.json";
-                
+
                 for (const auto &id : subject_id) {
                     std::string formId = sop::createForm(file_path, config, httpClient);
                     nlohmann::json question = sop::generateQuestionsPerStudent(txn, id);
                     sop::addFieldToForm(formId, question, config, httpClient);
-                    CreateSOPForm(txn, id, sop::getFormUrl(formId), "", "");
+                    CreateSOPForm(txn, id, sop::getFormUrl(formId),
+                                  ""
+                                  "");
                 }
-                
+
                 bot.getApi().sendMessage(ChatId, "СОП открыт");
             } else if (query->data == "admin_add_user") {
                 bot.getApi().sendMessage(ChatId, "Введите данные:");
@@ -436,9 +438,8 @@ int main() {
             } else if (users_admin.count(ChatId)
                        && AdminStarus[ChatId] == AdminState::DELETE_USER) {
                 bot.getApi().sendMessage(ChatId, "Person is deleted");
-                {
-                    pqxx::work() DeletePerson(txn, message->text);
-                }
+
+                DeletePerson(txn, message->text);
             }
 
             if (waiting_for_admin_code.count(ChatId)) {
