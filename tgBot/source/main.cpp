@@ -296,13 +296,15 @@ int main() {
             throw std::runtime_error("Connection failed");
         }
         fmt::print("✓ Подключено к: {}\n", conn.dbname());
-        
-        {
-            pqxx::work txn_open(conn);
-            DeleteAllTable(txn_open);
-            CreateAllTable(txn_open);
-            txn_open.commit();
-        }
+
+
+        pqxx::work txn_open(conn);
+        DeleteAllTable(txn_open);
+        CreateAllTable(txn_open);
+        txn_open.commit();
+
+        pqxx::work txn(conn);
+
 
 
 
@@ -377,11 +379,8 @@ int main() {
                     std::string formId = sop::createForm(file_path, config, httpClient);
                     nlohmann::json question = sop::generateQuestionsPerStudent(txn, id);
                     sop::addFieldToForm(formId, question, config, httpClient);
+                    CreateSOPForm(txn, id, sop::getFormUrl(formId), " ", " ");
 
-                    {
-                        pqxx::work txn(txn);
-                        CreateSOPForm(txn, id, sop::getFormUrl(formId), " ", " ");
-                    }
                 }
 
                 bot.getApi().sendMessage(ChatId, "СОП открыт");
