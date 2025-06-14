@@ -400,17 +400,21 @@ int main() {
                         std::cout << id << '\n';
                     }
 
-                    // sop::Config config = sop::Config::getInstance();
-                    // sop::HttpClient httpClient;
-                    // std::string file_path = "json/formTitle.json";
+                    sop::Config config = sop::Config::getInstance();
+                    sop::HttpClient httpClient;
+                    std::string file_path = "json/formTitle.json";
 
-                    // for (const auto &id : person_ids) {
-                    //     std::string formId = sop::createForm(file_path, config, httpClient);
-                    //     nlohmann::json question = sop::generateQuestionsPerStudent(txn, id);
-                    //     sop::addFieldToForm(formId, question, config, httpClient);
-                    //     CreateSOPForm(txn, id, sop::getFormUrl(formId), " ", " ");
+                    for (const auto &id : person_ids) {
+                        std::string formId = sop::createForm(file_path, config, httpClient);
+                        pqxx::work txn1(conn);
+                        nlohmann::json question = sop::generateQuestionsPerStudent(txn1, id);
+                        txn1.commit();
+                        sop::addFieldToForm(formId, question, config, httpClient);
+                        pqxx::work txn2(conn);
+                        CreateSOPForm(txn2, id, sop::getFormUrl(formId), " ", " ");
+                        txn2.commit();
 
-                    // }
+                    }
 
                 }
 
