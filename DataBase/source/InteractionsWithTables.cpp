@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS Role (
 CREATE TABLE IF NOT EXISTS Person_Role (
     person_id INT REFERENCES People(person_id),
     role_id INT REFERENCES Role(role_id),
-    PRIMARY KEY (person_id, role_id)
+    PRIMARY KEY (person_id, role_id) ON DELETE CASCADE
 );
 
 -- Исправленная таблица Course (была опечатка в названии Cource)
@@ -107,7 +107,7 @@ void DeleteAllTable(pqxx::transaction_base& txn) {
         std::string sql = R"(
 DROP TABLE IF EXISTS 
     People , 
-    Roles,
+    Role,
     Person_Role,
     Subject_Offer,
     Category_Tags,
