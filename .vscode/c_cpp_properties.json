@@ -1,19 +1,24 @@
+
 {
   "version": 4,
   "configurations": [
-    {
-      "name": "macos-clang-arm64",
-      "compilerPath": "/usr/bin/clang",
-      "cStandard": "${default}",
-      "cppStandard": "${default}",
-      "intelliSenseMode": "macos-clang-arm64",
-      "includePath": [
-        "${workspaceFolder}/**"
-      ],
-      "macFrameworkPath": [
-        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
-      ],
-      "defines": []
-    }
+      {
+          "name": "Mac",
+          "compilerPath": "/usr/bin/clang++",
+          "cStandard": "c17",
+          "cppStandard": "c++20",
+          "intelliSenseMode": "macos-clang-arm64",
+          "includePath": [
+              "${workspaceFolder}/**",
+              "/opt/homebrew/opt/libpqxx/include",
+              "/opt/homebrew/opt/libpq/include",
+              "/opt/homebrew/opt/fmt/include" , 
+              "/opt/homebrew/opt/googletest/include"
+          ],
+          "macFrameworkPath": [
+              "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
+          ],
+          "defines": []
+      }
   ]
 }

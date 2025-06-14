@@ -67,3 +67,18 @@ void DeletePerson(pqxx::transaction_base& txn, std::string tg_nick ) {
     }
 }
 
+vector<int> ReadPersonId(pqxx::transaction_base& txn) {
+    try {
+        std::string sql =  "SELECT person_id FROM eople";
+        pqxx::result res = txn.exec(sql);
+        std::vector<int> person_ids;
+        for (auto row : res) {
+            person_ids.push_back(row["person_id"].as<int>());
+        }
+        return person_ids;
+    } catch (const std::exception &e) {
+        fmt::print("Ошибка при чтении {}: {}", "person_id", e.what()) ;
+        throw ;
+    }
+}
+

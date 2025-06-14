@@ -8,7 +8,7 @@ void TEST_PERSON(pqxx::transaction_base& txn  ) {
     People person1{"John", "Doe", "johвndoe", 0 , 12121};
     People person2{"Danik", "bla " , "dвanik_b" , 0 , 12141} ; 
     People person3{"Egor", "Schcred " , "eвgorik" , 1 , 141432 } ; 
-    People person4{"Egor", "PIDOR " , "eвgorikkk" , 0 , 1214213 } ; 
+    People person4{"Egor", "Zipo " , "eвgorikkk" , 0 , 1214213 } ; 
 
 
     person1.SetPrimaryKey(CreatePerson(txn, person1.GetFirstName(), person1.GetLastName(), person1.GetTgNick(), person1.GetAccess() , person1.GetSnils() ));

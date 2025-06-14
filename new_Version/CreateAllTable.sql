@@ -73,3 +73,4 @@ CREATE TABLE IF NOT EXISTS Sop_Form (
     tg_answer TEXT,  -- Исправлено с NTEXT на TEXT
     url_answer TEXT   -- Исправлено с NTEXT на TEXT
 );
+
