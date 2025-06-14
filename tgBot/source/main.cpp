@@ -111,8 +111,8 @@ void StudentCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
                           std::shared_ptr<mtd::User> user) {
     int64_t ChatId = user->id();
     if (query->data == "1" || query->data == "2" || query->data == "3"
-        || query->data == "4" || query->data == "5" || query->data == "6" query->data == "7" query->data
-               == "8" query->data == "9" query->data == "10"
+        || query->data == "4" || query->data == "5" || query->data == "6" || query->data == "7" || query->data
+               == "8" || query->data == "9" || query->data == "10"
         || query->data == "-1") {
         if (user->GetState() == mtd::UserState::STUDENT_SOP) {
             if (user->GetStep() == 0) {  // оценка лектора
