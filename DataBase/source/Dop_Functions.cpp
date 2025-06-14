@@ -53,7 +53,13 @@ bool CorrectSnils(pqxx::transaction_base& txn, int snils , std::string tg_nick) 
 
 void CreatePersonWithParams(pqxx::transaction_base& txn ,  Person person) {
     try {
-        int person_id = CreatePerson(txn , person.first_name , person.last_name , person.tg_nick , person.access , person.snils);
+        // int person_id = CreatePerson(txn , person.first_name , person.last_name , person.tg_nick , person.access , person.snils);
+        int person_id;
+        if (IsThereARecordPerson(txn, person.tg_nick)) {
+            person_id = ReadPersonId(txn, person.tg_nick);
+        } else {
+            person_id = CreatePerson(txn , person.first_name , person.last_name , person.tg_nick , person.access , person.snils);
+        }
         int role_id ; 
         if ( person.role == "Student"){
             role_id = ReadRoleId(txn , "Student");
