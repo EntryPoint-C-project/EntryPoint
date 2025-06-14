@@ -444,7 +444,7 @@ int main() {
                 {
                     pqxx::work txn(conn);
                     CreatePersonWithParams(
-                        txn, Person("Alice", "Anderson", "@alice_bot", 1, 123456789, "student", "Math",
+                        txn, Person("Egor", "Lukavenko", "st_luka", 1, 123456789, "Student", "Math",
                                 "1st Year", "Bachelor", "Group A"));
                     txn.commit();
                 }
