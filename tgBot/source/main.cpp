@@ -310,8 +310,9 @@ int main() {
                         "1st Year", "PMI", "Group A"));
             txn.commit();
         }
-        
+
         {
+            pqxx::work txn(conn);
             CreatePersonWithParams(
                 txn, Person("simarova", "Kate", "kate", 1, 23424, "Practitioner", "Math",
                 "1st Year", "PMI", "Group A"));    
