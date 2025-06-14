@@ -36,7 +36,5 @@ target_include_directories(tgBotLib PUBLIC
 # Явно указываем зависимости
 target_link_libraries(tgBotLib PUBLIC
     pqxx
-    pqxx-static  # Для статической линковки
     fmt::fmt
-    PostgreSQL::PQ  # Добавляем официальный таргет для libpq
 )
