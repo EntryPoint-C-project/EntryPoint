@@ -415,7 +415,7 @@ int main() {
                         pqxx::work txn2(conn);
                         std::string formUrl = sop::getFormUrl(formId);
 
-                        std::cout << " url -->  " <<  formUrl << endl; 
+                        std::cout << " url -->  " <<  formUrl << "\n"; 
 
                         CreateSOPForm(txn2, id, sop::getFormUrl(formId), " ", " ");
                         txn2.commit();
