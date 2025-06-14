@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # EntryPoint
 =======
 # 🎓 EntryPoint: Telegram Bot for Educational Institutions
