@@ -303,7 +303,7 @@ int main() {
         CreateAllTable(txn_open);
         txn_open.commit();
 
-        pqxx::work txn(conn);
+        // pqxx::work txn(conn);
 
 
 
@@ -440,9 +440,14 @@ int main() {
             int64_t ChatId = message->chat->id;
 
             if (users_admin.count(ChatId) && AdminStarus[ChatId] == AdminState::ADD_USER) {
-                CreatePersonWithParams(
-                    txn, Person("Alice", "Anderson", "@alice_bot", 1, 123456789, "student", "Math",
+                
+                {
+                    pqxx::work txn(conn);
+                    CreatePersonWithParams(
+                        txn, Person("Alice", "Anderson", "@alice_bot", 1, 123456789, "student", "Math",
                                 "1st Year", "Bachelor", "Group A"));
+                    txn.commit();
+                }
             } else if (users_admin.count(ChatId)
                        && AdminStarus[ChatId] == AdminState::DELETE_USER) {
                 bot.getApi().sendMessage(ChatId, "Person is deleted");
