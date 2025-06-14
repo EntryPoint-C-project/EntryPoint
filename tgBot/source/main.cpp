@@ -34,6 +34,9 @@
 #include "../../DataBase/include/TESTS.hpp"
 #include "../../DataBase/include/Teaching_Assigment.hpp"
 
+// Google API
+#include "../../Google API/inc/manageSOP.hpp"
+
 int InitDataBase() {
     // const std::string conn_str = "dbname=postgres user=postgres password=spelaya_melon
     // hostaddr=127.0.0.1 port=5432";
@@ -107,13 +110,13 @@ TgBot::InlineKeyboardMarkup::Ptr get_raiting_scale() {
     keyboard->inlineKeyboard.push_back({button});
     return keyboard;
 }
+
 void StudentCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
                           std::shared_ptr<mtd::User> user) {
     int64_t ChatId = user->id();
-    if (query->data == "1" || query->data == "2" || query->data == "3"
-        || query->data == "4" || query->data == "5" || query->data == "6" || query->data == "7" || query->data
-               == "8" || query->data == "9" || query->data == "10"
-        || query->data == "-1") {
+    if (query->data == "1" || query->data == "2" || query->data == "3" || query->data == "4"
+        || query->data == "5" || query->data == "6" || query->data == "7" || query->data == "8"
+        || query->data == "9" || query->data == "10" || query->data == "-1") {
         if (user->GetState() == mtd::UserState::STUDENT_SOP) {
             if (user->GetStep() == 0) {  // оценка лектора
                 user->feedback.grade = std::stoi(query->data);
@@ -163,6 +166,7 @@ void StudentCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
         bot.getApi().sendMessage(ChatId, "Какая-то информация", 0, 0, user->BackButton());
     }
 }
+
 void OfficeStaffCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
                               std::shared_ptr<mtd::User> user) {
     int64_t ChatId = user->id();
@@ -292,10 +296,15 @@ int main() {
             throw std::runtime_error("Connection failed");
         }
         fmt::print("✓ Подключено к: {}\n", conn.dbname());
-        pqxx::work txn(conn);
+        
+        {
+            pqxx::work txn_open(conn);
+            DeleteAllTable(txn_open);
+            CreateAllTable(txn_open);
+            txn_open.commit();
+        }
 
-        DeleteAllTable(txn);
-        CreateAllTable(txn);
+
 
         //-----------------------------------------------------
 
@@ -356,9 +365,28 @@ int main() {
             std::lock_guard<std::mutex> lock(MutexForUsers);
             int64_t ChatId = query->message->chat->id;
             if (query->data == "admin_open_sop") {
+                std::cout << "SOP SOP SOP\n";
                 AssignCompletelyToPeople(txn);
+                std::vector<int> subject_id = ReadSubjectId(txn);
+
+                sop::Config config = sop::Config::getInstance();
+                sop::HttpClient httpClient;
+                std::string file_path = "json/formTitle.json";
+
+                for (const auto &id : subject_id) {
+                    std::string formId = sop::createForm(file_path, config, httpClient);
+                    nlohmann::json question = sop::generateQuestionsPerStudent(txn, id);
+                    sop::addFieldToForm(formId, question, config, httpClient);
+
+                    {
+                        pqxx::work txn(txn);
+                        CreateSOPForm(txn, id, sop::getFormUrl(formId), " ", " ");
+                    }
+                }
+
                 bot.getApi().sendMessage(ChatId, "СОП открыт");
             } else if (query->data == "admin_add_user") {
+                std::cout << "admin_add_user\n";
                 bot.getApi().sendMessage(ChatId, "Введите данные:");
                 AdminStarus[ChatId] = AdminState::ADD_USER;
             } else if (query->data == "admin_remove_user") {
@@ -411,11 +439,15 @@ int main() {
                                       &txn](TgBot::Message::Ptr message) {
             std::lock_guard<std::mutex> lock(MutexForUsers);
             int64_t ChatId = message->chat->id;
+
             if (users_admin.count(ChatId) && AdminStarus[ChatId] == AdminState::ADD_USER) {
-                CreatePersonWithParams(txn, Person{"a", "a", "a", 1, 1, "a", "a", "a", "a", "a"});
+                CreatePersonWithParams(
+                    txn, Person("Alice", "Anderson", "@alice_bot", 1, 123456789, "student", "Math",
+                                "1st Year", "Bachelor", "Group A"));
             } else if (users_admin.count(ChatId)
                        && AdminStarus[ChatId] == AdminState::DELETE_USER) {
                 bot.getApi().sendMessage(ChatId, "Person is deleted");
+
                 DeletePerson(txn, message->text);
             }
 
