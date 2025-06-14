@@ -29,3 +29,7 @@ public:
 int CreatePerson(pqxx::transaction_base& txn , const std::string first_name , const std::string last_name, const std::string tg_nick , int access , int snils) ; 
 std::tuple< std::string, std::string, std::string , int , int > ReadPerson(pqxx::transaction_base& txn , int person_id) ;//! исправить все места 
 void DeletePerson(pqxx::transaction_base& txn, std::string tg_nick  ) ;    
+
+bool IsThereARecordPeople(pqxx::transaction_base& txn, std::string tg_nick) ; 
+
+int ReadPersonId(pqxx::transaction_base& txn , std::string tg_nick) ;
