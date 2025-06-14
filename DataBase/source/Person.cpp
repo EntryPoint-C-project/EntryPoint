@@ -8,20 +8,21 @@ int  CreatePerson(pqxx::transaction_base& txn , const std::string first_name , c
         throw std::invalid_argument("Заполните все поля в Person");
     }
 
-
     try { 
-        std::string sql =  "INSERT INTO people (first_name, last_name, tg_nick, access , snils) VALUES ($1, $2, $3, $4 , $5) ON CONFLICT (tg_nick) DO NOTHING RETURNING person_id";
-
-        pqxx::result res = txn.exec_params(sql, first_name, last_name, tg_nick, access , snils);
-        int person_id  ;
+        // First, try to select the person_id by tg_nick
+        std::string sql = "SELECT person_id FROM people WHERE tg_nick = $1";
+        pqxx::result res = txn.exec_params(sql, tg_nick);
 
         if (!res.empty() && !res[0]["person_id"].is_null()) {
-            person_id = res[0]["person_id"].as<int>();
-            // ...
-        } else {
-            fmt::print("Запись уже существует с указанным tg_nick\n");
-            // throw std::invalid_argument("Запись уже существует с указанным tg_nick");
+            // If a record exists, return the person_id
+            return res[0]["person_id"].as<int>();
         }
+
+        // If no record exists, create a new one
+        sql = "INSERT INTO people (first_name, last_name, tg_nick, access , snils) VALUES ($1, $2, $3, $4 , $5) RETURNING person_id";
+        res = txn.exec_params(sql, first_name, last_name, tg_nick, access , snils);
+        int person_id = res[0]["person_id"].as<int>();
+
         //txn.commit();
         return person_id; 
     } catch (const std::exception &e) {
@@ -29,7 +30,6 @@ int  CreatePerson(pqxx::transaction_base& txn , const std::string first_name , c
         throw ; 
     }
 }
-
 
 std::tuple<std::string, std::string, std::string, int , int > ReadPerson(pqxx::transaction_base& txn, int person_id) {
     try {
@@ -55,14 +55,14 @@ std::tuple<std::string, std::string, std::string, int , int > ReadPerson(pqxx::t
     }
 }
 
-void DeletePerson(pqxx::transaction_base& txn, int person_id) {
+void DeletePerson(pqxx::transaction_base& txn, std::string tg_nick ) {
     try {
 
-        std::string sql =  "DELETE FROM people WHERE person_id = $1";
-        txn.exec_params(sql, person_id);
+        std::string sql =  "DELETE FROM people WHERE tg_nick = $1";
+        txn.exec_params(sql,tg_nick );
         //txn.commit();
     } catch (const std::exception &e) {
-        fmt::print("Ошибка при удалении {}: {}", person_id, e.what()) ;
+        fmt::print("Ошибка при удалении {}: {}", tg_nick, e.what()) ;
         throw ; 
     }
 }
