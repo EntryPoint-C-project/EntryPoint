@@ -64,10 +64,10 @@ target_include_directories(main
 target_link_libraries(main
   PRIVATE
     Boost::system
+    TgBot
     nlohmann_json::nlohmann_json
     curl
     pqxx
-    fmt::fmt          # fmt после DataBaseLib
     tgBotLib
+    fmt::fmt          # fmt после DataBaseLib
 )
-
