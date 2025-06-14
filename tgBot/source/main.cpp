@@ -452,7 +452,7 @@ int main() {
                        && AdminStarus[ChatId] == AdminState::DELETE_USER) {
                 bot.getApi().sendMessage(ChatId, "Person is deleted");
 
-                DeletePerson(txn, message->text);// TODO
+                // DeletePerson(txn, message->text); // TODO
             }
 
             if (waiting_for_admin_code.count(ChatId)) {
@@ -570,7 +570,7 @@ int main() {
         }
         //------------------------------------------------
 
-        txn.commit();
+        // txn.commit();
     } catch (const std::exception &e) {
         fmt::print("произошла ошибка : {}\n", e.what());
     }
