@@ -303,6 +303,19 @@ int main() {
         CreateAllTable(txn_open);
         txn_open.commit();
 
+        {
+            pqxx::work txn(conn);
+            CreatePersonWithParams(
+                txn, Person("XHR", "Aleck", "sexmen", 1, 83883, "Lector", "Math",
+                        "1st Year", "PMI", "Group A"));
+
+            CreatePersonWithParams(
+                txn, Person("simarova", "Kate", "kate", 1, 23424, "Practitioner", "Math",
+                "1st Year", "PMI", "Group A"));    
+
+            txn.commit();
+        }
+
         // pqxx::work txn(conn);
 
 
@@ -368,22 +381,26 @@ int main() {
             int64_t ChatId = query->message->chat->id;
             if (query->data == "admin_open_sop") {
                 std::cout << "SOP SOP SOP\n";
-                // AssignCompletelyToPeople(txn);
-                // std::vector<int> subject_id = ReadSubjectId(txn);
+                {
+                    pqxx::work txn(conn);
+                    AssignCompletelyToPeople(txn); // прокидывает всех людей в SOP_Form 
+                    std::vector<int> person_ids = ReadSubjectId(txn);
 
-                // sop::Config config = sop::Config::getInstance();
-                // sop::HttpClient httpClient;
-                // std::string file_path = "json/formTitle.json";
+                    sop::Config config = sop::Config::getInstance();
+                    sop::HttpClient httpClient;
+                    std::string file_path = "json/formTitle.json";
 
-                // for (const auto &id : subject_id) {
-                //     std::string formId = sop::createForm(file_path, config, httpClient);
-                //     nlohmann::json question = sop::generateQuestionsPerStudent(txn, id);
-                //     sop::addFieldToForm(formId, question, config, httpClient);
-                //     CreateSOPForm(txn, id, sop::getFormUrl(formId), " ", " ");
+                    for (const auto &id : person_ids) {
+                        std::string formId = sop::createForm(file_path, config, httpClient);
+                        nlohmann::json question = sop::generateQuestionsPerStudent(txn, id);
+                        sop::addFieldToForm(formId, question, config, httpClient);
+                        CreateSOPForm(txn, id, sop::getFormUrl(formId), " ", " ");
 
-                // }
+                    }
+                    txn.commit();
+                }
 
-                // bot.getApi().sendMessage(ChatId, "СОП открыт");
+                bot.getApi().sendMessage(ChatId, "СОП открыт");
             } else if (query->data == "admin_add_user") {
                 std::cout << "admin_add_user\n";
                 bot.getApi().sendMessage(ChatId, "Введите данные:");
@@ -445,14 +462,18 @@ int main() {
                     pqxx::work txn(conn);
                     CreatePersonWithParams(
                         txn, Person("Egor", "Lukavenko", "st_luka", 1, 123456789, "Student", "Math",
-                                "1st Year", "Bachelor", "Group A"));
+                                "1st Year", "PMI", "Group A"));
                     txn.commit();
                 }
             } else if (users_admin.count(ChatId)
                        && AdminStarus[ChatId] == AdminState::DELETE_USER) {
                 bot.getApi().sendMessage(ChatId, "Person is deleted");
 
-                // DeletePerson(txn, message->text); // TODO
+                {
+                    pqxx::work txn(conn);
+                    DeletePerson(txn, message->text); // TODO
+                    txn.commit();
+                }
             }
 
             if (waiting_for_admin_code.count(ChatId)) {
