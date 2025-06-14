@@ -406,12 +406,16 @@ int main() {
 
                     for (const auto &id : person_ids) {
                         std::string formId = sop::createForm(file_path, config, httpClient);
+                        std::cout << "id --> " << formId << "\n";
                         pqxx::work txn1(conn);
                         nlohmann::json question = sop::generateQuestionsPerStudent(txn1, id);
+                        std::cout << question.dump() << '\n';
                         txn1.commit();
                         sop::addFieldToForm(formId, question, config, httpClient);
                         pqxx::work txn2(conn);
                         std::string formUrl = sop::getFormUrl(formId);
+
+                        std::cout << " url -->  " <<  formUrl << endl; 
 
                         CreateSOPForm(txn2, id, sop::getFormUrl(formId), " ", " ");
                         txn2.commit();
