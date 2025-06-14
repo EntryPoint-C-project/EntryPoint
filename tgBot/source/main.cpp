@@ -1,4 +1,3 @@
-Daniil Kalashnikov, [14.06.2025 20:34]
 #include <fmt/core.h>
 #include <tgbot/tgbot.h>
 
@@ -108,14 +107,13 @@ TgBot::InlineKeyboardMarkup::Ptr get_raiting_scale() {
     keyboard->inlineKeyboard.push_back({button});
     return keyboard;
 }
-
-Daniil Kalashnikov, [14.06.2025 20:34]
 void StudentCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
                           std::shared_ptr<mtd::User> user) {
     int64_t ChatId = user->id();
-    if (query->data == "1"  query->data == "2"  query->data == "3" || query->data == "4"
-         query->data == "5"  query->data == "6"  query->data == "7"  query->data == "8"
-         query->data == "9"  query->data == "10" || query->data == "-1") {
+    if (query->data == "1" query->data == "2" query->data == "3"
+        || query->data == "4" query->data == "5" query->data == "6" query->data == "7" query->data
+               == "8" query->data == "9" query->data == "10"
+        || query->data == "-1") {
         if (user->GetState() == mtd::UserState::STUDENT_SOP) {
             if (user->GetStep() == 0) {  // оценка лектора
                 user->feedback.grade = std::stoi(query->data);
@@ -165,8 +163,6 @@ void StudentCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
         bot.getApi().sendMessage(ChatId, "Какая-то информация", 0, 0, user->BackButton());
     }
 }
-
-Daniil Kalashnikov, [14.06.2025 20:34]
 void OfficeStaffCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
                               std::shared_ptr<mtd::User> user) {
     int64_t ChatId = user->id();
@@ -239,7 +235,6 @@ void TutorCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
 
 // ------------------------------------------------------------------------------------------------------------
 
-Daniil Kalashnikov, [14.06.2025 20:34]
 TgBot::InlineKeyboardMarkup::Ptr getAdminKeyboard() {
     TgBot::InlineKeyboardMarkup::Ptr keyboard(new TgBot::InlineKeyboardMarkup);
 
@@ -337,8 +332,7 @@ int main() {
                 b1->text = "Студент";
                 b1->callbackData = "student";
 
-Daniil Kalashnikov, [14.06.2025 20:34]
-TgBot::InlineKeyboardButton::Ptr b2(new TgBot::InlineKeyboardButton);
+                TgBot::InlineKeyboardButton::Ptr b2(new TgBot::InlineKeyboardButton);
                 b2->text = "Очебный офис";
                 b2->callbackData = "office_staff";
 
@@ -417,11 +411,10 @@ TgBot::InlineKeyboardButton::Ptr b2(new TgBot::InlineKeyboardButton);
                                       &txn](TgBot::Message::Ptr message) {
             std::lock_guard<std::mutex> lock(MutexForUsers);
             int64_t ChatId = message->chat->id;
-
-Daniil Kalashnikov, [14.06.2025 20:34]
-if (users_admin.count(ChatId) && AdminStarus[ChatId] == AdminState::ADD_USER) {
+            if (users_admin.count(ChatId) && AdminStarus[ChatId] == AdminState::ADD_USER) {
                 CreatePersonWithParams(txn, Person{'a', 'a', 'a', 1, 1, 'a', 'a', 'a', 'a', 'b'});
-            } else if (users_admin.count(ChatId) && AdminStarus[ChatId] == AdminState::DELETE_USER) {
+            } else if (users_admin.count(ChatId)
+                       && AdminStarus[ChatId] == AdminState::DELETE_USER) {
                 bot.getApi().sendMessage(ChatId, "Person is deleted");
                 DeletePerson(txn, message->text);
             }
@@ -447,8 +440,7 @@ if (users_admin.count(ChatId) && AdminStarus[ChatId] == AdminState::ADD_USER) {
             }
             auto &user = users[ChatId];
 
-Daniil Kalashnikov, [14.06.2025 20:34]
-if (user->GetState() == mtd::UserState::TUTOR_SOP) {
+            if (user->GetState() == mtd::UserState::TUTOR_SOP) {
                 int64_t student_ChatId = static_cast<int64_t>(std::stoll(message->text));
                 std::string s;
                 for (const auto i : users[student_ChatId]->GetEvaluations()) {
@@ -499,8 +491,7 @@ if (user->GetState() == mtd::UserState::TUTOR_SOP) {
                         bot.getApi().sendMessage(ChatId, "Введите какой-нибудь коммент");
                     }
 
-Daniil Kalashnikov, [14.06.2025 20:34]
-} else if (user->GetStep() == 5) {
+                } else if (user->GetStep() == 5) {
                     user->feedback.advantages = message->text;
                     bot.getApi().sendMessage(ChatId, "Что не нравится");
                     user->GetStep()++;
