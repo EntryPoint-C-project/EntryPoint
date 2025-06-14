@@ -1,64 +1,155 @@
-cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.20)
+project(EntryPoint LANGUAGES CXX)
 
-project(MyProject LANGUAGES CXX)
-
-set(CMAKE_CXX_STANDARD 17)
+# Настройки компилятора
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-include(cmake/CPM.cmake)
+# Используем FetchContent для загрузки зависимостей
+include(FetchContent)
 
-CPMAddPackage(
-  NAME Boost
-  VERSION 1.86.0
-  URL https://github.com/boostorg/boost/releases/download/boost-1.86.0/boost-1.86.0-cmake.tar.xz
-  URL_HASH SHA256=2c5ec5edcdff47ff55e27ed9560b0a0b94b07bd07ed9928b476150e16b0efc57
-  OPTIONS "BOOST_ENABLE_CMAKE ON" "BOOST_SKIP_INSTALL_RULES ON"
-          "BUILD_SHARED_LIBS OFF" "BOOST_INCLUDE_LIBRARIES system"
+# Загрузка fmt
+FetchContent_Declare(
+  fmt
+  GIT_REPOSITORY https://github.com/fmtlib/fmt.git 
+  GIT_TAG        master
+)
+FetchContent_MakeAvailable(fmt)
+
+# Загрузка libpqxx
+FetchContent_Declare(
+    libpqxx
+    GIT_REPOSITORY https://github.com/jtv/libpqxx.git
+    GIT_TAG master
+    GIT_SHALLOW TRUE
 )
 
-CPMAddPackage(
-  NAME TgBot
-  GIT_REPOSITORY https://github.com/reo7sp/tgbot-cpp.git
-  GIT_TAG master
+# Загрузка nlohmann_json
+FetchContent_Declare(
+    nlohmann_json
+    GIT_REPOSITORY https://github.com/nlohmann/json.git
+    GIT_TAG master
+    GIT_SHALLOW TRUE
 )
 
-CPMAddPackage(
-  NAME nlohmann_json
-  GIT_REPOSITORY https://github.com/nlohmann/json.git
-  GIT_TAG v3.11.2
+# Загрузка TgBot
+FetchContent_Declare(
+    TgBot
+    GIT_REPOSITORY https://github.com/reo7sp/tgbot-cpp.git
+    GIT_TAG master
+    GIT_SHALLOW TRUE
 )
 
-CPMAddPackage(
-  NAME libcurl
-  GIT_REPOSITORY https://github.com/curl/curl.git
-  GIT_TAG curl-8_1_2
-  OPTIONS "BUILD_CURL_EXE OFF" "BUILD_TESTING OFF"
+# Получаем зависимости
+FetchContent_MakeAvailable(
+    libpqxx
+    nlohmann_json
+    TgBot
 )
 
-CPMAddPackage(
-  NAME libpqxx
-  GIT_REPOSITORY https://github.com/jtv/libpqxx.git
-  GIT_TAG 7.6.0
+# Для Boost используем системную установку
+find_package(Boost 1.74 COMPONENTS system REQUIRED)
+
+# Поиск системных библиотек
+find_package(CURL REQUIRED)
+find_package(OpenSSL REQUIRED)
+find_package(PostgreSQL REQUIRED)
+find_package(ZLIB REQUIRED)
+find_package(Threads REQUIRED)
+
+# Библиотека Database
+add_library(DatabaseLib STATIC)
+target_include_directories(DatabaseLib PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/DataBase/include
 )
 
-CPMAddPackage(
-  NAME fmt
-  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-  GIT_TAG 10.2.1
+# Исключаем тестовые файлы
+file(GLOB_RECURSE DB_SOURCES 
+    "${CMAKE_CURRENT_SOURCE_DIR}/DataBase/source/*.cpp"
+)
+list(REMOVE_ITEM DB_SOURCES 
+    "${CMAKE_CURRENT_SOURCE_DIR}/DataBase/source/CreateAllTable.sql"
+    "${CMAKE_CURRENT_SOURCE_DIR}/DataBase/source/DeleteAllTable.sql"
 )
 
-add_subdirectory(tgBot)
-
-add_executable(main tgBot/source/main.cpp)
-
-target_include_directories(main PRIVATE tgBot/include)
-
-target_link_libraries(main
-  PRIVATE
-    Boost::system
-    nlohmann_json::nlohmann_json
-    curl
+target_sources(DatabaseLib PRIVATE ${DB_SOURCES})
+target_link_libraries(DatabaseLib PUBLIC
     pqxx
-    tgBotLib
     fmt::fmt
 )
+
+# Библиотека Google API
+add_library(GoogleAPILib STATIC)
+
+# Копирование JSON-файлов
+set(GOOGLE_JSON_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Google API/json")
+set(GOOGLE_JSON_DEST "${CMAKE_CURRENT_BINARY_DIR}/GoogleAPI/json")
+
+# Создаем директорию для JSON файлов
+file(MAKE_DIRECTORY "${GOOGLE_JSON_DEST}")
+
+# Определение макроса для доступа к JSON-файлам
+target_compile_definitions(GoogleAPILib PUBLIC 
+    GOOGLE_JSON_PATH="${GOOGLE_JSON_DEST}"
+)
+
+target_include_directories(GoogleAPILib PUBLIC
+    "${CMAKE_CURRENT_SOURCE_DIR}/Google API/inc"
+)
+
+# Исключаем тестовые файлы - ИСПРАВЛЕННЫЙ ПУТЬ
+file(GLOB GOOGLE_SOURCES  # Убрали RECURSE так как в src нет поддиректорий
+    "${CMAKE_CURRENT_SOURCE_DIR}/Google API/src/*.cpp"
+)
+message(STATUS "Google sources found: ${GOOGLE_SOURCES}")  # Для отладки
+
+# Убедимся что app.log не попадает в список
+list(FILTER GOOGLE_SOURCES EXCLUDE REGEX ".*app\\.log$")
+
+list(REMOVE_ITEM GOOGLE_SOURCES 
+    "${CMAKE_CURRENT_SOURCE_DIR}/Google API/src/pre_main.cpp"
+)
+
+target_sources(GoogleAPILib PRIVATE ${GOOGLE_SOURCES})
+
+target_link_libraries(GoogleAPILib PUBLIC
+    CURL::libcurl
+    OpenSSL::SSL
+    OpenSSL::Crypto
+    fmt::fmt
+    nlohmann_json
+    DatabaseLib
+)
+
+# Основной исполняемый файл (tgBot)
+add_executable(main)
+target_include_directories(main PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/tgBot/include"
+)
+
+file(GLOB_RECURSE TGBOT_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/tgBot/source/*.cpp"
+)
+target_sources(main PRIVATE ${TGBOT_SOURCES})
+
+# Линковка
+target_link_libraries(main PRIVATE
+    TgBot
+    GoogleAPILib
+    DatabaseLib
+    Boost::system
+    ${CMAKE_THREAD_LIBS_INIT}
+)
+
+# Копирование JSON-файлов при каждой сборке
+add_custom_command(TARGET main PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${GOOGLE_JSON_DIR}"
+        "${GOOGLE_JSON_DEST}"
+    COMMENT "Copying Google API JSON files"
+    VERBATIM
+)
+
+# Вывод информации о путях
+message(STATUS "Google API JSON files located at: ${GOOGLE_JSON_DEST}")
