@@ -411,9 +411,10 @@ int main() {
                         txn1.commit();
                         sop::addFieldToForm(formId, question, config, httpClient);
                         pqxx::work txn2(conn);
+                        std::string formUrl = sop::getFormUrl(formId);
+
                         CreateSOPForm(txn2, id, sop::getFormUrl(formId), " ", " ");
                         txn2.commit();
-
                     }
 
                 }
