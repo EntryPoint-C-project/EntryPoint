@@ -308,7 +308,10 @@ int main() {
             CreatePersonWithParams(
                 txn, Person("XHR", "Aleck", "sexmen", 1, 83883, "Lector", "Math",
                         "1st Year", "PMI", "Group A"));
-
+            txn.commit();
+        }
+        
+        {
             CreatePersonWithParams(
                 txn, Person("simarova", "Kate", "kate", 1, 23424, "Practitioner", "Math",
                 "1st Year", "PMI", "Group A"));    
@@ -382,22 +385,32 @@ int main() {
             if (query->data == "admin_open_sop") {
                 std::cout << "SOP SOP SOP\n";
                 {
-                    pqxx::work txn(conn);
-                    AssignCompletelyToPeople(txn); // прокидывает всех людей в SOP_Form 
-                    std::vector<int> person_ids = ReadSubjectId(txn);
-
-                    sop::Config config = sop::Config::getInstance();
-                    sop::HttpClient httpClient;
-                    std::string file_path = "json/formTitle.json";
-
-                    for (const auto &id : person_ids) {
-                        std::string formId = sop::createForm(file_path, config, httpClient);
-                        nlohmann::json question = sop::generateQuestionsPerStudent(txn, id);
-                        sop::addFieldToForm(formId, question, config, httpClient);
-                        CreateSOPForm(txn, id, sop::getFormUrl(formId), " ", " ");
-
+                    {
+                        pqxx::work txn(conn);
+                        AssignCompletelyToPeople(txn); // прокидывает всех людей в SOP_Form 
+                        txn.commit();
                     }
-                    txn.commit();
+
+                    pqxx::work txn1(conn);
+                    std::vector<int> person_ids = ReadSubjectId(txn1);
+                    txn1.commit();
+                    //test
+                    for (auto id : person_ids) {
+                        std::cout << id << '\n';
+                    }
+
+                    // sop::Config config = sop::Config::getInstance();
+                    // sop::HttpClient httpClient;
+                    // std::string file_path = "json/formTitle.json";
+
+                    // for (const auto &id : person_ids) {
+                    //     std::string formId = sop::createForm(file_path, config, httpClient);
+                    //     nlohmann::json question = sop::generateQuestionsPerStudent(txn, id);
+                    //     sop::addFieldToForm(formId, question, config, httpClient);
+                    //     CreateSOPForm(txn, id, sop::getFormUrl(formId), " ", " ");
+
+                    // }
+
                 }
 
                 bot.getApi().sendMessage(ChatId, "СОП открыт");
