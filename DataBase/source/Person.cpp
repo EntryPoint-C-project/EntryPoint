@@ -66,3 +66,28 @@ void DeletePerson(pqxx::transaction_base& txn, std::string tg_nick ) {
         throw ; 
     }
 }
+
+bool IsThereARecordPeople(pqxx::transaction_base& txn, std::string tg_nick) {
+    try {
+        std::string sql =  "SELECT EXISTS("
+                           "SELECT 1 FROM People WHERE tg_nick = $1"
+                           ")";
+        pqxx::result res = txn.exec_params(sql, tg_nick);
+        return res[0][0].as<bool>();
+    } catch (const std::exception &e) {
+        fmt::print("Ошибка при чтении {}: {}", tg_nick, e.what()) ;
+        throw ;
+    }
+}
+
+
+int ReadPersonId(pqxx::transaction_base& txn , std::string tg_nick) {
+    try {
+        std::string sql =  "SELECT person_id FROM people WHERE tg_nick = $1";
+        pqxx::result res = txn.exec_params(sql, tg_nick);
+        return res[0][0].as<int>();
+    } catch (const std::exception &e) {
+        fmt::print("Ошибка при чтении {}: {}", tg_nick, e.what()) ;
+        throw ;
+    }
+}
