@@ -1,21 +1,21 @@
 #include "Person_Role.hpp"
 
-std::pair<int,int> CreatePersonRole(pqxx::transaction_base& txn , int person_id, int role_id) {
-    if (!person_id || !role_id) {
-        fmt::print("Заполните все поля в Person_Role\n");
-        throw std::invalid_argument("Заполните все поля в Person_Role");
-    }
+    std::pair<int,int> CreatePersonRole(pqxx::transaction_base& txn , int person_id, int role_id) {
+        if (!person_id || !role_id) {
+            fmt::print("Заполните все поля в Person_Role\n");
+            throw std::invalid_argument("Заполните все поля в Person_Role");
+        }
 
-    try {
-        std::string sql =  "INSERT INTO Person_Role (person_id, role_id) VALUES ($1, $2) ";
-        txn.exec_params(sql, person_id, role_id);
-        //txn.commit();
-        return std::make_pair(person_id, role_id);
-    } catch (const std::exception &e) {
-        fmt::print("Ошибка при создании {}: {}", person_id, e.what()) ;
-        throw ;   
+        try {
+            std::string sql =  "INSERT INTO Person_Role (person_id, role_id) VALUES ($1, $2) ";
+            txn.exec_params(sql, person_id, role_id);
+            //txn.commit();
+            return std::make_pair(person_id, role_id);
+        } catch (const std::exception &e) {
+            fmt::print("Ошибка при создании {}: {}", person_id, e.what()) ;
+            throw ;   
+        }
     }
-}
 
 std::vector<int> ReadPersonId(pqxx::transaction_base& txn , int role_id) {
     try {
