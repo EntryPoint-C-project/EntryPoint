@@ -494,7 +494,11 @@ int main() {
                        && AdminStarus[ChatId] == AdminState::DELETE_USER) {
                 bot.getApi().sendMessage(ChatId, "Person is deleted");
 
-                DeletePerson(txn, message->text); // TODO
+                {
+                    pqxx::work txn(conn);
+                    DeletePerson(txn, message->text); // TODO
+                }
+
             }
 
             if (waiting_for_admin_code.count(ChatId)) {
