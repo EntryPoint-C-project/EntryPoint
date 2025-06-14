@@ -480,6 +480,7 @@ int main() {
             int64_t ChatId = message->chat->id;
 
             if (users_admin.count(ChatId) && AdminStarus[ChatId] == AdminState::ADD_USER) {
+                Logger::getInstance().info("Hello, World!");
                 
                 {
                     pqxx::work txn(conn);
@@ -488,15 +489,12 @@ int main() {
                                 "1st Year", "PMI", "Group A"));
                     txn.commit();
                 }
-            } else if (users_admin.count(ChatId)
+
+            } else if (users_admin.count(ChatId)    
                        && AdminStarus[ChatId] == AdminState::DELETE_USER) {
                 bot.getApi().sendMessage(ChatId, "Person is deleted");
 
-                {
-                    pqxx::work txn(conn);
-                    DeletePerson(txn, message->text); // TODO
-                    txn.commit();
-                }
+                DeletePerson(txn, message->text); // TODO
             }
 
             if (waiting_for_admin_code.count(ChatId)) {
