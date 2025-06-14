@@ -8,7 +8,7 @@ void Logger::log(const std::string &message) {
   std::strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S",
                 std::localtime(&now_time_t));
 
-  std::string log_message = fmt::format("[{}] {}", timestamp, message);
+  std::string log_message = fmt::format("[{}] {}\n", timestamp, message);
   if (logFile.is_open()) {
     logFile << log_message;
     logFile.flush();
