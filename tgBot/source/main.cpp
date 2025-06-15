@@ -87,12 +87,18 @@ std::string GetUrlAnswer(pqxx::transaction_base &txn, std::string tg_nick) {
 
         std::string sql2 = "SELECT url_answer FROM SOP_Form WHERE person_id = $1";
         pqxx::result res2 = txn.exec_params(sql2, person_id);
-        if (!res2.empty()) {
-            std::cout << res2[0]["url_answer"].as<std::string>() << std::endl;
+        if (res2.empty()) {
+            fmt::print("Не найден url_answer для person_id");
+            return "not found";
+        }
+        if (res2[0]["url_answer"].is_null()) {
+            fmt::print("url_answer равен NULL");
+            return "null";
         }
         return res2[0]["url_answer"].as<std::string>();
     } catch (const std::exception &e) {
         fmt::print("Ошибка при чтении: {}", e.what());
+        return "error";
     }
 }
 
@@ -345,9 +351,12 @@ int main() {
             bot.getApi().sendMessage(message->chat->id, "Введите пароль");
         });
         bot.getEvents().onCommand("sooop", [&bot, &conn](TgBot::Message::Ptr message) {
-            pqxx::work txn(conn);
-            std::string url_answer = GetUrlAnswer(txn, "st_luka");
-            txn.commit();
+            {
+                pqxx::work txn(conn);
+                std::string url_answer = GetUrlAnswer(txn, "st_luka");
+
+                txn.commit();
+            }
             bot.getApi().sendMessage(message->chat->id, url_answer);
         });
 
