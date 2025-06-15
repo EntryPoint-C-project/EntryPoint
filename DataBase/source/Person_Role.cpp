@@ -7,7 +7,8 @@
         }
 
         try {
-            std::string sql =  "INSERT INTO Person_Role (person_id, role_id) VALUES ($1, $2) ";
+            // std::string sql =  "INSERT INTO Person_Role (person_id, role_id) VALUES ($1, $2) ";
+            std::string sql =  "INSERT INTO person_role (person_id, role_id) VALUES ($1, $2) ON CONFLICT DO NOTHING";
             txn.exec_params(sql, person_id, role_id);
             //txn.commit();
             return std::make_pair(person_id, role_id);
