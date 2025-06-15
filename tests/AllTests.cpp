@@ -2,8 +2,8 @@
 #include <pqxx/pqxx>
 #include <fstream>
 #include <nlohmann/json.hpp>
-#include "../inc/manageSOP.hpp"
-#include "../inc/DB.hpp"
+#include "../Google\ API/inc/manageSOP.hpp"
+#include "../DataBase/include/DOP_Functions.hpp"
 
 using json = nlohmann::json;
 using namespace std;
