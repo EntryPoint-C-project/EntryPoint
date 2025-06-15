@@ -373,7 +373,7 @@ int main() {
         });
         bot.getEvents().onCommand("sooop", [&bot, &conn] (TgBot::Message::Ptr message) {
             pqxx::work txn(conn);
-            std::string url_answer =  GetUrlAnswer(txn, "st_luka"); 
+            std::string url_answer =  GetUrlAnswer(txn, message->chat->username); 
             txn.commit(); 
             bot.getApi().sendMessage(message->chat->id, url_answer);
         });
