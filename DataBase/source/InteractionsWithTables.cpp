@@ -37,10 +37,17 @@ CREATE TABLE IF NOT EXISTS Role (
 ); 
 
 -- Таблица связи Person_Role (многие-ко-многим между People и Role)
-CREATE TABLE IF NOT EXISTS Person_Role (
-    person_id INT REFERENCES People(person_id),
-    role_id INT REFERENCES Role(role_id),
-    PRIMARY KEY (person_id, role_id) ON DELETE CASCADE
+-- CREATE TABLE IF NOT EXISTS Person_Role (
+--    person_id INT REFERENCES People(person_id),
+--    role_id INT REFERENCES Role(role_id),
+--    PRIMARY KEY (person_id, role_id) 
+--);
+
+CREATE TABLE person_role (
+    person_id INTEGER NOT NULL,
+    role_id INTEGER NOT NULL,
+    PRIMARY KEY (person_id, role_id),
+    FOREIGN KEY (person_id) REFERENCES people (person_id) ON DELETE CASCADE
 );
 
 -- Исправленная таблица Course (была опечатка в названии Cource)
