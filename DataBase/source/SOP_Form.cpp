@@ -4,8 +4,8 @@ int CreateSOPForm(pqxx::transaction_base& txn , int person_id, const std::string
 
     try {
 
-        sql = "INSERT INTO SOP_Form (person_id, url_out_sop, sop_status ,  tg_answer, url_answer) VALUES ($1, $2, $3, $4, $5)  RETURNING sop_id";
-        res = txn.exec_params(sql, person_id, url, "NOT_STARTED", tg_answer, url_answer);
+        std::string sql = "INSERT INTO SOP_Form (person_id, url_out_sop, sop_status ,  tg_answer, url_answer) VALUES ($1, $2, $3, $4, $5)  RETURNING sop_id";
+        pqxx::result res = txn.exec_params(sql, person_id, url, "NOT_STARTED", tg_answer, url_answer);
         int sop_id ; 
         if ( !res.empty() ) {
             sop_id = res[0]["sop_id"].as<int>();
