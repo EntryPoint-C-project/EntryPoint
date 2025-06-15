@@ -179,7 +179,6 @@ TEST(JsonTest, ReadJsonFromFile) {
     remove("tmp_test.json");
 }
 
-// Главная функция
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
