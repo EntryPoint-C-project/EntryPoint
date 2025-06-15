@@ -210,7 +210,7 @@ std::string createForm(const std::string &jsonFilePath, Config &config,
 }
 
 void addFieldToForm(const std::string &formId, json jsonFile, Config &config,
-                     HttpClient &httpClient) {
+                           HttpClient &httpClient) {
    std::string accessToken = refreshAccessToken(config, httpClient);
    if (accessToken.empty()) {
      Logger::getInstance().error(
