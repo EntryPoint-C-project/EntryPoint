@@ -68,9 +68,9 @@ json generateQuestionsPerStudent(pqxx::transaction_base &txn, int student_id) {
 
   json jsonScaleQuestion, jsonOverallQuestion, header;
   try {
-    jsonScaleQuestion = readJsonFromFile("json/scaleQuestion.json");
-    jsonOverallQuestion = readJsonFromFile("json/overallQuestion.json");
-    header = readJsonFromFile("json/headerOfQuestionsBlock.json");
+    jsonScaleQuestion = readJsonFromFile("GoogleAPI/json/scaleQuestion.json");
+    jsonOverallQuestion = readJsonFromFile("GoogleAPI/json/overallQuestion.json");
+    header = readJsonFromFile("GoogleAPI/json/headerOfQuestionsBlock.json");
   } catch (const std::exception &e) {
     Logger::getInstance().error("Error reading JSON templates: {}", e.what());
     return {};
