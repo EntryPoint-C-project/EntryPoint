@@ -446,7 +446,7 @@ int main() {
 
                         std::cout << " url -->  " <<  formUrl << "\n"; 
 
-                        CreateSOPForm(txn2, id, sop::getFormUrl(formId), " ", " ");
+                        CreateSOPForm(txn2, id, formUrl, " ", " ");
                         txn2.commit();
                     }
 
