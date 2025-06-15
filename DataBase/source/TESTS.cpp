@@ -1,44 +1,45 @@
 
 #include <TESTS.hpp>
 
+void TEST_PERSON(pqxx::transaction_base& txn) {
+    People person1{"John", "Doe", "johвndoe", 0, 12121};
+    People person2{"Danik", "bla ", "dвanik_b", 0, 12141};
+    People person3{"Egor", "Schcred ", "eвgorik", 1, 141432};
+    People person4{"Egor", "PIDOR ", "eвgorikkk", 0, 1214213};
 
-
-void TEST_PERSON(pqxx::transaction_base& txn  ) {   
-
-    People person1{"John", "Doe", "johвndoe", 0 , 12121};
-    People person2{"Danik", "bla " , "dвanik_b" , 0 , 12141} ; 
-    People person3{"Egor", "Schcred " , "eвgorik" , 1 , 141432 } ; 
-    People person4{"Egor", "PIDOR " , "eвgorikkk" , 0 , 1214213 } ; 
-
-
-    person1.SetPrimaryKey(CreatePerson(txn, person1.GetFirstName(), person1.GetLastName(), person1.GetTgNick(), person1.GetAccess() , person1.GetSnils() ));
-    person2.SetPrimaryKey(CreatePerson(txn, person2.GetFirstName(), person2.GetLastName(), person2.GetTgNick(), person2.GetAccess() , person2.GetSnils()));
-    person3.SetPrimaryKey(CreatePerson(txn, person3.GetFirstName(), person3.GetLastName(), person3.GetTgNick(), person3.GetAccess() , person3.GetSnils()));
-    person4.SetPrimaryKey(CreatePerson(txn, person4.GetFirstName(), person4.GetLastName(), person4.GetTgNick(), person4.GetAccess() , person4.GetSnils()));
-    auto person4_read = ReadPerson(txn, person4.GetPrimaryKey()) ;
+    person1.SetPrimaryKey(CreatePerson(txn, person1.GetFirstName(), person1.GetLastName(),
+                                       person1.GetTgNick(), person1.GetAccess(),
+                                       person1.GetSnils()));
+    person2.SetPrimaryKey(CreatePerson(txn, person2.GetFirstName(), person2.GetLastName(),
+                                       person2.GetTgNick(), person2.GetAccess(),
+                                       person2.GetSnils()));
+    person3.SetPrimaryKey(CreatePerson(txn, person3.GetFirstName(), person3.GetLastName(),
+                                       person3.GetTgNick(), person3.GetAccess(),
+                                       person3.GetSnils()));
+    person4.SetPrimaryKey(CreatePerson(txn, person4.GetFirstName(), person4.GetLastName(),
+                                       person4.GetTgNick(), person4.GetAccess(),
+                                       person4.GetSnils()));
+    auto person4_read = ReadPerson(txn, person4.GetPrimaryKey());
 
     std::cout << std::get<0>(person4_read) << std::endl;
     std::cout << std::get<1>(person4_read) << std::endl;
     std::cout << std::get<2>(person4_read) << std::endl;
     std::cout << std::get<3>(person4_read) << std::endl;
-    int i = 22 ; 
+    int i = 22;
 
     // DeletePerson(txn, i);
 }
 
-
-void TEST_SUBJECT(pqxx::transaction_base& txn  ) {   
+void TEST_SUBJECT(pqxx::transaction_base& txn) {
     Subject subject{"Mathematics"};
     subject.SetPrimaryKey(CreateSubject(txn, subject.GetSubjectName()));
     std::cout << "SUBject: " << ReadSubject(txn, subject.GetPrimaryKey()) << std::endl;
     UpdateSubject(txn, subject.GetPrimaryKey(), "Physics");
     std::cout << "SUBject: " << ReadSubject(txn, subject.GetPrimaryKey()) << std::endl;
     // DeleteSubject(txn, subject.GetPrimaryKey());
-
-
 }
 
-void TEST_PROGRAM(pqxx::transaction_base& txn  ) {   
+void TEST_PROGRAM(pqxx::transaction_base& txn) {
     Program program{"Mathematics"};
     program.SetPrimaryKey(CreateProgram(txn, program.GetProgramName()));
     std::cout << "Program: " << ReadProgram(txn, program.GetPrimaryKey()) << std::endl;
@@ -47,7 +48,7 @@ void TEST_PROGRAM(pqxx::transaction_base& txn  ) {
     // DeleteProgram(txn, program.GetPrimaryKey());
 }
 
-void TEST_ROLE(pqxx::transaction_base& txn  ) {   
+void TEST_ROLE(pqxx::transaction_base& txn) {
     Role role{"Mathematics"};
     role.SetPrimaryKey(CreateRole(txn, role.GetRoleName()));
     std::cout << "Role: " << ReadRole(txn, role.GetPrimaryKey()) << std::endl;
@@ -56,11 +57,11 @@ void TEST_ROLE(pqxx::transaction_base& txn  ) {
     // DeleteRole(txn, role.GetPrimaryKey());
 }
 
-
-void TEST_PERSON_ROLE(pqxx::transaction_base& txn  ) {
+void TEST_PERSON_ROLE(pqxx::transaction_base& txn) {
     Person_Role person_role{1, 1};
-    person_role.SetPrimaryKey(CreatePersonRole(txn, person_role.GetPrimaryKey(), person_role.GetRoleId()));
-    std::cout << "PersonRole: " ; 
+    person_role.SetPrimaryKey(
+        CreatePersonRole(txn, person_role.GetPrimaryKey(), person_role.GetRoleId()));
+    std::cout << "PersonRole: ";
     std::vector<int> person_ids = ReadPersonId(txn, person_role.GetRoleId());
     for (int id : person_ids) {
         std::cout << id << " ";
@@ -73,7 +74,7 @@ void TEST_PERSON_ROLE(pqxx::transaction_base& txn  ) {
     std::cout << std::endl;
     // Update(txn, person_role.GetPrimaryKey(), 2, person_role.GetPrimaryKey(), 2);
 
-    // std::cout << "PersonRole: " ; 
+    // std::cout << "PersonRole: " ;
     // person_ids = ReadPersonId(txn, person_role.GetRoleId());
     // for (int id : person_ids) {
     //     std::cout << id << " ";
@@ -88,24 +89,26 @@ void TEST_PERSON_ROLE(pqxx::transaction_base& txn  ) {
     // DeletePersonRole(txn, person_role.GetPrimaryKey() , person_role.GetRoleId());
 }
 
-void TEST_COURSE(pqxx::transaction_base& txn  ) {
+void TEST_COURSE(pqxx::transaction_base& txn) {
     Course course{"1"};
-    course.SetPrimaryKey(CreateCourse(txn , course.GetCourceName()));
+    course.SetPrimaryKey(CreateCourse(txn, course.GetCourceName()));
     std::cout << "Course: " << ReadCourse(txn, course.GetPrimaryKey()) << std::endl;
     UpdateCourse(txn, course.GetPrimaryKey(), "Physics");
     std::cout << "Course: " << ReadCourse(txn, course.GetPrimaryKey()) << std::endl;
     // DeleteCource(txn, course.GetPrimaryKey());
 }
 
-void TEST_SOP_FORM(pqxx::transaction_base& txn  ) {
-    SOP_Form sop_form{1 , "url", "tg_answer", "url_answer"};
-    sop_form.SetPrimaryKey(CreateSOPForm(txn ,sop_form.GetPersonId(), sop_form.GetUrl(), sop_form.GetTgAnswer(), sop_form.GetUrlAnswer()));
-    std::tuple < int , std::string , std::string , std::string , std::string > read = ReadSOPForm(txn, sop_form.GetPrimaryKey()) ; 
+void TEST_SOP_FORM(pqxx::transaction_base& txn) {
+    SOP_Form sop_form{1, "url", "tg_answer", "url_answer"};
+    sop_form.SetPrimaryKey(CreateSOPForm(txn, sop_form.GetPersonId(), sop_form.GetUrl(),
+                                         sop_form.GetTgAnswer(), sop_form.GetUrlAnswer()));
+    std::tuple<int, std::string, std::string, std::string, std::string> read
+        = ReadSOPForm(txn, sop_form.GetPrimaryKey());
     {
         auto [id, str1, status, str2, str3] = read;
-        std::cout << "id " << id << " url " << str1  << " status " << status <<" tg_answer " << str2 << " url_answer " << str3 << std::endl;    
+        std::cout << "id " << id << " url " << str1 << " status " << status << " tg_answer " << str2
+                  << " url_answer " << str3 << std::endl;
     }
-
 
     // UpdatePersonId(txn, sop_form.GetPrimaryKey(), 2);
 
@@ -115,43 +118,47 @@ void TEST_SOP_FORM(pqxx::transaction_base& txn  ) {
     UpdateTgAnswer(txn, sop_form.GetPrimaryKey(), "sex");
 
     UpdateUrlAnswer(txn, sop_form.GetPrimaryKey(), "ah ah ah");
-    std::tuple < int , std::string , std::string , std::string , std::string > sop_result = ReadSOPForm(txn, sop_form.GetPrimaryKey()) ; 
+    std::tuple<int, std::string, std::string, std::string, std::string> sop_result
+        = ReadSOPForm(txn, sop_form.GetPrimaryKey());
     {
         auto [id, str1, status, str2, str3] = sop_result;
-        std::cout << "id " << id << " url " << str1  << " status " << status <<" tg_answer " << str2 << " url_answer " << str3 << std::endl;
+        std::cout << "id " << id << " url " << str1 << " status " << status << " tg_answer " << str2
+                  << " url_answer " << str3 << std::endl;
     }
-
-
 
     // Delete_SOP_Form(txn, sop_form.GetPrimaryKey());
 }
 
-void TEST_TEACGING_ASSIGMENTS(pqxx::transaction_base& txn  ) {
-    Teaching_Assigment teacing_assigments{1 , 1 ,1 };
-    teacing_assigments.SetPrimaryKey(CreateTeachingAssigment(txn , teacing_assigments.GetPersonId(), teacing_assigments.GetOfferId(), teacing_assigments.GetSubjectId()));
-    std::tuple < int , int , int > read = ReadTeachingAssigment(txn, teacing_assigments.GetPrimaryKey()) ; 
+void TEST_TEACGING_ASSIGMENTS(pqxx::transaction_base& txn) {
+    Teaching_Assigment teacing_assigments{1, 1, 1};
+    teacing_assigments.SetPrimaryKey(CreateTeachingAssigment(txn, teacing_assigments.GetPersonId(),
+                                                             teacing_assigments.GetOfferId(),
+                                                             teacing_assigments.GetSubjectId()));
+    std::tuple<int, int, int> read = ReadTeachingAssigment(txn, teacing_assigments.GetPrimaryKey());
     auto [id, person_id, offer_id] = read;
     std::cout << "id " << id << " person_id " << person_id << " offer_id " << offer_id << std::endl;
     // Update(txn, teacing_assigments.GetPrimaryKey(), 2, 2, 2);
     // Delete_Teaching_Assigment(txn, teacing_assigments.GetPrimaryKey());
 }
 
-void TEST_PERSON_GROUP(pqxx::transaction_base& txn  ) {
-    People_Group person_group{"groop" };
-    person_group.SetPrimaryKey(CreatePeopleGroup(txn , person_group.GetGroupName()));
-    std::string read = ReadPeopleGroup(txn, person_group.GetPrimaryKey()) ; 
+void TEST_PERSON_GROUP(pqxx::transaction_base& txn) {
+    People_Group person_group{"groop"};
+    person_group.SetPrimaryKey(CreatePeopleGroup(txn, person_group.GetGroupName()));
+    std::string read = ReadPeopleGroup(txn, person_group.GetPrimaryKey());
     std::cout << "id " << read << std::endl;
     UpdatePeopleGroup(txn, person_group.GetPrimaryKey(), "groop1");
     // Delete_Person_Group(txn, person_group.GetPrimaryKey());
 }
 
- 
-void TEST_SUBJECT_OFFER(pqxx::transaction_base& txn  ) {
-    Subject_Offer subject_offer{1 , 1 , 1 };
-    subject_offer.SetPrimaryKey(CreateSubjectOffer(txn , subject_offer.GetGroupId(), subject_offer.GetProgramId(), subject_offer.GetCourseId()));
-    std::tuple < int , int , int > read = ReadSubjectOffer(txn, subject_offer.GetPrimaryKey()) ;
+void TEST_SUBJECT_OFFER(pqxx::transaction_base& txn) {
+    Subject_Offer subject_offer{1, 1, 1};
+    subject_offer.SetPrimaryKey(CreateSubjectOffer(txn, subject_offer.GetGroupId(),
+                                                   subject_offer.GetProgramId(),
+                                                   subject_offer.GetCourseId()));
+    std::tuple<int, int, int> read = ReadSubjectOffer(txn, subject_offer.GetPrimaryKey());
     auto [group_id, program_id, course_id] = read;
-    std::cout << "group_id " << group_id << " program_id " << program_id << " course_id " << course_id << std::endl;
+    std::cout << "group_id " << group_id << " program_id " << program_id << " course_id "
+              << course_id << std::endl;
     // Update(txn, subject_offer.GetPrimaryKey(), 2, 2, 2);
     // Delete_Subject_Offer(txn, subject_offer.GetPrimaryKey());
 }
@@ -185,33 +192,33 @@ void TEST_GET_ALL_TEACHERS(pqxx::transaction_base& txn) {
 
         // ================== 2. Создаем пользователей ==================
         // Создаем 1 студента
-        int student_1 = CreatePerson(txn, "Иван", "Иванов", "ivanov", 0 , 12132);
+        int student_1 = CreatePerson(txn, "Иван", "Иванов", "ivanov", 0, 12132);
         CreatePersonRole(txn, student_1, student_role);
 
-        int student_2 = CreatePerson(txn, "Вася", "Пупкин", "сися666", 0 , 21412);
+        int student_2 = CreatePerson(txn, "Вася", "Пупкин", "сися666", 0, 21412);
         CreatePersonRole(txn, student_2, student_role);
 
         // Создаем 3 преподавателей
-        int teacher1 = CreatePerson(txn, "Петр", "Петров", "petrov", 1 , 5943);
+        int teacher1 = CreatePerson(txn, "Петр", "Петров", "petrov", 1, 5943);
         CreatePersonRole(txn, teacher1, teacher_role);
-        
-        int teacher2 = CreatePerson(txn, "Сергей", "Сергеев", "sergeev", 1 , 662662);
+
+        int teacher2 = CreatePerson(txn, "Сергей", "Сергеев", "sergeev", 1, 662662);
         CreatePersonRole(txn, teacher2, teacher_role);
-        
-        int teacher3 = CreatePerson(txn, "Анна", "Сидорова", "sidorova", 1 , 93993);
+
+        int teacher3 = CreatePerson(txn, "Анна", "Сидорова", "sidorova", 1, 93993);
         CreatePersonRole(txn, teacher3, teacher_role);
 
         // Создаем 2 практиков
-        int practic1 = CreatePerson(txn, "Дмитрий", "Практиков", "practic1", 1 , 32323);
+        int practic1 = CreatePerson(txn, "Дмитрий", "Практиков", "practic1", 1, 32323);
         CreatePersonRole(txn, practic1, practice_role);
-        
-        int practic2 = CreatePerson(txn, "Ольга", "Практикова", "practic2", 1 , 849494);
+
+        int practic2 = CreatePerson(txn, "Ольга", "Практикова", "practic2", 1, 849494);
         CreatePersonRole(txn, practic2, practice_role);
 
         // ================== 3. Создаем учебные предложения ==================
         // Предложение 1: ПМИ, курс 1, группа 1
         int offer1 = CreateSubjectOffer(txn, group1, pmi_prog, course1);
-        
+
         // Предложение 2: ПАДИИ, курс 2, группа 2
         int offer2 = CreateSubjectOffer(txn, group2, padii_prog, course2);
 
@@ -219,8 +226,6 @@ void TEST_GET_ALL_TEACHERS(pqxx::transaction_base& txn) {
         // Для offer1 назначаем всех преподавателей и практиков на матан
         // CreateTeachingAssigment(txn ,student_1 , offer2, student);
 
-
-        
         CreateTeachingAssigment(txn, teacher1, offer1, math_subj);
         CreateTeachingAssigment(txn, teacher2, offer1, math_subj);
         CreateTeachingAssigment(txn, teacher3, offer1, math_subj);
@@ -239,17 +244,15 @@ void TEST_GET_ALL_TEACHERS(pqxx::transaction_base& txn) {
         // ================== 6. Тестируем функцию ==================
         fmt::print("=== Тестируем для student_1 = {} ===\n", student_1);
 
-
         auto teachers_1 = GetAllTeachersForStudent(txn, student_1);
 
         auto teachers_2 = GetAllTeachersForStudent(txn, student_2);
 
-
         // ================== 7. Проверяем результаты ==================
         fmt::print("Найдено учителей: {}\n", teachers_1.size());
-        
+
         // Должно быть 5 учителей (3 Teacher + 2 Practice) для offer1
-        if(teachers_1.size() != 5) {
+        if (teachers_1.size() != 5) {
             fmt::print("Ошибка: ожидалось 5 учителей, получено {}\n", teachers_1.size());
             fmt::print("Проверьте:\n");
             fmt::print("1. Назначен ли студент на правильный offer\n");
@@ -257,21 +260,19 @@ void TEST_GET_ALL_TEACHERS(pqxx::transaction_base& txn) {
             fmt::print("3. Корректно ли работает функция GetAllTeachers_1ForStudent\n");
         } else {
             fmt::print("Тест пройден успешно!\n");
-            
+
             // Дополнительная проверка данных
             fmt::print("Список учителей:\n");
-            for(const auto& t : teachers_1) {
-                fmt::print("- {} {} ({}), предмет: {}\n", 
-                    t.first_name, t.last_name, 
-                    fmt::join(t.his_roles, ", "), 
-                    t.subject_name);
+            for (const auto& t : teachers_1) {
+                fmt::print("- {} {} ({}), предмет: {}\n", t.first_name, t.last_name,
+                           fmt::join(t.his_roles, ", "), t.subject_name);
             }
         }
 
         fmt::print("Найдено учителей: {}\n", teachers_2.size());
-        
+
         // Должно быть 5 учителей (3 Teacher + 2 Practice) для offer1
-        if(teachers_2.size() != 2) {
+        if (teachers_2.size() != 2) {
             fmt::print("Ошибка: ожидалось 5 учителей, получено {}\n", teachers_2.size());
             fmt::print("Проверьте:\n");
             fmt::print("1. Назначен ли студент на правильный offer\n");
@@ -279,23 +280,19 @@ void TEST_GET_ALL_TEACHERS(pqxx::transaction_base& txn) {
             fmt::print("3. Корректно ли работает функция GetAllTeachers_1ForStuden2\n");
         } else {
             fmt::print("Тест пройден успешно!\n");
-            
+
             // Дополнительная проверка данных
             fmt::print("Список учителей:\n");
-            for(const auto& t : teachers_2) {
-                fmt::print("- {} {} ({}), предмет: {}\n", 
-                    t.first_name, t.last_name, 
-                    fmt::join(t.his_roles, ", "), 
-                    t.subject_name);
+            for (const auto& t : teachers_2) {
+                fmt::print("- {} {} ({}), предмет: {}\n", t.first_name, t.last_name,
+                           fmt::join(t.his_roles, ", "), t.subject_name);
             }
         }
 
-        std::vector <int> student_ids = ReadSubjectId(txn);
-        for ( auto id : student_ids) {
+        std::vector<int> student_ids = ReadSubjectId(txn);
+        for (auto id : student_ids) {
             fmt::print("student_id: {}\n", id);
         }
-
-
 
     } catch (const std::exception& e) {
         fmt::print("Ошибка в тесте: {}\n", e.what());
@@ -360,17 +357,18 @@ void TEST_ASSIGN_COMPLETLY_TO_PEOPLE_AND_STATUS(pqxx::transaction_base& txn) {
         // ================== 3. Тестируем метод AssignStatusToAllPeople ==================
         AssignStatusToAllPeople(txn, "NOT_STARTED");
 
-
         // Проверяем, что статус для каждого SOP_Form обновлен
         sql = "SELECT sop_status FROM SOP_Form WHERE sop_id = $1";
-        result = txn.exec_params(sql , ReadSopId(txn,  student_1));
+        result = txn.exec_params(sql, ReadSopId(txn, student_1));
         if (result[0]["sop_status"].as<std::string>() != "NOT_STARTED") {
-            fmt::print("Ошибка: статус для SOP_Form {} не обновлен\n", result[0]["sop_id"].as<int>());
+            fmt::print("Ошибка: статус для SOP_Form {} не обновлен\n",
+                       result[0]["sop_id"].as<int>());
         }
 
         result = txn.exec_params(sql, ReadSopId(txn, student_2));
         if (result[0]["sop_status"].as<std::string>() != "NOT_STARTED") {
-            fmt::print("Ошибка: статус для SOP_Form {} не обновлен\n", result[1]["sop_id"].as<int>());
+            fmt::print("Ошибка: статус для SOP_Form {} не обновлен\n",
+                       result[1]["sop_id"].as<int>());
         }
 
         fmt::print("Тест пройден успешно!\n");

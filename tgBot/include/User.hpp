@@ -10,7 +10,16 @@
 
 namespace mtd {
 enum class UserRole { STUDENT, TEACHER, OFFICE_STAFF, TUTOR, NONE };
-enum class UserState { MENU, BUTTONS, INFORMATION, STUDENT_SOP, TUTOR_SOP, CREATE_SOP, TUTOR_ADD_DECLARATION, NONE };
+enum class UserState {
+    MENU,
+    BUTTONS,
+    INFORMATION,
+    STUDENT_SOP,
+    TUTOR_SOP,
+    CREATE_SOP,
+    TUTOR_ADD_DECLARATION,
+    NONE
+};
 
 class User {
     int64_t chat_id = 0;

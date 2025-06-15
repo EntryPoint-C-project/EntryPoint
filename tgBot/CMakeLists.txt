@@ -33,6 +33,11 @@ target_include_directories(tgBotLib
 target_link_libraries(tgBotLib
     PUBLIC
         pqxx
+<<<<<<< HEAD
         fmt::fmt
         TgBot::tgbot   # если используешь API из CPM библиотеки TgBot
 )
+=======
+        fmt::fmt    # Добавить эту строку!
+)
+>>>>>>> last_branch

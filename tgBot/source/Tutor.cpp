@@ -7,25 +7,21 @@ Tutor::Tutor(int64_t chat_id) : User(chat_id, UserRole::TUTOR) {
 TgBot::InlineKeyboardMarkup::Ptr Tutor::GetInlineKeyboard() {
     TgBot::InlineKeyboardMarkup::Ptr inlineKeyboard(new TgBot::InlineKeyboardMarkup);
 
-    // Добавление кнопки для добавления предмета
     TgBot::InlineKeyboardButton::Ptr addSubject(new TgBot::InlineKeyboardButton);
     addSubject->text = "Добавить предмет";
     addSubject->callbackData = "tutor_add_subject";
     inlineKeyboard->inlineKeyboard.push_back({addSubject});
 
-    // Добавление кнопки для объявления 
     TgBot::InlineKeyboardButton::Ptr addDeclaration(new TgBot::InlineKeyboardButton);
     addDeclaration->text = "Сделать объявление";
     addDeclaration->callbackData = "tutor_add_declaration";
     inlineKeyboard->inlineKeyboard.push_back({addDeclaration});
 
-    // Добавление кнопки для добавления людей в группы
     TgBot::InlineKeyboardButton::Ptr addPeople(new TgBot::InlineKeyboardButton);
     addPeople->text = "Добавить людей в группы";
     addPeople->callbackData = "tutor_add_people";
     inlineKeyboard->inlineKeyboard.push_back({addPeople});
 
-    // Добавление кнопки для создания SOP
     TgBot::InlineKeyboardButton::Ptr createSop(new TgBot::InlineKeyboardButton);
     createSop->text = "Создать SOP";
     createSop->callbackData = "tutor_create_sop";
@@ -36,7 +32,6 @@ TgBot::InlineKeyboardMarkup::Ptr Tutor::GetInlineKeyboard() {
     view_sop->callbackData = "tutor_view_sop";
     inlineKeyboard->inlineKeyboard.push_back({view_sop});
 
-    // Добавление кнопки "Назад"
     TgBot::InlineKeyboardButton::Ptr back(new TgBot::InlineKeyboardButton);
     back->text = "🔙 Назад";
     back->callbackData = "tutor_back";
@@ -48,7 +43,6 @@ TgBot::InlineKeyboardMarkup::Ptr Tutor::GetInlineKeyboard() {
 TgBot::InlineKeyboardMarkup::Ptr Tutor::GetMenu() {
     TgBot::InlineKeyboardMarkup::Ptr inlineKeyboard(new TgBot::InlineKeyboardMarkup);
 
-    // Пример кнопки меню (можно добавить другие кнопки по необходимости)
     TgBot::InlineKeyboardButton::Ptr buttons(new TgBot::InlineKeyboardButton);
     buttons->text = "Меню для куратора";
     buttons->callbackData = "tutor_buttons";

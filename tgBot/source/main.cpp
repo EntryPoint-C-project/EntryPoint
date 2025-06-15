@@ -34,15 +34,15 @@
 #include "../../DataBase/include/TESTS.hpp"
 #include "../../DataBase/include/Teaching_Assigment.hpp"
 
+// Google API
+#include "../../Google API/inc/manageSOP.hpp"
+
 int InitDataBase() {
-    // const std::string conn_str = "dbname=postgres user=postgres password=spelaya_melon
-    // hostaddr=127.0.0.1 port=5432";
     const std::string conn_str
         = "dbname=ep_db user=danik password=60992425 hostaddr=127.0.0.1 port=5432";
 
     try {
         pqxx::connection conn(conn_str);
-        // pqxx::work txn(conn);
         if (!conn.is_open()) {
             throw std::runtime_error("Connection failed");
         }
@@ -75,6 +75,27 @@ int InitDataBase() {
     return 0;
 }
 
+std::string GetUrlAnswer(pqxx::transaction_base &txn, std::string tg_nick) {
+    try {
+        std::string sql = "SELECT person_id FROM People WHERE tg_nick = $1";
+        pqxx::result res = txn.exec_params(sql, tg_nick);
+        if (res.empty()) {
+            fmt::print("Не найден person_id для tg_nick");
+            return "not found";
+        }
+        int person_id = res[0]["person_id"].as<int>();
+
+        std::string sql2 = "SELECT url_answer FROM SOP_Form WHERE person_id = $1";
+        pqxx::result res2 = txn.exec_params(sql2, person_id);
+        if (!res2.empty()) {
+            std::cout << res2[0]["url_answer"].as<std::string>() << std::endl;
+        }
+        return res2[0]["url_answer"].as<std::string>();
+    } catch (const std::exception &e) {
+        fmt::print("Ошибка при чтении: {}", e.what());
+    }
+}
+
 mtd::Discipline t;
 mtd::Subject OMP;
 std::vector<std::string> declarations;
@@ -94,12 +115,12 @@ TgBot::InlineKeyboardMarkup::Ptr CompleteButton() {
 
 TgBot::InlineKeyboardMarkup::Ptr get_raiting_scale() {
     TgBot::InlineKeyboardMarkup::Ptr keyboard(new TgBot::InlineKeyboardMarkup);
-    // Создаем кнопки от 1 до 10
+
     for (int i = 1; i < 11; ++i) {
         TgBot::InlineKeyboardButton::Ptr button(new TgBot::InlineKeyboardButton);
         button->text = std::to_string(i);
-        button->callbackData = std::to_string(i);      // Колбек-данные соответствуют цифре
-        keyboard->inlineKeyboard.push_back({button});  // Добавляем кнопки в строку клавиатуры
+        button->callbackData = std::to_string(i);
+        keyboard->inlineKeyboard.push_back({button});
     }
     TgBot::InlineKeyboardButton::Ptr button(new TgBot::InlineKeyboardButton);
     button->text = "Не моя группа";
@@ -115,7 +136,7 @@ void StudentCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
         || query->data == "5" || query->data == "6" || query->data == "7" || query->data == "8"
         || query->data == "9" || query->data == "10" || query->data == "-1") {
         if (user->GetState() == mtd::UserState::STUDENT_SOP) {
-            if (user->GetStep() == 0) {  // оценка лектора
+            if (user->GetStep() == 0) {
                 user->feedback.grade = std::stoi(query->data);
                 bot.getApi().sendMessage(ChatId, "вы оценили лекции на " + query->data
                                                      + "\nНапишите, что вам нравится в лекциях");
@@ -132,8 +153,6 @@ void StudentCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
         }
     }
 
-    //---------------------------------
-    //---------------------------------
     if (query->data == "student_buttons") {
         bot.getApi().sendMessage(ChatId, "fsfsdf", 0, 0, user->GetInlineKeyboard());
     } else if (query->data == "student_sop" && user->GetStep() == 0) {
@@ -234,40 +253,33 @@ void TutorCallBackQuery(TgBot::Bot &bot, TgBot::CallbackQuery::Ptr &query,
     }
 }
 
-// ------------------------------------------------------------------------------------------------------------
-
 TgBot::InlineKeyboardMarkup::Ptr getAdminKeyboard() {
     TgBot::InlineKeyboardMarkup::Ptr keyboard(new TgBot::InlineKeyboardMarkup);
 
-    // Первая строка: Открыть СОП
     std::vector<TgBot::InlineKeyboardButton::Ptr> row1;
     TgBot::InlineKeyboardButton::Ptr btnOpenSOP(new TgBot::InlineKeyboardButton);
     btnOpenSOP->text = "📄 Открыть СОП";
     btnOpenSOP->callbackData = "admin_open_sop";
     row1.push_back(btnOpenSOP);
 
-    // Вторая строка: Сделать объявление
     std::vector<TgBot::InlineKeyboardButton::Ptr> row2;
     TgBot::InlineKeyboardButton::Ptr btnMakeAnnouncement(new TgBot::InlineKeyboardButton);
     btnMakeAnnouncement->text = "📢 Сделать объявление";
     btnMakeAnnouncement->callbackData = "admin_make_announcement";
     row2.push_back(btnMakeAnnouncement);
 
-    // Третья строка: Добавить человека
     std::vector<TgBot::InlineKeyboardButton::Ptr> row3;
     TgBot::InlineKeyboardButton::Ptr btnAddUser(new TgBot::InlineKeyboardButton);
     btnAddUser->text = "➕ Добавить человека";
     btnAddUser->callbackData = "admin_add_user";
     row3.push_back(btnAddUser);
 
-    // Четвёртая строка: Удалить человека
     std::vector<TgBot::InlineKeyboardButton::Ptr> row4;
     TgBot::InlineKeyboardButton::Ptr btnRemoveUser(new TgBot::InlineKeyboardButton);
     btnRemoveUser->text = "➖ Удалить человека";
     btnRemoveUser->callbackData = "admin_remove_user";
     row4.push_back(btnRemoveUser);
 
-    // Добавляем все строки в клавиатуру
     keyboard->inlineKeyboard.push_back(row1);
     keyboard->inlineKeyboard.push_back(row2);
     keyboard->inlineKeyboard.push_back(row3);
@@ -279,40 +291,45 @@ TgBot::InlineKeyboardMarkup::Ptr getAdminKeyboard() {
 std::set<int64_t> waiting_for_admin_code, users_admin;
 std::mutex mutes_for_admin;
 
-enum class AdminState {
-    ADD_USER,
-    MAKE_ANOUNSMENT,
-    DELETE_USER
-};
+enum class AdminState { ADD_USER, MAKE_ANOUNSMENT, DELETE_USER };
 std::map<int64_t, AdminState> AdminStarus;
 
 int main() {
-    
     const std::string conn_str
         = "dbname=ep_db user=danik password=60992425 hostaddr=127.0.0.1 port=5432";
 
     try {
         pqxx::connection conn(conn_str);
-        // pqxx::work txn(conn);
         if (!conn.is_open()) {
             throw std::runtime_error("Connection failed");
         }
         fmt::print("✓ Подключено к: {}\n", conn.dbname());
-        pqxx::work txn(conn);
 
-        DeleteAllTable(txn);
-        CreateAllTable(txn);
+        pqxx::work txn_open(conn);
+        DeleteAllTable(txn_open);
+        CreateAllTable(txn_open);
+        txn_open.commit();
 
-        //-----------------------------------------------------
-        
+        {
+            pqxx::work txn(conn);
+            CreatePersonWithParams(txn, Person("XHR", "Aleck", "sexmen", 1, 83883, "Lector", "Math",
+                                               "1st Year", "PMI", "Group A"));
+            txn.commit();
+        }
+
+        {
+            pqxx::work txn(conn);
+            CreatePersonWithParams(txn, Person("simarova", "Kate", "kate", 1, 23424, "Practitioner",
+                                               "Math", "1st Year", "PMI", "Group A"));
+
+            txn.commit();
+        }
+
         OMP.name_subject = "ОМП";
         TgBot::Bot bot("7472835556:AAGGxuQuWDgYb9rskK3tn7YG660YEg7OgKM");
         std::map<int64_t, std::shared_ptr<mtd::User>> users;
         std::set<int64_t> NewUsers;
         std::mutex MutexForUsers;
-
-        // std::thread thread_foor_data_base(InitDataBase);
-        // thread_foor_data_base.detach();
 
         bot.getEvents().onCommand("secret", [&bot](TgBot::Message::Ptr message) {
             if (users_admin.count(message->chat->id)) {
@@ -326,6 +343,12 @@ int main() {
             std::lock_guard<std::mutex> lock(mutes_for_admin);
             waiting_for_admin_code.insert(message->chat->id);
             bot.getApi().sendMessage(message->chat->id, "Введите пароль");
+        });
+        bot.getEvents().onCommand("sooop", [&bot, &conn](TgBot::Message::Ptr message) {
+            pqxx::work txn(conn);
+            std::string url_answer = GetUrlAnswer(txn, "st_luka");
+            txn.commit();
+            bot.getApi().sendMessage(message->chat->id, url_answer);
         });
 
         bot.getEvents().onCommand(
@@ -358,65 +381,123 @@ int main() {
                 bot.getApi().sendMessage(message->chat->id, "Кто ты?", 0, 0, keyboard);
             });
 
-        bot.getEvents().onCallbackQuery(
-            [&](TgBot::CallbackQuery::Ptr query) {
-                std::lock_guard<std::mutex> lock(MutexForUsers);
-                int64_t ChatId = query->message->chat->id;
-                if (query->data == "admin_open_sop") {
-                    AssignCompletelyToPeople(txn);
-                    bot.getApi().sendMessage(ChatId, "СОП открыт");
-                } else if (query->data == "admin_add_user") {
-                    bot.getApi().sendMessage(ChatId, "Введите данные:");
-                    AdminStarus[ChatId] = AdminState::ADD_USER;
-                }
-                if (NewUsers.find(ChatId) != NewUsers.end()) {
-                    if (query->data == "student") {
-                        auto student_ptr = std::make_shared<mtd::Student>(ChatId);
-                        users.insert({ChatId, student_ptr});
-                    } else if (query->data == "office_staff") {
-                        auto office_staff_ptr = std::make_shared<mtd::OfficeStaff>(ChatId);
-                        users.insert({ChatId, office_staff_ptr});
-                    } else if (query->data == "teacher") {
-                        auto teacher_ptr = std::make_shared<mtd::Teacher>(ChatId);
-                        users.insert({ChatId, teacher_ptr});
-                    } else if (query->data == "tutor") {
-                        auto tutor_ptr = std::make_shared<mtd::Tutor>(ChatId);
-                        users.insert({ChatId, tutor_ptr});
+        bot.getEvents().onCallbackQuery([&](TgBot::CallbackQuery::Ptr query) {
+            std::lock_guard<std::mutex> lock(MutexForUsers);
+            int64_t ChatId = query->message->chat->id;
+            if (query->data == "admin_open_sop") {
+                std::cout << "SOP SOP SOP\n";
+                {
+                    {
+                        pqxx::work txn(conn);
+                        AssignCompletelyToPeople(txn);
+                        txn.commit();
                     }
 
-                    bot.getApi().sendMessage(ChatId, "Меню", 0, 0, users[ChatId]->GetMenu());
-                    NewUsers.erase(ChatId);
-                    return;
-                }
-                if (users.find(ChatId) == users.end()) {
-                    std::cout << "=== Error ===\n";
-                    return;
-                }
-                auto &user = users[ChatId];
+                    pqxx::work txn1(conn);
+                    std::vector<int> person_ids = ReadSubjectId(txn1);
+                    txn1.commit();
+                    // test
+                    for (auto id : person_ids) {
+                        std::cout << id << '\n';
+                    }
 
-                if (query->data == "complete_button") {
-                    std::cout << "sfdfdfdf\n";
-                    bot.getApi().sendMessage(ChatId, "_", 0, 0, user->GetMenu());
-                    return;
+                    sop::Config config = sop::Config::getInstance();
+                    sop::HttpClient httpClient;
+                    std::string file_path = "GoogleAPI/json/formTitle.json";
+
+                    for (const auto &id : person_ids) {
+                        std::string formId = sop::createForm(file_path, config, httpClient);
+                        std::cout << "id --> " << formId << "\n";
+                        pqxx::work txn1(conn);
+                        nlohmann::json question = sop::generateQuestionsPerStudent(txn1, id);
+                        std::cout << question.dump() << '\n';
+                        txn1.commit();
+                        sop::addFieldToForm(formId, question, config, httpClient);
+                        pqxx::work txn2(conn);
+                        std::string formUrl = sop::getFormUrl(formId);
+
+                        std::cout << " url -->  " << formUrl << "\n";
+
+                        CreateSOPForm(txn2, id, formUrl, " ", " ");
+                        txn2.commit();
+                    }
                 }
 
-                if (user->GetRole() == mtd::UserRole::STUDENT) {
-                    StudentCallBackQuery(bot, query, user);
-                } else if (user->GetRole() == mtd::UserRole::OFFICE_STAFF) {
-                    OfficeStaffCallBackQuery(bot, query, user);
-                } else if (user->GetRole() == mtd::UserRole::TEACHER) {
-                    TeacherCallBackQuery(bot, query, user);
-                } else if (user->GetRole() == mtd::UserRole::TUTOR) {
-                    TutorCallBackQuery(bot, query, user);
+                bot.getApi().sendMessage(ChatId, "СОП открыт");
+            } else if (query->data == "admin_add_user") {
+                std::cout << "admin_add_user\n";
+                bot.getApi().sendMessage(ChatId, "Введите данные:");
+                AdminStarus[ChatId] = AdminState::ADD_USER;
+            } else if (query->data == "admin_remove_user") {
+                bot.getApi().sendMessage(ChatId, "Напиши тгник");
+                AdminStarus[ChatId] = AdminState::DELETE_USER;
+            }
+            if (NewUsers.find(ChatId) != NewUsers.end()) {
+                if (query->data == "student") {
+                    auto student_ptr = std::make_shared<mtd::Student>(ChatId);
+                    users.insert({ChatId, student_ptr});
+                } else if (query->data == "office_staff") {
+                    auto office_staff_ptr = std::make_shared<mtd::OfficeStaff>(ChatId);
+                    users.insert({ChatId, office_staff_ptr});
+                } else if (query->data == "teacher") {
+                    auto teacher_ptr = std::make_shared<mtd::Teacher>(ChatId);
+                    users.insert({ChatId, teacher_ptr});
+                } else if (query->data == "tutor") {
+                    auto tutor_ptr = std::make_shared<mtd::Tutor>(ChatId);
+                    users.insert({ChatId, tutor_ptr});
                 }
-            });
 
-        bot.getEvents().onAnyMessage([&bot, &users, &MutexForUsers, &txn](TgBot::Message::Ptr message) {
+                bot.getApi().sendMessage(ChatId, "Меню", 0, 0, users[ChatId]->GetMenu());
+                NewUsers.erase(ChatId);
+                return;
+            }
+            if (users.find(ChatId) == users.end()) {
+                std::cout << "=== Error ===\n";
+                return;
+            }
+            auto &user = users[ChatId];
+
+            if (query->data == "complete_button") {
+                std::cout << "sfdfdfdf\n";
+                bot.getApi().sendMessage(ChatId, "_", 0, 0, user->GetMenu());
+                return;
+            }
+
+            if (user->GetRole() == mtd::UserRole::STUDENT) {
+                StudentCallBackQuery(bot, query, user);
+            } else if (user->GetRole() == mtd::UserRole::OFFICE_STAFF) {
+                OfficeStaffCallBackQuery(bot, query, user);
+            } else if (user->GetRole() == mtd::UserRole::TEACHER) {
+                TeacherCallBackQuery(bot, query, user);
+            } else if (user->GetRole() == mtd::UserRole::TUTOR) {
+                TutorCallBackQuery(bot, query, user);
+            }
+        });
+
+        bot.getEvents().onAnyMessage([&bot, &users, &MutexForUsers,
+                                      &conn](TgBot::Message::Ptr message) {
             std::lock_guard<std::mutex> lock(MutexForUsers);
             int64_t ChatId = message->chat->id;
 
             if (users_admin.count(ChatId) && AdminStarus[ChatId] == AdminState::ADD_USER) {
-                CreatePersonWithParams(txn, {'a', 'a', 'a', 1, 1, 'a', 'a', 'a', 'a', 'b'});
+                Logger::getInstance().info("Hello, World!");
+
+                {
+                    pqxx::work txn(conn);
+                    CreatePersonWithParams(
+                        txn, Person("Egor", "Lukavenko", "st_luka", 1, 123456789, "Student", "Math",
+                                    "1st Year", "PMI", "Group A"));
+                    txn.commit();
+                }
+
+            } else if (users_admin.count(ChatId)
+                       && AdminStarus[ChatId] == AdminState::DELETE_USER) {
+                bot.getApi().sendMessage(ChatId, "Person is deleted");
+
+                {
+                    pqxx::work txn(conn);
+                    DeletePerson(txn, message->text);
+                }
             }
 
             if (waiting_for_admin_code.count(ChatId)) {
@@ -464,7 +545,7 @@ int main() {
                 }
                 return;
             } else if (user->GetState() == mtd::UserState::STUDENT_SOP) {
-                if (user->GetStep() == -1) {  // конец
+                if (user->GetStep() == -1) {
                     OMP.comments.push_back(message->text);
                     bot.getApi().sendMessage(ChatId, "Меню", 0, 0, user->GetMenu());
                 }
@@ -532,9 +613,7 @@ int main() {
         } catch (const TgBot::TgException &e) {
             std::cerr << "Error: " << e.what() << "\n";
         }
-        //------------------------------------------------
 
-        txn.commit();
     } catch (const std::exception &e) {
         fmt::print("произошла ошибка : {}\n", e.what());
     }
