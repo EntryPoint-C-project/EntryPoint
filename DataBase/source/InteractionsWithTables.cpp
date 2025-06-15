@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS Teaching_Assigment (
 -- Таблица Sop_Form с использованием созданного типа ENUM
 CREATE TABLE IF NOT EXISTS Sop_Form (
     sop_id SERIAL PRIMARY KEY,
-    person_id INT REFERENCES People(person_id),
+    person_id INT REFERENCES People(person_id) ON DELETE CASCADE,
     url_out_sop VARCHAR(100) NOT NULL,
     sop_status VARCHAR(100) NOT NULL,
     tg_answer TEXT,  -- Исправлено с NTEXT на TEXT
