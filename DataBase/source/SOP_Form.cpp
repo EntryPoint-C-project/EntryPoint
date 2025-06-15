@@ -3,15 +3,7 @@
 int CreateSOPForm(pqxx::transaction_base& txn , int person_id, const std::string url, std::string tg_answer, std::string url_answer) {
 
     try {
-        // Проверяем, есть ли уже запись для данного человека в таблице Sop_Form
-        std::string sql = "SELECT sop_id FROM Sop_Form WHERE person_id = $1";
-        pqxx::result res = txn.exec_params(sql, person_id);
-        if (!res.empty()) {
-            // Если запись уже существует, то просто вернём 0
-            return 0;
-        }
 
-        // Если записи нет, то добавляем новую запись
         sql = "INSERT INTO SOP_Form (person_id, url_out_sop, sop_status ,  tg_answer, url_answer) VALUES ($1, $2, $3, $4, $5)  RETURNING sop_id";
         res = txn.exec_params(sql, person_id, url, "NOT_STARTED", tg_answer, url_answer);
         int sop_id ; 
@@ -106,39 +98,41 @@ void UpdateStatus(pqxx::transaction_base& txn, int sop_id, std::string new_statu
 
 
 
-void DeleteSOP_Form(pqxx::transaction_base& txn, int sop_id) {
+void DeleteSOP_Form(pqxx::transaction_base& txn, int person_id) {
     try {
 
-        std::string sql =  "DELETE FROM SOP_Form WHERE sop_id = $1";
-        txn.exec_params(sql, sop_id);
+        std::string sql =  "DELETE FROM SOP_Form WHERE person_id = $1";
+        txn.exec_params(sql, person_id);
         //txn.commit();
     } catch (const std::exception &e) {
-        fmt::print("Ошибка при удалении {}: {}", sop_id, e.what()) ;
+        txn.abort();
+        fmt::print("Ошибка при удалении {}: {}", person_id, e.what()) ;
         throw ; 
     }
 }
 
-void UpdateTgAnswer(pqxx::transaction_base& txn, int sop_id, std::string new_tg_answer) { // обновленные методы , для того , чтобы у нас была конкатенация ответов , а не просто замена одного на другое 
+void UpdateTgAnswer(pqxx::transaction_base& txn, int person_id, std::string new_tg_answer) { // обновленные методы , для того , чтобы у нас была конкатенация ответов , а не просто замена одного на другое 
     try {
-        std::string sql =  "UPDATE SOP_Form SET tg_answer = tg_answer || '\t' || $1 WHERE sop_id = $2";
-        txn.exec_params(sql, new_tg_answer, sop_id);
+        std::string sql =  "UPDATE SOP_Form SET tg_answer = tg_answer || '\t' || $1 WHERE person_id = $2";
+        txn.exec_params(sql, new_tg_answer, person_id);
         //txn.commit();
     } catch (const std::exception &e) {
-        fmt::print("Ошибка при обновлении {}: {}", sop_id, e.what()) ;
+        fmt::print("Ошибка при обновлении {}: {}", person_id, e.what()) ;
         throw ; 
     }
 }
 
-void UpdateUrlAnswer(pqxx::transaction_base& txn, int sop_id, std::string new_url_answer) { // обновленные методы , для того , чтобы у нас была конкатенация ответов , а не просто замена одного на другое 
+void UpdateUrlAnswer(pqxx::transaction_base& txn, int person_id, std::string new_url_answer) { // обновленные методы , для того , чтобы у нас была конкатенация ответов , а не просто замена одного на другое 
     try {
-        std::string sql =  "UPDATE SOP_Form SET url_answer = url_answer || '\t' || $1 WHERE sop_id = $2";
-        txn.exec_params(sql, new_url_answer, sop_id);
+        std::string sql =  "UPDATE SOP_Form SET url_answer = url_answer || '\t' || $1 WHERE person_id = $2";
+        txn.exec_params(sql, new_url_answer, person_id);
         //txn.commit();
     } catch (const std::exception &e) {
-        fmt::print("Ошибка при обновлении {}: {}", sop_id, e.what()) ;
+        fmt::print("Ошибка при обновлении {}: {}", person_id, e.what()) ;
         throw ; 
     }
 }
+
 
 int ReadSopId(pqxx::transaction_base& txn , int person_id) {
     try {
@@ -151,25 +145,5 @@ int ReadSopId(pqxx::transaction_base& txn , int person_id) {
     } catch (const std::exception &e) {
         fmt::print("Ошибка при чтении {}: {}", person_id, e.what()) ;
         throw ; 
-    }
-}
-
-void GetUrlFuckMe(pqxx::transaction_base& txn, std::string tg_nick) {
-    try {
-        std::string sql = "SELECT person_id FROM People WHERE tg_answer = $1";
-        pqxx::result res = txn.exec_params(sql, tg_nick);
-        if (res.empty()) {
-            fmt::print("Не найден person_id для tg_nick");
-            return;
-        }
-        int person_id = res[0]["person_id"].as<int>();
-
-        std::string sql2 = "SELECT url_answer FROM SOP_Form WHERE person_id = $1";
-        pqxx::result res2 = txn.exec_params(sql2, person_id);
-        if (!res2.empty()) {
-            std::cout << res2[0]["url_answer"].as<std::string>() << std::endl;
-        }
-    } catch (const std::exception& e) {
-        fmt::print("Ошибка при чтении: {}", e.what());
     }
 }
