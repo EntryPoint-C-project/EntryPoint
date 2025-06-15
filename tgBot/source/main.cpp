@@ -80,7 +80,7 @@ int InitDataBase() {
 
 std::string GetUrlAnswer(pqxx::transaction_base& txn, std::string tg_nick) {
     try {
-        std::string sql = "SELECT person_id FROM Person WHERE tg_nick = $1";
+        std::string sql = "SELECT person_id FROM People WHERE tg_nick = $1";
         pqxx::result res = txn.exec_params(sql, tg_nick);
         if (res.empty()) {
             fmt::print("Не найден person_id для tg_nick");
