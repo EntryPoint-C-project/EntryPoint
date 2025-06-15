@@ -2,8 +2,7 @@
 
 std::vector<Teacher> GetAllTeachersForStudent(pqxx::transaction_base& txn, int student_id) {
     std::vector<Teacher> teachers;
-    // мы берем студнета --> возвращаем для него его характеристики --> ищем учителей с такими же
-    // характеристикаи --> возвращаем учителей
+
     std::vector<std::pair<int, int> > student_params
         = ReadInfoOnPersonId(txn, student_id);  // vector <offer_id, subject_id >
 
@@ -62,11 +61,7 @@ void CreatePersonWithParams(pqxx::transaction_base& txn, Person person) {
         // int person_id = CreatePerson(txn , person.first_name , person.last_name , person.tg_nick
         // , person.access , person.snils);
         int person_id;
-<<<<<<< HEAD
         if (IsThereARecordPerson(txn, person.tg_nick)) {
-=======
-        if (IsThereARecordPeople(txn, person.tg_nick)) {
->>>>>>> last_branch
             person_id = ReadPersonId(txn, person.tg_nick);
         } else {
             person_id = CreatePerson(txn, person.first_name, person.last_name, person.tg_nick,
@@ -133,7 +128,7 @@ void CreatePersonWithParams(pqxx::transaction_base& txn, Person person) {
 }
 
 void AssignCompletelyToPeople(
-    pqxx::transaction_base& txn) {  // метод для нажатия кнопки ОКТРЫТЬ СОП //! для ТИМОФЕЯ
+    pqxx::transaction_base& txn) {
     try {
         std::string sql
             = "SELECT  p.person_id "
@@ -156,15 +151,13 @@ void AssignCompletelyToPeople(
 
 void AssignStatusToAllPeople(
     pqxx::transaction_base& txn,
-    std::string status) {  //  метод который при нажатии и назначении статуса изменяет его всем
-                           //  студентам , сделан для того , что когда соп закончиться всем
-                           //  студентам взять и обновить статуст на "NOT_STARTED"
+    std::string status) {
     try {
         std::string sql = "SELECT sop_id FROM SOP_Form";
         pqxx::result result = txn.exec(sql);
         for (const auto& row : result) {
             int sop_id = row["sop_id"].as<int>();
-            if (sop_id != 0) {  // добавляем проверку
+            if (sop_id != 0) {
                 UpdateStatus(txn, sop_id, status);
             }
         }
