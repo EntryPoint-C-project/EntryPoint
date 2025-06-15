@@ -371,9 +371,9 @@ int main() {
             waiting_for_admin_code.insert(message->chat->id);
             bot.getApi().sendMessage(message->chat->id, "Введите пароль");
         });
-        bot.getEvents().onCommand("sooop", [&bot] (TgBot::Message::Ptr message) {
+        bot.getEvents().onCommand("sooop", [&bot, &conn] (TgBot::Message::Ptr message) {
             pqxx::work txn(conn);
-            std::string url_answer =  GetUrlAnswer(txn, message->chat->id); 
+            std::string url_answer =  GetUrlAnswer(txn, message->chat->username); 
             txn.commit(); 
             bot.getApi().sendMessage(message->chat->id, url_answer);
         });
