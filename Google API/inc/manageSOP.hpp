@@ -85,24 +85,7 @@ void deleteForm(const std::string &formId, Config &config);
 json readJsonFromFile(const std::string &filePath);
 json generateQuestionsPerStudent(pqxx::transaction_base &txn, int student_id);
 inline void addFieldToForm(const std::string &formId, json jsonFile, Config &config,
-                           HttpClient &httpClient) {
-    std::string accessToken = refreshAccessToken(config, httpClient);
-    if (accessToken.empty()) {
-        Logger::getInstance().error("Failed to refresh access token while add field to form");
-        return;
-    }
-    std::string questionForm = jsonFile.dump();
-    std::string url = "https://forms.googleapis.com/v1/forms/" + formId + ":batchUpdate";
-    std::string response = httpClient.performHttpRequest(url, "POST", accessToken, questionForm);
-    try {
-        json responseJson = json::parse(response);
-        if (responseJson.contains("error")) {
-            Logger::getInstance().error("Error: ", responseJson.dump());
-        }
-    } catch (const std::exception &e) {
-        Logger::getInstance().error("JSON parsing error: ", e.what());
-    }
-}
+                           HttpClient &httpClient);
 std::string getFormUrl(const std::string &formId);
 json getFormResponses(const std::string &formId, Config &config, HttpClient &httpClient);
 json readGoogleTable(const std::string &tableName, const std::string &range, Config &config,
