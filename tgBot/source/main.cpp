@@ -385,7 +385,6 @@ int main() {
             std::lock_guard<std::mutex> lock(MutexForUsers);
             int64_t ChatId = query->message->chat->id;
             if (query->data == "admin_open_sop") {
-                std::cout << "SOP SOP SOP\n";
                 {
                     {
                         pqxx::work txn(conn);
@@ -396,10 +395,6 @@ int main() {
                     pqxx::work txn1(conn);
                     std::vector<int> person_ids = ReadSubjectId(txn1);
                     txn1.commit();
-                    // test
-                    for (auto id : person_ids) {
-                        std::cout << id << '\n';
-                    }
 
                     sop::Config config = sop::Config::getInstance();
                     sop::HttpClient httpClient;
@@ -407,17 +402,12 @@ int main() {
 
                     for (const auto &id : person_ids) {
                         std::string formId = sop::createForm(file_path, config, httpClient);
-                        std::cout << "id --> " << formId << "\n";
                         pqxx::work txn1(conn);
                         nlohmann::json question = sop::generateQuestionsPerStudent(txn1, id);
-                        std::cout << question.dump() << '\n';
                         txn1.commit();
                         sop::addFieldToForm(formId, question, config, httpClient);
                         pqxx::work txn2(conn);
                         std::string formUrl = sop::getFormUrl(formId);
-
-                        std::cout << " url -->  " << formUrl << "\n";
-
                         CreateSOPForm(txn2, id, formUrl, " ", " ");
                         txn2.commit();
                     }
