@@ -3,7 +3,7 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include "../inc/manageSOP.hpp"
-#include "../include/DOP_Functions.hpp"
+#include "../include/Dop_Functions.hpp"
 
 using json = nlohmann::json;
 using namespace std;
