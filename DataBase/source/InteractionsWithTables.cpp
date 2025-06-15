@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS Subject_Offer (
 -- Таблица Teaching_Assignment (исправлено название с Teaching_Assingment)
 CREATE TABLE IF NOT EXISTS Teaching_Assigment (
     assignment_id SERIAL PRIMARY KEY,
-    person_id INT REFERENCES People(person_id),
+    person_id INT REFERENCES People(person_id) ON DELETE CASCADE,
     offer_id INT REFERENCES Subject_Offer(offer_id), 
     subject_id INT REFERENCES Subjects(subject_id)
 );
