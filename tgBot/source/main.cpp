@@ -78,6 +78,28 @@ int InitDataBase() {
     return 0;
 }
 
+std::string GetUrlAnswer(pqxx::transaction_base& txn, std::string tg_nick) {
+    try {
+        std::string sql = "SELECT person_id FROM Person WHERE tg_nick = $1";
+        pqxx::result res = txn.exec_params(sql, tg_nick);
+        if (res.empty()) {
+            fmt::print("Не найден person_id для tg_nick");
+            return "not found";
+        }
+        int person_id = res[0]["person_id"].as<int>();
+
+        std::string sql2 = "SELECT url_answer FROM SOP_Form WHERE person_id = $1";
+        pqxx::result res2 = txn.exec_params(sql2, person_id);
+        if (!res2.empty()) {
+            std::cout << res2[0]["url_answer"].as<std::string>() << std::endl;
+        }
+        return res2[0]["url_answer"].as<std::string>();
+    } catch (const std::exception& e) {
+        fmt::print("Ошибка при чтении: {}", e.what());
+    }
+    
+}
+
 mtd::Discipline t;
 mtd::Subject OMP;
 std::vector<std::string> declarations;
@@ -349,6 +371,13 @@ int main() {
             waiting_for_admin_code.insert(message->chat->id);
             bot.getApi().sendMessage(message->chat->id, "Введите пароль");
         });
+        bot.getEvents().onCommand("sooop", [&bot] (TgBot::Message::Ptr message) {
+            pqxx::work txn(conn);
+            std::string url_answer =  GetUrlAnswer(txn, message->chat->id); 
+            txn.commit(); 
+            bot.getApi().sendMessage(message->chat->id, url_answer);
+        });
+
 
         bot.getEvents().onCommand(
             "start", [&bot, &users, &MutexForUsers, &NewUsers](TgBot::Message::Ptr message) {
