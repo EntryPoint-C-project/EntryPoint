@@ -351,12 +351,12 @@ int main() {
             bot.getApi().sendMessage(message->chat->id, "Введите пароль");
         });
         bot.getEvents().onCommand("sooop", [&bot, &conn](TgBot::Message::Ptr message) {
-            {
-                pqxx::work txn(conn);
-                std::string url_answer = GetUrlAnswer(txn, "st_luka");
 
-                txn.commit();
-            }
+            pqxx::work txn(conn);
+            std::string url_answer = GetUrlAnswer(txn, "st_luka");
+
+            txn.commit();
+
             bot.getApi().sendMessage(message->chat->id, url_answer);
         });
 
