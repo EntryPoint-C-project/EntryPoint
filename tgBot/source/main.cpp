@@ -350,14 +350,20 @@ int main() {
             waiting_for_admin_code.insert(message->chat->id);
             bot.getApi().sendMessage(message->chat->id, "Введите пароль");
         });
+        
         bot.getEvents().onCommand("sooop", [&bot, &conn](TgBot::Message::Ptr message) {
-
-            pqxx::work txn(conn);
-            std::string url_answer = GetUrlAnswer(txn, "st_luka");
-
-            txn.commit();
-
-            bot.getApi().sendMessage(message->chat->id, url_answer);
+            try {
+                pqxx::work txn(conn);
+                std::string url_answer = GetUrlAnswer(txn, "st_luka");
+                txn.commit();
+                if (!url_answer.empty()) {
+                    bot.getApi().sendMessage(message->chat->id, url_answer);
+                } else {
+                    bot.getApi().sendMessage(message->chat->id, "Информация не найдена");
+                }
+            } catch (const std::exception& e) {
+                fmt::print("Ошибка: {}", e.what());
+            }
         });
 
         bot.getEvents().onCommand(
