@@ -402,7 +402,7 @@ int main() {
 
                     sop::Config config = sop::Config::getInstance();
                     sop::HttpClient httpClient;
-                    std::string file_path = "json/formTitle.json";
+                    std::string file_path = "GoogleAPI/json/formTitle.json";
 
                     for (const auto &id : person_ids) {
                         std::string formId = sop::createForm(file_path, config, httpClient);
