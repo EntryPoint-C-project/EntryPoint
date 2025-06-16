@@ -1,6 +1,3 @@
-
-# EntryPoint
-=======
 # 🎓 EntryPoint: Telegram Bot for Educational Institutions
 
 **EntryPoint** is a versatile Telegram bot written in C++ using the [tgbot-cpp](https://github.com/reo7sp/tgbot-cpp) library, designed to streamline communication and management within educational environments.
@@ -34,4 +31,3 @@ mkdir build && cd build
 cmake ..
 make
 ``` 
->>>>>>> last_branch
